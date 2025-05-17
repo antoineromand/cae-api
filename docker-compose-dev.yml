@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+    postgresql-db:
+        image: postgres
+        restart: always
+        environment:
+          POSTGRES_USER: ${DB_PASSWORD}
+          POSTGRES_PASSWORD: ${DB_PASSWORD}
+          POSTGRES_DB: ${DB_NAME}
+        volumes:
+          - pgdata:/var/lib/postgresql/data 
+        ports:
+          - ${DOCKER_DB_PORTS}
+    
+    adminer:
+        image: adminer
+        restart: always
+        ports:
+          - 8080:8080
+        depends_on:
+          - postgresql-db
+        environment:
+          ADMINER_DEFAULT_SERVER: postgresql-db
+          ADMINER_DESIGN: dracula
+
+volumes:
+  pgdata:
