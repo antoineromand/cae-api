@@ -2,6 +2,12 @@ plugins {
 	java
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(24))
+    }
+}
+
 dependencies {
 	implementation("org.springframework.modulith:spring-modulith-starter-core")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -17,3 +23,6 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}

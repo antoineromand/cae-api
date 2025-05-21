@@ -21,6 +21,7 @@ allprojects {
 }
 
 subprojects {
+	apply(plugin = "java")
 	apply(plugin = "io.spring.dependency-management")
 	dependencyManagement {
 		imports {
@@ -28,8 +29,12 @@ subprojects {
 			mavenBom("org.springframework.modulith:spring-modulith-bom:1.3.5")
 		}
 	}
+	dependencies {
+        testImplementation("org.junit.jupiter:junit-jupiter")
+    }
+	tasks.withType<Test> {
+	useJUnitPlatform()
+	}
 }
 
-tasks.withType<Test> {
-	useJUnitPlatform()
-}
+
