@@ -23,6 +23,7 @@ allprojects {
 subprojects {
 	apply(plugin = "java")
 	apply(plugin = "io.spring.dependency-management")
+	apply(plugin= "jacoco")
 	dependencyManagement {
 		imports {
 			mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.5")
@@ -33,8 +34,13 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter")
     }
 	tasks.withType<Test> {
-	useJUnitPlatform()
+		useJUnitPlatform()
+		finalizedBy(tasks.named("jacocoTestReport"))
 	}
+
+	tasks.named("jacocoTestReport") {
+        dependsOn(tasks.named("test"))
+    }
 }
 
 

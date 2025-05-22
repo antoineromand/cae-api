@@ -9,6 +9,7 @@ public class ScopeTest {
     public void shouldCreateAScope() {
         Scope scope = new Scope(1, "read", "menu");
         assertEquals("read:menu", scope.getScope());
+        assertFalse(scope.isAdmin());
     }
 
     @Test
