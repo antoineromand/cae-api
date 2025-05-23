@@ -9,6 +9,13 @@ plugins {
 val lombokVersion = "1.18.38"
 
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(24))
+    }
+}
+
+
 
 dependencies {
 	implementation(project(":authentication"))
