@@ -32,6 +32,7 @@ subprojects {
 	}
 	dependencies {
         testImplementation("org.junit.jupiter:junit-jupiter")
+		testImplementation("org.mockito:mockito-junit-jupiter:5.18.0")
     }
 	tasks.withType<Test> {
 		useJUnitPlatform()
