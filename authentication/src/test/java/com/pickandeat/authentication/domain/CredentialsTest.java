@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
+import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.domain.valueobject.Scope;
 
@@ -24,12 +25,11 @@ public class CredentialsTest {
                 UUID.randomUUID(),
                 "test@test.com",
                 "hashedPassword",
-                Role.ADMIN,
-                scopes,
+                new Role(RoleName.ADMIN, scopes),
                 new Date(),
                 null);
 
-        assertTrue(adminCredentials.hasWildcardScope());
+        assertTrue(adminCredentials.getRole().hasWildcardScope());
         assertTrue(adminCredentials.canAccess("read", "menu"));
         assertTrue(adminCredentials.hasAdminRole());
         assertFalse(adminCredentials.hasConsummerRole());
@@ -53,11 +53,10 @@ public class CredentialsTest {
                 UUID.randomUUID(),
                 "test@test.com",
                 "hashedPassword",
-                Role.CONSUMMER,
-                scopes,
+                new Role(RoleName.CONSUMMER, scopes),
                 new Date(),
                 null);
-        assertFalse(consummerCredentials.hasWildcardScope());
+        assertFalse(consummerCredentials.getRole().hasWildcardScope());
         assertTrue(consummerCredentials.canAccess("read", "menu"));
         assertTrue(consummerCredentials.hasConsummerRole());
         assertFalse(consummerCredentials.hasProRole());
@@ -78,11 +77,10 @@ public class CredentialsTest {
                 UUID.randomUUID(),
                 "test@test.com",
                 "hashedPassword",
-                Role.PRO,
-                scopes,
+                new Role(RoleName.PRO, scopes),
                 new Date(),
                 null);
-        assertFalse(proCredentials.hasWildcardScope());
+        assertFalse(proCredentials.getRole().hasWildcardScope());
         assertFalse(proCredentials.canAccess("create", "order"));
         assertTrue(proCredentials.canAccess("update", "menu"));
         assertTrue(proCredentials.hasProRole());
