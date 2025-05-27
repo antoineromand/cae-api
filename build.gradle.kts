@@ -33,6 +33,10 @@ subprojects {
 	dependencies {
         testImplementation("org.junit.jupiter:junit-jupiter")
 		testImplementation("org.mockito:mockito-junit-jupiter:5.18.0")
+		testImplementation("org.testcontainers:testcontainers:1.21.0")
+		testImplementation("org.testcontainers:postgresql:1.21.0")
+		testImplementation("org.testcontainers:junit-jupiter:1.21.0")
+		implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
     }
 	tasks.withType<Test> {
 		useJUnitPlatform()
