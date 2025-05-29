@@ -1,11 +1,19 @@
 package com.pickandeat.authentication.infrastructure.model;
 
 import java.time.Instant;
+import java.util.Date;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.pickandeat.authentication.domain.Credentials;
+import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.authentication.domain.valueobject.Role;
+import com.pickandeat.authentication.domain.valueobject.Scope;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,4 +58,64 @@ public class CredentialsEntity {
    @ManyToOne(fetch = FetchType.LAZY)
    @JoinColumn(name = "role_id")
    private RoleEntity roleEntity;
+
+   public CredentialsEntity() {
+   }
+
+   public CredentialsEntity(UUID id, String email, String password, Instant createdAt, Instant updatedAt,
+         RoleEntity roleEntity) {
+      this.id = id;
+      this.email = email;
+      this.password = password;
+      this.createdAt = createdAt;
+      this.updatedAt = updatedAt;
+      this.roleEntity = roleEntity;
+   }
+
+   public static CredentialsEntity fromDomain(Credentials credentials, RoleEntity roleEntity) {
+      return new CredentialsEntity(credentials.getId(), credentials.getEmail(), credentials.getPassword(),
+            credentials.getCreatedAt().toInstant(), credentials.getUpdatedAt().toInstant(), roleEntity);
+   }
+
+   public Credentials toDomain() {
+      Set<Scope> scopes = roleEntity.getScopes().stream()
+            .map(scopeEntity -> new Scope(scopeEntity.getAction(), scopeEntity.getTarget()))
+            .collect(Collectors.toSet());
+
+      RoleName roleName = RoleName.valueOf(roleEntity.getName());
+      Role domainRole = new Role(roleName, scopes);
+
+      return new Credentials(
+            id,
+            email,
+            password,
+            domainRole,
+            Date.from(createdAt),
+            Date.from(updatedAt));
+   }
+
+   public UUID getId() {
+      return id;
+   }
+
+   public String getEmail() {
+      return email;
+   }
+
+   public String getPassword() {
+      return password;
+   }
+
+   public Instant getCreatedAt() {
+      return createdAt;
+   }
+
+   public Instant getUpdatedAt() {
+      return updatedAt;
+   }
+
+   public RoleEntity getRoleEntity() {
+      return roleEntity;
+   }
+
 }

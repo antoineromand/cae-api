@@ -24,14 +24,27 @@ public class RoleEntity {
     private int id;
 
     @Column(name = "name", length = 50, nullable = false, unique = true)
-    private String name = "CONSUMMER";
+    private String name = "CONSUMER";
 
     // Set<Scope> many to many
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "role_scope", 
-        joinColumns = { @JoinColumn(name = "role_id") }, 
-        inverseJoinColumns = { @JoinColumn(name = "scope_id") }
-    )
+    @JoinTable(name = "role_scope", joinColumns = { @JoinColumn(name = "role_id") }, inverseJoinColumns = {
+            @JoinColumn(name = "scope_id") })
     private Set<ScopeEntity> scopes = new HashSet<>();
+
+    public RoleEntity() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Set<ScopeEntity> getScopes() {
+        return scopes;
+    }
+
 }

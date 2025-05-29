@@ -20,4 +20,20 @@ public class ScopeEntity {
 
     @Column(name = "target", length = 50, nullable = false)
     private String target;
+
+    public ScopeEntity() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
 }
