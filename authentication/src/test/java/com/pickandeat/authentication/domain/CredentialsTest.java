@@ -49,18 +49,18 @@ public class CredentialsTest {
         scopes.add(new Scope("read", "order"));
         scopes.add(new Scope("read", "stores"));
 
-        Credentials consummerCredentials = new Credentials(
+        Credentials consumerCredentials = new Credentials(
                 UUID.randomUUID(),
                 "test@test.com",
                 "hashedPassword",
-                new Role(RoleName.CONSUMMER, scopes),
+                new Role(RoleName.CONSUMER, scopes),
                 new Date(),
                 null);
-        assertFalse(consummerCredentials.getRole().hasWildcardScope());
-        assertTrue(consummerCredentials.canAccess("read", "menu"));
-        assertTrue(consummerCredentials.hasConsummerRole());
-        assertFalse(consummerCredentials.hasProRole());
-        assertFalse(consummerCredentials.hasAdminRole());
+        assertFalse(consumerCredentials.getRole().hasWildcardScope());
+        assertTrue(consumerCredentials.canAccess("read", "menu"));
+        assertTrue(consumerCredentials.hasConsummerRole());
+        assertFalse(consumerCredentials.hasProRole());
+        assertFalse(consumerCredentials.hasAdminRole());
 
     }
 

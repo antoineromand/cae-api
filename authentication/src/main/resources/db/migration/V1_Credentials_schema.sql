@@ -28,11 +28,11 @@ CREATE TABLE if not exists credentials (
 );
 
 INSERT INTO role (role_id, name) VALUES 
-    (1, 'CONSUMMER'), 
+    (1, 'CONSUMER'), 
     (2, 'PRO'), 
     (3, 'ADMIN');
 
--- Scopes for CONSUMMER
+-- Scopes for CONSUMER
 INSERT INTO scope (scope_id, action, target) VALUES
     (1, 'read', 'menu'),
     (2, 'read', 'store'),
@@ -55,7 +55,7 @@ INSERT INTO scope (scope_id, action, target) VALUES
     (19, 'update', 'notification-settings'),
     (20, 'update', 'user-location');
 
--- Link CONSUMMER to previous scopes
+-- Link CONSUMER to previous scopes
 INSERT INTO role_scope (role_id, scope_id) VALUES
     (1, 1),
     (1, 2),

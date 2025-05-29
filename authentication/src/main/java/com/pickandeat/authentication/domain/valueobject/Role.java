@@ -23,7 +23,7 @@ public record Role(RoleName name, Set<Scope> scopes) {
     }
 
     public boolean isConsumer() {
-        return is(RoleName.CONSUMMER);
+        return is(RoleName.CONSUMER);
     }
 
     public boolean isPro() {

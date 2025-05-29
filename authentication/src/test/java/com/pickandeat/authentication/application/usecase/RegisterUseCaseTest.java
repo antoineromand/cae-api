@@ -40,7 +40,7 @@ public class RegisterUseCaseTest {
                                 "juda",
                                 "+33650333340",
                                 LocalDate.parse(dateString, formatter),
-                                new Role(RoleName.CONSUMMER, null));
+                                new Role(RoleName.CONSUMER, null));
         }
 
         @BeforeEach
