@@ -1,7 +1,6 @@
 package com.pickandeat.authentication.application.usecase;
 
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,45 +17,53 @@ import com.pickandeat.authentication.domain.service.IPasswordService;
 @Service
 @Transactional
 public class RegisterUseCase {
+
     private final ICredentialsRespository credentialsRepository;
     private final IPasswordService passwordService;
 
     public RegisterUseCase(ICredentialsRespository respository, IPasswordService service) {
-        credentialsRepository = respository;
-        passwordService = service;
+        this.credentialsRepository = respository;
+        this.passwordService = service;
     }
 
     public UUID register(RegisterCommand command) {
+        ensureEmailIsUnique(command.email());
 
-        Optional<Credentials> credentials = credentialsRepository.findByEmail(command.email());
+        String hashedPassword = hashPassword(command.password());
+        Credentials credentials = createCredentials(command, hashedPassword);
 
-        if (credentials.isPresent()) {
-            throw new EmailAlreadyUsedException(command.email());
+        return persistCredentials(credentials);
+    }
+
+    private void ensureEmailIsUnique(String email) {
+        if (credentialsRepository.findByEmail(email).isPresent()) {
+            throw new EmailAlreadyUsedException(email);
         }
+    }
 
-        String hashedPassword;
+    private String hashPassword(String plainPassword) {
         try {
-            hashedPassword = this.passwordService.hashPassword(command.password());
+            return passwordService.hashPassword(plainPassword);
         } catch (Exception e) {
             throw new CannotHashPasswordException(e);
         }
+    }
 
-        Credentials _credentials = new Credentials(null, command.email(), hashedPassword, command.role(),
-                new Date(), null);
+    private Credentials createCredentials(RegisterCommand command, String hashedPassword) {
+        return new Credentials(
+                null,
+                command.email(),
+                hashedPassword,
+                command.role(),
+                new Date(),
+                null);
+    }
 
-        UUID credentialsId;
+    private UUID persistCredentials(Credentials credentials) {
         try {
-            credentialsId = credentialsRepository.save(_credentials);
+            return credentialsRepository.save(credentials);
         } catch (DataIntegrityViolationException e) {
             throw new RegistrationTechnicalException("Une erreur est survenue lors de l'inscription.", e);
         }
-
-        // NEXT TIME : SEND OTHER FIELDS FROM REGISTER COMMAND THROUGHT SPRING EVENTS TO
-        // PROFILE MODULE
-
-        // NEXT TIME : GENERATE TOKEN WITH USER ID AND SENT IT TO NOTIFICATION MODULE
-        // (EMAIL)
-
-        return credentialsId;
     }
 }
