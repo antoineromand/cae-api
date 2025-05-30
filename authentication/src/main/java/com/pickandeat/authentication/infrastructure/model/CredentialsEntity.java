@@ -73,8 +73,11 @@ public class CredentialsEntity {
    }
 
    public static CredentialsEntity fromDomain(Credentials credentials, RoleEntity roleEntity) {
+      Instant updatedAt = credentials.getUpdatedAt() != null
+            ? credentials.getUpdatedAt().toInstant()
+            : null;
       return new CredentialsEntity(credentials.getId(), credentials.getEmail(), credentials.getPassword(),
-            credentials.getCreatedAt().toInstant(), credentials.getUpdatedAt().toInstant(), roleEntity);
+            credentials.getCreatedAt().toInstant(), updatedAt, roleEntity);
    }
 
    public Credentials toDomain() {
@@ -91,7 +94,7 @@ public class CredentialsEntity {
             password,
             domainRole,
             Date.from(createdAt),
-            Date.from(updatedAt));
+            updatedAt != null ? Date.from(updatedAt) : null);
    }
 
    public UUID getId() {
