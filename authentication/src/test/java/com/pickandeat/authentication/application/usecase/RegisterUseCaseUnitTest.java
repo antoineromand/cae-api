@@ -5,10 +5,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -23,14 +23,14 @@ import com.pickandeat.authentication.domain.repository.ICredentialsRespository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import com.pickandeat.authentication.domain.valueobject.Role;
 
-public class RegisterUseCaseTest {
+public class RegisterUseCaseUnitTest {
         private ICredentialsRespository credentialsRespository;
 
         private RegisterUseCase registerUseCase;
 
         private IPasswordService passwordService;
 
-        public RegisterCommand getCommand() {
+        private RegisterCommand getCommand() {
                 String dateString = "2025-05-24";
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 return new RegisterCommand(
