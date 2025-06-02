@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.pickandeat.api.authentication.dto.validators.ValidRole;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +34,7 @@ public class RegisterRequestDto {
     private final LocalDate birthDate;
 
     @NotBlank(message = "role must be provided.")
+    @ValidRole
     private final String role;
 
     public RegisterRequestDto(String email, String password, String firstName, String lastName, String phoneNumber,
