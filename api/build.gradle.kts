@@ -59,3 +59,7 @@ tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
         }
     }
 }
+
+tasks.withType<Javadoc>().configureEach {
+    (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+}

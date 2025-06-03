@@ -48,4 +48,29 @@ subprojects {
     }
 }
 
+tasks.register<DefaultTask>("aggregateJavadoc") {
+    group = "documentation"
+    description = "Aggregates Javadoc from all subprojects."
+
+    val outputDir = layout.buildDirectory.dir("docs/javadoc").get().asFile
+
+    doLast {
+        ant.withGroovyBuilder {
+            "javadoc"(
+                "destdir" to outputDir,
+                "sourcepath" to subprojects.joinToString(separator = File.pathSeparator) {
+                    it.the<SourceSetContainer>()["main"].allJava.srcDirs.joinToString(File.pathSeparator)
+                },
+                "classpath" to subprojects.joinToString(separator = File.pathSeparator) {
+                    it.the<SourceSetContainer>()["main"].compileClasspath.asPath
+                },
+                "use" to true,
+                "author" to true,
+                "version" to true,
+                "windowtitle" to "PickAndEat API Documentation"
+            )
+        }
+    }
+}
+
 
