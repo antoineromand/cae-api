@@ -16,7 +16,7 @@ import com.pickandeat.authentication.domain.service.IPasswordService;
 
 @Service
 @Transactional
-public class RegisterUseCase {
+public class RegisterUseCase implements IRegisterUseCase {
 
     private final ICredentialsRespository credentialsRepository;
     private final IPasswordService passwordService;
