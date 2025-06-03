@@ -1,149 +1,162 @@
-import java.time.LocalDate;
-import java.util.Set;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import com.pickandeat.api.authentication.dto.RegisterRequestDto;
+package com.pickandeat.api.authentication.dto;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class RegisterRequestDtoTest {
 
-    private static Validator validator;
+        private static Validator validator;
 
-    @BeforeAll
-    static void setupValidator() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
+        @BeforeAll
+        static void setupValidator() {
+                ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+                validator = factory.getValidator();
+        }
 
-    private RegisterRequestDto createValidDto() {
-        return new RegisterRequestDto(
-                "john.doe@example.com",
-                "StrongPassword123",
-                "John",
-                "Doe",
-                "0601020304",
-                LocalDate.of(2000, 1, 1),
-                "CONSUMER");
-    }
+        private RegisterRequestDto validDto() {
+                return new RegisterRequestDto(
+                                "john.doe@example.com",
+                                "StrongPass1!",
+                                "John",
+                                "Doe",
+                                "0601020304",
+                                "2000-01-01",
+                                "CONSUMER");
+        }
 
-    @Test
-    void shouldPassValidation_whenAllFieldsAreValid() {
-        RegisterRequestDto dto = createValidDto();
+        @Test
+        void shouldPassValidation_whenAllFieldsAreValid() {
+                Set<ConstraintViolation<RegisterRequestDto>> violations = validator.validate(validDto());
+                assertThat(violations).isEmpty();
+        }
 
-        Set<ConstraintViolation<RegisterRequestDto>> violations = validator.validate(dto);
+        @Test
+        void shouldFailValidation_whenEmailIsBlank() {
+                var dto = new RegisterRequestDto(
+                                "", validDto().getPassword(), validDto().getFirstName(), validDto().getLastName(),
+                                validDto().getPhoneNumber(), validDto().getBirthDate(), validDto().getRole());
 
-        assertThat(violations).isEmpty();
-    }
+                assertViolation(dto, "email");
+        }
 
-    @Test
-    void shouldFailValidation_whenEmailIsBlank() {
-        RegisterRequestDto dto = createValidDto();
-        dto = new RegisterRequestDto(
-                "", dto.getPassword(), dto.getFirstName(), dto.getLastName(),
-                dto.getPhoneNumber(), dto.getBirthDate(), dto.getRole());
+        @Test
+        void shouldFailValidation_whenEmailIsInvalid() {
+                var dto = new RegisterRequestDto(
+                                "invalid-email", validDto().getPassword(), validDto().getFirstName(),
+                                validDto().getLastName(),
+                                validDto().getPhoneNumber(), validDto().getBirthDate(), validDto().getRole());
 
-        Set<ConstraintViolation<RegisterRequestDto>> violations = validator.validate(dto);
+                assertViolation(dto, "email");
+        }
 
-        assertThat(violations)
-                .anyMatch(v -> v.getPropertyPath().toString().equals("email"));
-    }
+        @Test
+        void shouldFailValidation_whenPasswordIsBlank() {
+                var dto = new RegisterRequestDto(
+                                validDto().getEmail(), "", validDto().getFirstName(), validDto().getLastName(),
+                                validDto().getPhoneNumber(), validDto().getBirthDate(), validDto().getRole());
 
-    @Test
-    void shouldFailValidation_whenPasswordTooShort() {
-        RegisterRequestDto dto = createValidDto();
-        dto = new RegisterRequestDto(
-                dto.getEmail(), "short", dto.getFirstName(), dto.getLastName(),
-                dto.getPhoneNumber(), dto.getBirthDate(), dto.getRole());
+                assertViolation(dto, "password");
+        }
 
-        Set<ConstraintViolation<RegisterRequestDto>> violations = validator.validate(dto);
+        @Test
+        void shouldFailValidation_whenPasswordIsWeak() {
+                var dto = new RegisterRequestDto(
+                                validDto().getEmail(), "password", validDto().getFirstName(), validDto().getLastName(),
+                                validDto().getPhoneNumber(), validDto().getBirthDate(), validDto().getRole());
 
-        assertThat(violations)
-                .anyMatch(v -> v.getPropertyPath().toString().equals("password"));
-    }
+                assertViolation(dto, "password");
+        }
 
-    @Test
-    void shouldFailValidation_whenFirstNameIsBlank() {
-        RegisterRequestDto dto = createValidDto();
-        dto = new RegisterRequestDto(
-                dto.getEmail(), dto.getPassword(), "", dto.getLastName(),
-                dto.getPhoneNumber(), dto.getBirthDate(), dto.getRole());
+        @Test
+        void shouldFailValidation_whenFirstNameIsBlank() {
+                var dto = new RegisterRequestDto(
+                                validDto().getEmail(), validDto().getPassword(), "", validDto().getLastName(),
+                                validDto().getPhoneNumber(), validDto().getBirthDate(), validDto().getRole());
 
-        Set<ConstraintViolation<RegisterRequestDto>> violations = validator.validate(dto);
+                assertViolation(dto, "firstName");
+        }
 
-        assertThat(violations)
-                .anyMatch(v -> v.getPropertyPath().toString().equals("firstName"));
-    }
+        @Test
+        void shouldFailValidation_whenLastNameIsBlank() {
+                var dto = new RegisterRequestDto(
+                                validDto().getEmail(), validDto().getPassword(), validDto().getFirstName(), "",
+                                validDto().getPhoneNumber(), validDto().getBirthDate(), validDto().getRole());
 
-    @Test
-    void shouldFailValidation_whenLastNameIsBlank() {
-        RegisterRequestDto dto = createValidDto();
-        dto = new RegisterRequestDto(
-                dto.getEmail(), dto.getPassword(), dto.getFirstName(), "",
-                dto.getPhoneNumber(), dto.getBirthDate(), dto.getRole());
+                assertViolation(dto, "lastName");
+        }
 
-        Set<ConstraintViolation<RegisterRequestDto>> violations = validator.validate(dto);
+        @Test
+        void shouldFailValidation_whenPhoneNumberIsBlank() {
+                var dto = new RegisterRequestDto(
+                                validDto().getEmail(), validDto().getPassword(), validDto().getFirstName(),
+                                validDto().getLastName(),
+                                "", validDto().getBirthDate(), validDto().getRole());
 
-        assertThat(violations)
-                .anyMatch(v -> v.getPropertyPath().toString().equals("lastName"));
-    }
+                assertViolation(dto, "phoneNumber");
+        }
 
-    @Test
-    void shouldFailValidation_whenPhoneNumberIsBlank() {
-        RegisterRequestDto dto = createValidDto();
-        dto = new RegisterRequestDto(
-                dto.getEmail(), dto.getPassword(), dto.getFirstName(), dto.getLastName(),
-                "", dto.getBirthDate(), dto.getRole());
+        @Test
+        void shouldFailValidation_whenPhoneNumberIsInvalid() {
+                var dto = new RegisterRequestDto(
+                                validDto().getEmail(), validDto().getPassword(), validDto().getFirstName(),
+                                validDto().getLastName(),
+                                "abc123", validDto().getBirthDate(), validDto().getRole());
 
-        Set<ConstraintViolation<RegisterRequestDto>> violations = validator.validate(dto);
+                assertViolation(dto, "phoneNumber");
+        }
 
-        assertThat(violations)
-                .anyMatch(v -> v.getPropertyPath().toString().equals("phoneNumber"));
-    }
+        @Test
+        void shouldFailValidation_whenBirthDateIsBlank() {
+                var dto = new RegisterRequestDto(
+                                validDto().getEmail(), validDto().getPassword(), validDto().getFirstName(),
+                                validDto().getLastName(),
+                                validDto().getPhoneNumber(), "", validDto().getRole());
 
-    @Test
-    void shouldFailValidation_whenBirthDateIsNull() {
-        RegisterRequestDto dto = createValidDto();
-        dto = new RegisterRequestDto(
-                dto.getEmail(), dto.getPassword(), dto.getFirstName(), dto.getLastName(),
-                dto.getPhoneNumber(), null, dto.getRole());
+                assertViolation(dto, "birthDate");
+        }
 
-        Set<ConstraintViolation<RegisterRequestDto>> violations = validator.validate(dto);
+        @Test
+        void shouldFailValidation_whenBirthDateIsInvalidFormat() {
+                var dto = new RegisterRequestDto(
+                                validDto().getEmail(), validDto().getPassword(), validDto().getFirstName(),
+                                validDto().getLastName(),
+                                validDto().getPhoneNumber(), "2024/01/01", validDto().getRole() // Mauvais format
+                );
 
-        assertThat(violations)
-                .anyMatch(v -> v.getPropertyPath().toString().equals("birthDate"));
-    }
+                assertViolation(dto, "birthDate");
+        }
 
-    @Test
-    void shouldFailValidation_whenBirthDateIsInFuture() {
-        RegisterRequestDto dto = createValidDto();
-        dto = new RegisterRequestDto(
-                dto.getEmail(), dto.getPassword(), dto.getFirstName(), dto.getLastName(),
-                dto.getPhoneNumber(), LocalDate.now().plusDays(1), dto.getRole());
+        @Test
+        void shouldFailValidation_whenRoleIsBlank() {
+                var dto = new RegisterRequestDto(
+                                validDto().getEmail(), validDto().getPassword(), validDto().getFirstName(),
+                                validDto().getLastName(),
+                                validDto().getPhoneNumber(), validDto().getBirthDate(), "");
 
-        Set<ConstraintViolation<RegisterRequestDto>> violations = validator.validate(dto);
+                assertViolation(dto, "role");
+        }
 
-        assertThat(violations)
-                .anyMatch(v -> v.getPropertyPath().toString().equals("birthDate"));
-    }
+        @Test
+        void shouldFailValidation_whenRoleIsInvalid() {
+                var dto = new RegisterRequestDto(
+                                validDto().getEmail(), validDto().getPassword(), validDto().getFirstName(),
+                                validDto().getLastName(),
+                                validDto().getPhoneNumber(), validDto().getBirthDate(), "INVALID_ROLE");
 
-    @Test
-    void shouldFailValidation_whenRoleIsInvalid() {
-        RegisterRequestDto dto = createValidDto();
-        dto = new RegisterRequestDto(
-                dto.getEmail(), dto.getPassword(), dto.getFirstName(), dto.getLastName(),
-                dto.getPhoneNumber(), dto.getBirthDate(), "FAKE_ROLE");
+                assertViolation(dto, "role");
+        }
 
-        Set<ConstraintViolation<RegisterRequestDto>> violations = validator.validate(dto);
-
-        assertThat(violations)
-                .anyMatch(v -> v.getPropertyPath().toString().equals("role") &&
-                        v.getMessage().contains("Invalid role"));
-    }
+        private void assertViolation(RegisterRequestDto dto, String fieldName) {
+                Set<ConstraintViolation<RegisterRequestDto>> violations = validator.validate(dto);
+                assertThat(violations)
+                                .anyMatch(v -> v.getPropertyPath().toString().equals(fieldName));
+        }
 }
