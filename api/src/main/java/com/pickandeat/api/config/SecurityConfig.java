@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -12,8 +13,10 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.formLogin(FormLoginConfigurer::disable);
-        httpSecurity.authorizeHttpRequests((e) -> e.requestMatchers("/public/**").permitAll().requestMatchers("/private/**").authenticated());
+        httpSecurity.authorizeHttpRequests(
+                (e) -> e.requestMatchers("/public/**").permitAll().requestMatchers("/private/**").authenticated());
         return httpSecurity.build();
     }
 }

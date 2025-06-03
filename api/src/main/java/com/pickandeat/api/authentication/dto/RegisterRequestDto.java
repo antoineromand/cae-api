@@ -1,15 +1,12 @@
 package com.pickandeat.api.authentication.dto;
 
-import java.time.LocalDate;
-
 import org.hibernate.validator.constraints.Length;
 
+import com.pickandeat.api.authentication.dto.validators.ValidDate;
 import com.pickandeat.api.authentication.dto.validators.ValidRole;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
 
 public class RegisterRequestDto {
     @Email(message = "email form not valid.")
@@ -29,16 +26,16 @@ public class RegisterRequestDto {
     @NotBlank(message = "phoneNumber must be provided.")
     private final String phoneNumber;
 
-    @NotNull(message = "birthDate must be provided.")
-    @Past(message = "birthDate must be in the past")
-    private final LocalDate birthDate;
+    @ValidDate
+    @NotBlank(message = "birthDate must be provided.")
+    private final String birthDate;
 
     @NotBlank(message = "role must be provided.")
     @ValidRole
     private final String role;
 
     public RegisterRequestDto(String email, String password, String firstName, String lastName, String phoneNumber,
-            LocalDate birthDate, String role) {
+            String birthDate, String role) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
@@ -68,7 +65,7 @@ public class RegisterRequestDto {
         return phoneNumber;
     }
 
-    public LocalDate getBirthDate() {
+    public String getBirthDate() {
         return birthDate;
     }
 
