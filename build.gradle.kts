@@ -23,6 +23,7 @@ allprojects {
 subprojects {
 	apply(plugin = "java")
 	apply(plugin = "io.spring.dependency-management")
+	apply(plugin= "jacoco")
 	dependencyManagement {
 		imports {
 			mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.5")
@@ -31,10 +32,45 @@ subprojects {
 	}
 	dependencies {
         testImplementation("org.junit.jupiter:junit-jupiter")
+		testImplementation("org.mockito:mockito-junit-jupiter:5.18.0")
+		testImplementation("org.testcontainers:testcontainers:1.21.0")
+		testImplementation("org.testcontainers:postgresql:1.21.0")
+		testImplementation("org.testcontainers:junit-jupiter:1.21.0")
+		implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8")
     }
 	tasks.withType<Test> {
-	useJUnitPlatform()
+		useJUnitPlatform()
+		finalizedBy(tasks.named("jacocoTestReport"))
 	}
+
+	tasks.named("jacocoTestReport") {
+        dependsOn(tasks.named("test"))
+    }
+}
+
+tasks.register<DefaultTask>("aggregateJavadoc") {
+    group = "documentation"
+    description = "Aggregates Javadoc from all subprojects."
+
+    val outputDir = layout.buildDirectory.dir("docs/javadoc").get().asFile
+
+    doLast {
+        ant.withGroovyBuilder {
+            "javadoc"(
+                "destdir" to outputDir,
+                "sourcepath" to subprojects.joinToString(separator = File.pathSeparator) {
+                    it.the<SourceSetContainer>()["main"].allJava.srcDirs.joinToString(File.pathSeparator)
+                },
+                "classpath" to subprojects.joinToString(separator = File.pathSeparator) {
+                    it.the<SourceSetContainer>()["main"].compileClasspath.asPath
+                },
+                "use" to true,
+                "author" to true,
+                "version" to true,
+                "windowtitle" to "PickAndEat API Documentation"
+            )
+        }
+    }
 }
 
 
