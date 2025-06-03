@@ -16,7 +16,12 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.formLogin(FormLoginConfigurer::disable);
         httpSecurity.authorizeHttpRequests(
-                (e) -> e.requestMatchers("/public/**").permitAll().requestMatchers("/private/**").authenticated());
+                (e) -> e.requestMatchers("/public/**").permitAll().requestMatchers(
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/swagger.html",
+                        "/swagger-ui.html").permitAll()
+                        .requestMatchers("/private/**").authenticated());
         return httpSecurity.build();
     }
 }
