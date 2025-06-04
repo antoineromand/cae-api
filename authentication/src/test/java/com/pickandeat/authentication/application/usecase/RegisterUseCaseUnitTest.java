@@ -16,6 +16,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import com.pickandeat.authentication.application.exceptions.EmailAlreadyUsedException;
 import com.pickandeat.authentication.application.exceptions.RegistrationTechnicalException;
+import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
+import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pickandeat.api.authentication.dto.RegisterRequestDto;
 import com.pickandeat.api.authentication.mapper.RegisterRequestMapper;
-import com.pickandeat.authentication.application.usecase.IRegisterUseCase;
-import com.pickandeat.authentication.application.usecase.RegisterCommand;
+import com.pickandeat.authentication.application.usecase.register.IRegisterUseCase;
+import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

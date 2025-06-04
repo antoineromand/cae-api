@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import com.pickandeat.api.authentication.dto.RegisterRequestDto;
-import com.pickandeat.authentication.application.usecase.RegisterCommand;
+import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 
