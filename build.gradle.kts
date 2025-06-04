@@ -27,7 +27,6 @@ subprojects {
 	dependencyManagement {
 		imports {
 			mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.5")
-			mavenBom("org.springframework.modulith:spring-modulith-bom:1.3.5")
 		}
 	}
 	dependencies {

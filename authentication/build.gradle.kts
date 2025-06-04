@@ -9,7 +9,6 @@ java {
 }
 
 dependencies {
-	implementation("org.springframework.modulith:spring-modulith-starter-core")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.security:spring-security-crypto")
 	compileOnly("org.projectlombok:lombok")
