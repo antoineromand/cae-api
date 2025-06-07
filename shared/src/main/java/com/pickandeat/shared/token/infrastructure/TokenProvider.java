@@ -77,6 +77,13 @@ public class TokenProvider implements ITokenProvider {
         }
     }
 
+    @Override
+    public String extractJtiFromToken(String token) {
+        Claims claims = Jwts.parser().verifyWith(this.getSigningKey()).build().parseSignedClaims(token).getPayload();
+
+        return claims.getId();
+    }
+
     private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(this.secret);
         return Keys.hmacShaKeyFor(keyBytes);
@@ -84,7 +91,9 @@ public class TokenProvider implements ITokenProvider {
 
     private String buildToken(TokenPayload payload, Long expirationMs) {
         Instant now = Instant.now();
+        String jti = UUID.randomUUID().toString();
         return Jwts.builder()
+                .id(jti)
                 .subject(payload.getUserId().toString())
                 .claim("role", payload.getRole())
                 .issuedAt(Date.from(now))

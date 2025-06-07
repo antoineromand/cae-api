@@ -10,4 +10,6 @@ public interface ITokenProvider {
     boolean verifyRefreshToken(String refreshToken);
 
     TokenPayload decodeAccessToken(String accessToken);
+
+    String extractJtiFromToken(String refreshToken);
 }

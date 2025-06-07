@@ -18,8 +18,8 @@ class TokenProviderTest {
     private TokenProvider tokenProvider;
     private final String secret = java.util.Base64.getEncoder()
             .encodeToString("my-super-secret-key-which-is-long-enough".getBytes());
-    private final long accessExpiration = 60; // 1 minute
-    private final long refreshExpiration = 120; // 2 minutes
+    private final long accessExpiration = 6000;
+    private final long refreshExpiration = 12000;
     private UUID userId;
     private String role;
 

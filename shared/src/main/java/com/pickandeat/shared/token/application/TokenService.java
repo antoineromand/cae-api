@@ -31,4 +31,8 @@ public class TokenService {
     public TokenPayload extractPayload(String accessToken) {
         return this.tokenProvider.decodeAccessToken(accessToken);
     }
+
+    public String extractJti(String refreshToken) {
+        return this.tokenProvider.extractJtiFromToken(refreshToken);
+    }
 }
