@@ -1,0 +1,109 @@
+package com.pickandeat.shared.token.infrastructure;
+
+import java.time.Instant;
+import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.crypto.SecretKey;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pickandeat.shared.token.domain.ITokenProvider;
+import com.pickandeat.shared.token.domain.TokenPayload;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+
+public class TokenProvider implements ITokenProvider {
+
+    private String secret;
+    private long accessExpirationMs;
+    private long refreshExpirationMs;
+
+    public TokenProvider(String secret, long accessExpirationMs, long refreshExpirationMs) {
+        this.secret = secret;
+        this.accessExpirationMs = accessExpirationMs;
+        this.refreshExpirationMs = refreshExpirationMs;
+    }
+
+    @Override
+    public String generateAccessToken(TokenPayload payload) {
+        return buildToken(payload, accessExpirationMs);
+    }
+
+    @Override
+    public String generateRefreshToken(TokenPayload payload) {
+        return buildToken(payload, refreshExpirationMs);
+    }
+
+    @Override
+    public boolean verifyAccessToken(String accessToken) {
+        return validate(accessToken);
+    }
+
+    @Override
+    public boolean verifyRefreshToken(String refreshToken) {
+        return validate(refreshToken);
+    }
+
+    @Override
+    public TokenPayload decodeAccessToken(String accessToken) {
+        try {
+            String[] parts = accessToken.split("\\.");
+            if (parts.length != 3) {
+                throw new IllegalArgumentException("Invalid Jwt format !");
+            }
+
+            String payloadJson = new String(java.util.Base64.getUrlDecoder().decode(parts[1]));
+
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, Object> payload = mapper.readValue(payloadJson, new TypeReference<Map<String, Object>>() {
+            });
+
+            String id = (String) payload.get("sub");
+            String role = (String) payload.get("role");
+
+            if (id == null || role == null) {
+                throw new IllegalArgumentException("Missing claims");
+            }
+
+            return new TokenPayload(UUID.fromString(id), role);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while decoding JWT " + e.getMessage());
+        }
+    }
+
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(this.secret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private String buildToken(TokenPayload payload, Long expirationMs) {
+        Instant now = Instant.now();
+        return Jwts.builder()
+                .subject(payload.getUserId().toString())
+                .claim("role", payload.getRole())
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plusSeconds(expirationMs)))
+                .signWith(this.getSigningKey())
+                .compact();
+    }
+
+    private boolean validate(String token) {
+        if (token == null || token.isEmpty()) {
+            return false;
+        }
+        try {
+            Claims claims = Jwts.parser().verifyWith(this.getSigningKey()).build().parseSignedClaims(token)
+                    .getPayload();
+            return !claims.getExpiration().before(new Date());
+        } catch (JwtException e) {
+            return false;
+        }
+    }
+
+}

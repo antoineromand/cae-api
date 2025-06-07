@@ -9,6 +9,7 @@ java {
 }
 
 dependencies {
+	implementation(project(":shared"))
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.security:spring-security-crypto")
 	compileOnly("org.projectlombok:lombok")
