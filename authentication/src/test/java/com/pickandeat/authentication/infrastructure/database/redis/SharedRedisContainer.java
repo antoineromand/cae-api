@@ -7,6 +7,7 @@ public class SharedRedisContainer {
 
     static {
         REDIS_CONTAINER = new GenericContainer<>("docker.dragonflydb.io/dragonflydb/dragonfly").withExposedPorts(6379);
+        REDIS_CONTAINER.start();
     }
 
     public static GenericContainer<?> getInstance() {

@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.pickandeat.authentication.TestRedisConfiguration;
-import com.pickandeat.authentication.infrastructure.database.redis.AbstractRedisContainerTest;
+import com.pickandeat.authentication.TestConfiguration;
+import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 import com.pickandeat.authentication.infrastructure.repository.cache.TokenRepositoryImpl;
 
-@SpringBootTest(classes = TestRedisConfiguration.class)
-public class TokenRepositoryImplTest extends AbstractRedisContainerTest {
+@SpringBootTest(classes = TestConfiguration.class)
+public class TokenRepositoryImplTest extends AbstractDatabaseContainersTest {
     @Autowired
     TokenRepositoryImpl tokenRepositoryImpl;
 
