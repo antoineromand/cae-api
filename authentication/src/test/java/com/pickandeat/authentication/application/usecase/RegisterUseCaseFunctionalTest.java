@@ -17,7 +17,7 @@ import com.pickandeat.authentication.application.usecase.register.RegisterComman
 import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
-import com.pickandeat.authentication.infrastructure.AbstractPostgresContainerTest;
+import com.pickandeat.authentication.infrastructure.database.postgres.AbstractPostgresContainerTest;
 
 @SpringBootTest(classes = TestAuthenticationConfiguration.class)
 public class RegisterUseCaseFunctionalTest extends AbstractPostgresContainerTest {
