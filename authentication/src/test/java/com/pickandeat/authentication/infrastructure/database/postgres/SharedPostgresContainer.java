@@ -1,4 +1,4 @@
-package com.pickandeat.authentication.infrastructure;
+package com.pickandeat.authentication.infrastructure.database.postgres;
 
 import org.testcontainers.containers.PostgreSQLContainer;
 

@@ -16,7 +16,7 @@ import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.domain.valueobject.Scope;
-import com.pickandeat.authentication.infrastructure.AbstractPostgresContainerTest;
+import com.pickandeat.authentication.infrastructure.database.postgres.AbstractPostgresContainerTest;
 
 import jakarta.transaction.Transactional;
 
