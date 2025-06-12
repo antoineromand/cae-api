@@ -3,14 +3,21 @@ package com.pickandeat.api.authentication.controllers;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pickandeat.api.authentication.dto.LoginRequestDto;
 import com.pickandeat.api.authentication.dto.RegisterRequestDto;
+import com.pickandeat.api.authentication.mapper.LoginRequestMapper;
 import com.pickandeat.api.authentication.mapper.RegisterRequestMapper;
+import com.pickandeat.api.authentication.swagger.LoginApiResponse;
+import com.pickandeat.api.authentication.swagger.RegisterApiResponse;
+import com.pickandeat.api.shared.GenericApiResponse;
+import com.pickandeat.authentication.application.usecase.login.ILoginUseCase;
+import com.pickandeat.authentication.application.usecase.login.LoginCommand;
+import com.pickandeat.authentication.application.usecase.login.Token;
 import com.pickandeat.authentication.application.usecase.register.IRegisterUseCase;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 
@@ -29,12 +36,14 @@ import jakarta.validation.Valid;
 public class PublicAuthenticationController {
 
     private final IRegisterUseCase registerUseCase;
+    private final ILoginUseCase loginUseCase;
 
-    public PublicAuthenticationController(IRegisterUseCase registerUseCase) {
+    public PublicAuthenticationController(IRegisterUseCase registerUseCase, ILoginUseCase loginUseCase) {
         this.registerUseCase = registerUseCase;
+        this.loginUseCase = loginUseCase;
     }
 
-    @Operation(summary = "Register a user", description = "Registers a new user and returns their unique identifier.", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User registration data", required = true, content = @Content(schema = @Schema(implementation = RegisterRequestDto.class), examples = @ExampleObject(name = "RegisterRequestExample", summary = "Example registration", value = """
+    @Operation(summary = "Register a user", description = "Registers a new user and returns an api response with userID.", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User registration data", required = true, content = @Content(schema = @Schema(implementation = RegisterRequestDto.class), examples = @ExampleObject(name = "RegisterRequestExample", summary = "Example registration", value = """
                 {
                     "email": "example@example.com",
                     "password": "AstrongPassw0rd!",
@@ -46,25 +55,36 @@ public class PublicAuthenticationController {
                 }
             """))))
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User successfully registered", content = @Content(mediaType = "application/json", schema = @Schema(type = "string", format = "uuid", example = "550e8400-e29b-41d4-a716-446655440000"))),
+            @ApiResponse(responseCode = "201", description = "User successfully registered", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegisterApiResponse.class))),
             @ApiResponse(responseCode = "400", description = "Invalid request body."),
-            @ApiResponse(responseCode = "403", description = "Email is already in use."),
+            @ApiResponse(responseCode = "409", description = "Email is already in use."),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDto dto) throws Exception {
-        try {
-            RegisterCommand command = RegisterRequestMapper.toCommand(dto);
-            UUID userId = this.registerUseCase.register(command);
-            return ResponseEntity.ok(userId);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<GenericApiResponse<UUID>> register(@Valid @RequestBody RegisterRequestDto dto) {
+        RegisterCommand command = RegisterRequestMapper.toCommand(dto);
+        UUID userId = this.registerUseCase.register(command);
+        return ResponseEntity.status(201).body(new GenericApiResponse<>("Registration completed successfully." + //
+                "", userId));
     }
 
-    @GetMapping("/test")
-    public String getMethodName() {
-        return "haha";
+    @Operation(summary = "Log a user", description = "Log a new user and returns an api response with tokens.", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User registration data", required = true, content = @Content(schema = @Schema(implementation = RegisterRequestDto.class), examples = @ExampleObject(name = "RegisterRequestExample", summary = "Example registration", value = """
+                {
+                    "email": "example@example.com",
+                    "password": "AstrongPassw0rd!",
+                }
+            """))))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User successfully authenticated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginApiResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid request body."),
+            @ApiResponse(responseCode = "401", description = "Wrong credentials."),
+            @ApiResponse(responseCode = "500", description = "Internal server error.")
+    })
+    @PostMapping("/login")
+    public ResponseEntity<GenericApiResponse<Token>> login(@Valid @RequestBody LoginRequestDto dto) throws Exception {
+        LoginCommand command = LoginRequestMapper.toCommand(dto);
+        Token token = this.loginUseCase.login(command);
+        return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", token));
     }
 
 }

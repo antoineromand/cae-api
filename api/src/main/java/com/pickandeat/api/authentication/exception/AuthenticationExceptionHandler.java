@@ -1,0 +1,51 @@
+package com.pickandeat.api.authentication.exception;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import com.pickandeat.api.authentication.controllers.PublicAuthenticationController;
+import com.pickandeat.api.shared.GenericApiResponse;
+import com.pickandeat.authentication.application.exceptions.EmailAlreadyUsedException;
+import com.pickandeat.authentication.application.exceptions.PasswordNotMatchException;
+import com.pickandeat.authentication.application.exceptions.RegistrationTechnicalException;
+import com.pickandeat.authentication.application.exceptions.UserNotFoundException;
+
+@RestControllerAdvice(basePackageClasses = { PublicAuthenticationController.class })
+public class AuthenticationExceptionHandler {
+
+    private static final String CREDENTIALS_ERROR = "Error while login, please check your credentials.";
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<GenericApiResponse<Map<String, String>>> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+
+        return ResponseEntity.badRequest().body(new GenericApiResponse<>("Invalid parameters.", errors));
+    }
+
+    @ExceptionHandler(EmailAlreadyUsedException.class)
+    public ResponseEntity<GenericApiResponse<String>> handleErrorInRegisterIfEmailExists(EmailAlreadyUsedException ex) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(409)).body(new GenericApiResponse<>(ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(RegistrationTechnicalException.class)
+    public ResponseEntity<GenericApiResponse<String>> handleErrorInRegisterIfInsertNotWorking(
+            RegistrationTechnicalException ex) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(500)).body(new GenericApiResponse<>(ex.getMessage(), null));
+    }
+
+    @ExceptionHandler({ UserNotFoundException.class, PasswordNotMatchException.class })
+    public ResponseEntity<GenericApiResponse<String>> handleLoginError(Exception ex) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(401))
+                .body(new GenericApiResponse<>(CREDENTIALS_ERROR, null));
+    }
+}
