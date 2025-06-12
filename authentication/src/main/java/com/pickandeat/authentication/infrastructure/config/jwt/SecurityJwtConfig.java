@@ -1,8 +1,10 @@
 package com.pickandeat.authentication.infrastructure.config.jwt;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 @ConfigurationProperties("api.security.jwt")
+@EnableConfigurationProperties
 public class SecurityJwtConfig {
     private String secret;
     private long accessExpirationMs;
