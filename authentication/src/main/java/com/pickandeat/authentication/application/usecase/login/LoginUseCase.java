@@ -1,6 +1,7 @@
 package com.pickandeat.authentication.application.usecase.login;
 
 import java.time.Duration;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class LoginUseCase implements ILoginUseCase {
         private final ICredentialsRespository credentialsRespository;
         private final TokenService tokenService;
         private final ITokenRepository tokenRepository;
+        private static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
 
         public LoginUseCase(IPasswordService passwordService, ICredentialsRespository repository,
                         TokenService tokenService, ITokenRepository tokenRepository) {
@@ -29,24 +31,32 @@ public class LoginUseCase implements ILoginUseCase {
 
         @Override
         public Token login(LoginCommand command) {
-                // findByEmail
-                Credentials credentials = this.credentialsRespository.findByEmail(command.email())
+                Credentials credentials = this.getCredentials(command);
+                this.checkPassword(command, credentials.getPassword());
+                return this.generateTokens(credentials.getId(), credentials.getRole().name().toString());
+        }
+
+        private Credentials getCredentials(LoginCommand command) {
+                return this.credentialsRespository.findByEmail(command.email())
                                 .orElseThrow(() -> new UserNotFoundException(command.email()));
-                // match password
-                if (!this.passwordService.matches(command.password(), credentials.getPassword())) {
+        }
+
+        private void checkPassword(LoginCommand command, String hashedPassword) {
+                if (!this.passwordService.matches(command.password(), hashedPassword)) {
                         throw new PasswordNotMatchException();
                 }
-                // generate token
-                String accessToken = this.tokenService.createAccessToken(credentials.getId(),
-                                credentials.getRole().name().toString());
-                String refreshToken = this.tokenService.createRefreshToken(credentials.getId(),
-                                credentials.getRole().name().toString());
-                Token resultToken = new Token(accessToken, refreshToken);
-                // generate & store refresh token (use refresh time in application.properties)
-                this.tokenRepository.storeRefreshToken(this.tokenService.extractJti(refreshToken),
-                                credentials.getId().toString(), Duration.ofMillis(1209600000));
-                // return Token
-                return resultToken;
+        }
+
+        private Token generateTokens(UUID id, String role) {
+                String accessToken = this.tokenService.createAccessToken(id, role);
+                String refreshToken = this.tokenService.createRefreshToken(id, role);
+                this.storeRefreshTokenInCache(this.tokenService.extractJti(refreshToken), id.toString(),
+                                REFRESH_TOKEN_DURATION);
+                return new Token(accessToken, refreshToken);
+        }
+
+        private void storeRefreshTokenInCache(String jti, String userId, Duration duration) {
+                this.tokenRepository.storeRefreshToken(jti, userId, duration);
         }
 
 }
