@@ -1,5 +1,6 @@
 package com.pickandeat.authentication.application.usecase.login;
 
+import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -8,7 +9,9 @@ import static org.junit.Assert.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.pickandeat.authentication.application.exceptions.PasswordNotMatchException;
@@ -83,15 +86,39 @@ public class LoginUseCaseUnitTest {
 
         when(this.credentialsRespository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
         when(this.passwordService.matches(command.password(), "hashed")).thenReturn(true);
-
         when(this.tokenProvider.generateAccessToken(any())).thenReturn("access-token");
         when(this.tokenProvider.generateRefreshToken(any())).thenReturn("refresh-token");
+        when(this.tokenProvider.extractJtiFromToken("refresh-token")).thenReturn("jti-value");
 
         Token resultToken = this.loginUseCase.login(command);
 
         assertEquals("access-token", resultToken.getAccessToken());
         assertEquals("refresh-token", resultToken.getRefreshToken());
+    }
 
+    @Test
+    void shouldStoreRefreshTokenWithCorrectParameters() {
+        LoginCommand command = generateCommand();
+        UUID userId = UUID.randomUUID();
+        Role consumerRole = new Role(RoleName.CONSUMER, null);
+
+        Credentials credentials = mock(Credentials.class);
+        when(credentials.getId()).thenReturn(userId);
+        when(credentials.getRole()).thenReturn(consumerRole);
+        when(credentials.getPassword()).thenReturn("hashed");
+
+        when(this.credentialsRespository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
+        when(this.passwordService.matches(command.password(), "hashed")).thenReturn(true);
+        when(this.tokenProvider.generateAccessToken(any())).thenReturn("access-token");
+        when(this.tokenProvider.generateRefreshToken(any())).thenReturn("refresh-token");
+        when(this.tokenProvider.extractJtiFromToken("refresh-token")).thenReturn("jti-value");
+
+        this.loginUseCase.login(command);
+
+        verify(tokenRepository).storeRefreshToken(
+                eq("jti-value"),
+                eq(userId.toString()),
+                eq(Duration.ofMillis(1209600000)));
     }
 
 }
