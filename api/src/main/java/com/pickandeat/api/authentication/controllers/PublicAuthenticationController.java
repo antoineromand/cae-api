@@ -12,6 +12,7 @@ import com.pickandeat.api.authentication.dto.LoginRequestDto;
 import com.pickandeat.api.authentication.dto.RegisterRequestDto;
 import com.pickandeat.api.authentication.mapper.LoginRequestMapper;
 import com.pickandeat.api.authentication.mapper.RegisterRequestMapper;
+import com.pickandeat.api.authentication.swagger.ErrorResponse;
 import com.pickandeat.api.authentication.swagger.LoginApiResponse;
 import com.pickandeat.api.authentication.swagger.RegisterApiResponse;
 import com.pickandeat.api.shared.GenericApiResponse;
@@ -56,9 +57,9 @@ public class PublicAuthenticationController {
             """))))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User successfully registered", content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegisterApiResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid request body."),
-            @ApiResponse(responseCode = "409", description = "Email is already in use."),
-            @ApiResponse(responseCode = "500", description = "Internal server error.")
+            @ApiResponse(responseCode = "400", description = "Invalid request body.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "409", description = "Email is already in use.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/register")
     public ResponseEntity<GenericApiResponse<UUID>> register(@Valid @RequestBody RegisterRequestDto dto) {
@@ -76,9 +77,9 @@ public class PublicAuthenticationController {
             """))))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User successfully authenticated", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginApiResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid request body."),
-            @ApiResponse(responseCode = "401", description = "Wrong credentials."),
-            @ApiResponse(responseCode = "500", description = "Internal server error.")
+            @ApiResponse(responseCode = "400", description = "Invalid request body.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Wrong credentials.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/login")
     public ResponseEntity<GenericApiResponse<Token>> login(@Valid @RequestBody LoginRequestDto dto) throws Exception {
