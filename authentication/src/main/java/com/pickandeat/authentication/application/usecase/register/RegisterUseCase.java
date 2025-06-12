@@ -1,4 +1,4 @@
-package com.pickandeat.authentication.application.usecase;
+package com.pickandeat.authentication.application.usecase.register;
 
 import java.util.Date;
 import java.util.UUID;
@@ -26,6 +26,7 @@ public class RegisterUseCase implements IRegisterUseCase {
         this.passwordService = service;
     }
 
+    @Override
     public UUID register(RegisterCommand command) {
         ensureEmailIsUnique(command.email());
 

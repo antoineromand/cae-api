@@ -1,0 +1,38 @@
+package com.pickandeat.shared.token.application;
+
+import java.util.UUID;
+
+import com.pickandeat.shared.token.domain.ITokenProvider;
+import com.pickandeat.shared.token.domain.TokenPayload;
+
+public class TokenService {
+    private final ITokenProvider tokenProvider;
+
+    public TokenService(ITokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
+    }
+
+    public String createAccessToken(UUID id, String role) {
+        return this.tokenProvider.generateAccessToken(new TokenPayload(id, role));
+    }
+
+    public String createRefreshToken(UUID id, String role) {
+        return this.tokenProvider.generateRefreshToken(new TokenPayload(id, role));
+    }
+
+    public boolean isAccessTokenValid(String accessToken) {
+        return this.tokenProvider.verifyAccessToken(accessToken);
+    }
+
+    public boolean isRefreshTokenValid(String refreshToken) {
+        return this.tokenProvider.verifyRefreshToken(refreshToken);
+    }
+
+    public TokenPayload extractPayload(String accessToken) {
+        return this.tokenProvider.decodeAccessToken(accessToken);
+    }
+
+    public String extractJti(String refreshToken) {
+        return this.tokenProvider.extractJtiFromToken(refreshToken);
+    }
+}

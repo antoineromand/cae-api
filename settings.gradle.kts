@@ -12,4 +12,4 @@ plugins {
 }
 
 rootProject.name = "pick-and-eat-api"
-include("api", "authentication")
+include("api", "authentication", "shared")

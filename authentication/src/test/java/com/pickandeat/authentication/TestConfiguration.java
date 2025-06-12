@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(basePackages = "com.pickandeat.authentication")
-@EntityScan(basePackages = "com.pickandeat.authentication.infrastructure.model")
-@EnableJpaRepositories(basePackages = "com.pickandeat.authentication.infrastructure.repository")
-public class TestAuthenticationConfiguration {
+@EntityScan("com.pickandeat.authentication.infrastructure.model")
+@EnableJpaRepositories("com.pickandeat.authentication.infrastructure.repository")
+public class TestConfiguration {
 
 }

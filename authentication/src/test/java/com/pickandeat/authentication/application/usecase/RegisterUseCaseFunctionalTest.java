@@ -10,15 +10,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.pickandeat.authentication.TestAuthenticationConfiguration;
+import com.pickandeat.authentication.TestConfiguration;
 import com.pickandeat.authentication.application.exceptions.EmailAlreadyUsedException;
+import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
+import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
-import com.pickandeat.authentication.infrastructure.AbstractPostgresContainerTest;
+import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 
-@SpringBootTest(classes = TestAuthenticationConfiguration.class)
-public class RegisterUseCaseFunctionalTest extends AbstractPostgresContainerTest {
+import jakarta.transaction.Transactional;
+
+@SpringBootTest(classes = TestConfiguration.class)
+@Testcontainers
+public class RegisterUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     @Autowired
     private RegisterUseCase registerUseCase;
 
@@ -36,6 +42,7 @@ public class RegisterUseCaseFunctionalTest extends AbstractPostgresContainerTest
     }
 
     @Test
+    @Transactional
     void shouldRegisterSuccessfully() {
         RegisterCommand command = getCommand("unique-user@example.com");
         UUID result = registerUseCase.register(command);
@@ -43,6 +50,7 @@ public class RegisterUseCaseFunctionalTest extends AbstractPostgresContainerTest
     }
 
     @Test
+    @Transactional
     void shouldThrowExceptionWhenEmailAlreadyUsed() {
         String email = "duplicate@example.com";
         RegisterCommand first = getCommand(email);
@@ -53,6 +61,7 @@ public class RegisterUseCaseFunctionalTest extends AbstractPostgresContainerTest
     }
 
     @Test
+    @Transactional
     void shouldReturnDifferentIdsForDifferentUsers() {
         RegisterCommand one = getCommand("user1@example.com");
         RegisterCommand two = getCommand("user2@example.com");
