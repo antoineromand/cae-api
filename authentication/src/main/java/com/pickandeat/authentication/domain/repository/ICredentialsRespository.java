@@ -7,5 +7,8 @@ import com.pickandeat.authentication.domain.Credentials;
 
 public interface ICredentialsRespository {
     Optional<Credentials> findByEmail(String email);
+
     UUID save(Credentials credentials);
+
+    Optional<Credentials> findByUserId(String userId);
 }

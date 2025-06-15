@@ -51,4 +51,31 @@ public class CredentialsRepositoryImplIntegrationTest extends AbstractDatabaseCo
         assertEquals(id, fromDb.get().getId());
         assertEquals(roleName, fromDb.get().getRole().name());
     }
+
+    @Test
+    @Transactional
+
+    void shouldSaveAndFindById() {
+        String email = "integration@test.com";
+        String password = "hashed-password";
+        RoleName roleName = RoleName.CONSUMER;
+
+        Role role = new Role(roleName, Set.of(new Scope("read", "menu"))); // scopes inutilisés en save
+
+        Credentials credentials = new Credentials(
+                null,
+                email,
+                password,
+                role,
+                new Date(),
+                null);
+
+        UUID id = credentialsRepository.save(credentials);
+        Optional<Credentials> fromDb = credentialsRepository.findByUserId(id.toString());
+
+        assertTrue(fromDb.isPresent());
+        assertEquals(email, fromDb.get().getEmail());
+        assertEquals(id, fromDb.get().getId());
+        assertEquals(roleName, fromDb.get().getRole().name());
+    }
 }
