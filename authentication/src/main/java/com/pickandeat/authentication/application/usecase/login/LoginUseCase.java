@@ -3,12 +3,12 @@ package com.pickandeat.authentication.application.usecase.login;
 import java.time.Duration;
 import java.util.UUID;
 
+import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import org.springframework.stereotype.Service;
 
 import com.pickandeat.authentication.application.exceptions.PasswordNotMatchException;
 import com.pickandeat.authentication.application.exceptions.UserNotFoundException;
 import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.authentication.domain.repository.ICredentialsRespository;
 import com.pickandeat.authentication.domain.repository.ITokenRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import com.pickandeat.shared.token.application.TokenService;
@@ -16,15 +16,15 @@ import com.pickandeat.shared.token.application.TokenService;
 @Service
 public class LoginUseCase implements ILoginUseCase {
         private final IPasswordService passwordService;
-        private final ICredentialsRespository credentialsRespository;
+        private final ICredentialsRepository credentialsRepository;
         private final TokenService tokenService;
         private final ITokenRepository tokenRepository;
         private static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
 
-        public LoginUseCase(IPasswordService passwordService, ICredentialsRespository repository,
+        public LoginUseCase(IPasswordService passwordService, ICredentialsRepository repository,
                         TokenService tokenService, ITokenRepository tokenRepository) {
                 this.passwordService = passwordService;
-                this.credentialsRespository = repository;
+                this.credentialsRepository = repository;
                 this.tokenService = tokenService;
                 this.tokenRepository = tokenRepository;
         }
@@ -37,7 +37,7 @@ public class LoginUseCase implements ILoginUseCase {
         }
 
         private Credentials getCredentials(LoginCommand command) {
-                return this.credentialsRespository.findByEmail(command.email())
+                return this.credentialsRepository.findByEmail(command.email())
                                 .orElseThrow(() -> new UserNotFoundException(command.email()));
         }
 

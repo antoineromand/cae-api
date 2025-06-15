@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+
+import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,7 +20,6 @@ import com.pickandeat.authentication.application.exceptions.PasswordNotMatchExce
 import com.pickandeat.authentication.application.exceptions.UserNotFoundException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
-import com.pickandeat.authentication.domain.repository.ICredentialsRespository;
 import com.pickandeat.authentication.domain.repository.ITokenRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import com.pickandeat.authentication.domain.valueobject.Role;
@@ -26,7 +27,7 @@ import com.pickandeat.shared.token.application.TokenService;
 import com.pickandeat.shared.token.domain.ITokenProvider;
 
 public class LoginUseCaseUnitTest {
-    private ICredentialsRespository credentialsRespository;
+    private ICredentialsRepository credentialsRepository;
     private IPasswordService passwordService;
     private ILoginUseCase loginUseCase;
     private ITokenProvider tokenProvider;
@@ -35,12 +36,12 @@ public class LoginUseCaseUnitTest {
 
     @BeforeEach
     void init() {
-        this.credentialsRespository = mock(ICredentialsRespository.class);
+        this.credentialsRepository = mock(ICredentialsRepository.class);
         this.passwordService = mock(IPasswordService.class);
         this.tokenProvider = mock(ITokenProvider.class);
         this.tokenRepository = mock(ITokenRepository.class);
         this.TokenService = new TokenService(tokenProvider);
-        this.loginUseCase = new LoginUseCase(passwordService, credentialsRespository, TokenService, tokenRepository);
+        this.loginUseCase = new LoginUseCase(passwordService, credentialsRepository, TokenService, tokenRepository);
     }
 
     private LoginCommand generateCommand() {
@@ -51,7 +52,7 @@ public class LoginUseCaseUnitTest {
     public void shouldThrowExceptionIfUserNotFound() {
         LoginCommand command = generateCommand();
 
-        when(this.credentialsRespository.findByEmail(command.email())).thenReturn(Optional.empty());
+        when(this.credentialsRepository.findByEmail(command.email())).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> {
             this.loginUseCase.login(command);
@@ -64,7 +65,7 @@ public class LoginUseCaseUnitTest {
 
         Credentials existingCredentials = mock(Credentials.class);
 
-        when(this.credentialsRespository.findByEmail(command.email())).thenReturn(Optional.of(existingCredentials));
+        when(this.credentialsRepository.findByEmail(command.email())).thenReturn(Optional.of(existingCredentials));
 
         when(this.passwordService.matches(command.password(), existingCredentials.getPassword())).thenReturn(false);
 
@@ -84,7 +85,7 @@ public class LoginUseCaseUnitTest {
         when(credentials.getRole()).thenReturn(consumerRole);
         when(credentials.getPassword()).thenReturn("hashed");
 
-        when(this.credentialsRespository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
+        when(this.credentialsRepository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
         when(this.passwordService.matches(command.password(), "hashed")).thenReturn(true);
         when(this.tokenProvider.generateAccessToken(any())).thenReturn("access-token");
         when(this.tokenProvider.generateRefreshToken(any())).thenReturn("refresh-token");
@@ -107,7 +108,7 @@ public class LoginUseCaseUnitTest {
         when(credentials.getRole()).thenReturn(consumerRole);
         when(credentials.getPassword()).thenReturn("hashed");
 
-        when(this.credentialsRespository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
+        when(this.credentialsRepository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
         when(this.passwordService.matches(command.password(), "hashed")).thenReturn(true);
         when(this.tokenProvider.generateAccessToken(any())).thenReturn("access-token");
         when(this.tokenProvider.generateRefreshToken(any())).thenReturn("refresh-token");

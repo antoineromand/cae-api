@@ -1,4 +1,4 @@
-package com.pickandeat.authentication.application.usecase;
+package com.pickandeat.authentication.application.usecase.register;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
