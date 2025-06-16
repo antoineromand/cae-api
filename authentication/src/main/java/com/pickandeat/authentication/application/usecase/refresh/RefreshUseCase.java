@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 
 import com.pickandeat.authentication.domain.repository.ITokenRepository;
 import com.pickandeat.shared.token.application.TokenService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class RefreshUseCase implements IRefreshUseCase {
 
     private final ITokenRepository tokenRepository;

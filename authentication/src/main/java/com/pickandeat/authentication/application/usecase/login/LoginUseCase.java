@@ -12,8 +12,10 @@ import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.repository.ITokenRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import com.pickandeat.shared.token.application.TokenService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class LoginUseCase implements ILoginUseCase {
         private final IPasswordService passwordService;
         private final ICredentialsRepository credentialsRepository;
