@@ -48,7 +48,7 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     }
 
     @Test
-    void shouldThrowErrorIfCredentialsNotFound() {
+    void login_shouldThrowUserNotFoundException_whenEmailDoesNotExist() {
         LoginCommand loginCommand = new LoginCommand("not-a-user@email.com", "LePoissonSteve?2");
 
         assertThrows(UserNotFoundException.class, () -> this.loginUseCase.login(loginCommand));
@@ -56,7 +56,7 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
 
     @Test
     @Transactional
-    void shouldThrowErrorIfPasswordNotMatch() {
+    void login_shouldThrowPasswordNotMatchException_whenPasswordIsIncorrect() {
         LoginCommand loginCommand = new LoginCommand("test@test.com", "MauvaisMotDePasse33?");
 
         assertThrows(PasswordNotMatchException.class, () -> this.loginUseCase.login(loginCommand));
@@ -64,7 +64,7 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
 
     @Test
     @Transactional
-    void shouldReturnTokenObject() {
+    void login_shouldReturnToken_whenCredentialsAreValid() {
         LoginCommand loginCommand = new LoginCommand("test@test.com", "MotDePasseTest06?");
 
         Token resultToken = this.loginUseCase.login(loginCommand);

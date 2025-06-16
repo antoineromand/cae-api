@@ -43,7 +43,7 @@ public class RegisterUseCaseFunctionalTest extends AbstractDatabaseContainersTes
 
     @Test
     @Transactional
-    void shouldRegisterSuccessfully() {
+    void register_shouldSucceed_whenEmailIsUnique() {
         RegisterCommand command = getCommand("unique-user@example.com");
         UUID result = registerUseCase.register(command);
         assertNotNull(result, "Le UUID retourné ne doit pas être null");
@@ -51,7 +51,7 @@ public class RegisterUseCaseFunctionalTest extends AbstractDatabaseContainersTes
 
     @Test
     @Transactional
-    void shouldThrowExceptionWhenEmailAlreadyUsed() {
+    void register_shouldThrowEmailAlreadyUsedException_whenEmailAlreadyExists() {
         String email = "duplicate@example.com";
         RegisterCommand first = getCommand(email);
         registerUseCase.register(first);
@@ -62,7 +62,7 @@ public class RegisterUseCaseFunctionalTest extends AbstractDatabaseContainersTes
 
     @Test
     @Transactional
-    void shouldReturnDifferentIdsForDifferentUsers() {
+    void register_shouldReturnDifferentIds_whenRegisteringTwoDifferentUsers() {
         RegisterCommand one = getCommand("user1@example.com");
         RegisterCommand two = getCommand("user2@example.com");
 

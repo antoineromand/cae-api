@@ -28,7 +28,7 @@ public class CredentialsRepositoryImplIntegrationTest extends AbstractDatabaseCo
 
     @Test
     @Transactional
-    void shouldSaveAndFindByEmail() {
+    void save_shouldPersistAndFindByEmail_whenEmailExistsInDatabase() {
         String email = "integration@test.com";
         String password = "hashed-password";
         RoleName roleName = RoleName.CONSUMER;
@@ -55,7 +55,7 @@ public class CredentialsRepositoryImplIntegrationTest extends AbstractDatabaseCo
     @Test
     @Transactional
 
-    void shouldSaveAndFindById() {
+    void save_shouldPersistAndFindById_whenIdExistsInDatabase() {
         String email = "integration@test.com";
         String password = "hashed-password";
         RoleName roleName = RoleName.CONSUMER;

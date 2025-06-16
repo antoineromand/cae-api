@@ -33,7 +33,7 @@ public class RefreshUseCaseUnitTest {
     }
 
     @Test
-    void shouldThrowAnExceptionIfGivenRefreshTokenIsNotValid() {
+    void refreshAccessToken_shouldThrowInvalidTokenException_whenTokenIsInvalid() {
         String invalidToken = "not-valid-token";
         TokenService tokenServiceMock = mock(TokenService.class);
         when(tokenServiceMock.isRefreshTokenValid(invalidToken)).thenReturn(false);
@@ -47,7 +47,7 @@ public class RefreshUseCaseUnitTest {
     }
 
     @Test
-    void shouldThrowAnExceptionIfJtiFromRefreshTokenNotInCache() {
+    void refreshAccessToken_shouldThrowJtiNotFoundInCacheException_whenJtiIsMissing() {
         String validToken = "valid-token";
         String jti = "jti-value";
 
@@ -62,7 +62,7 @@ public class RefreshUseCaseUnitTest {
     }
 
     @Test
-    void shouldThrowAnExceptionIfUserNotFound() {
+    void refreshAccessToken_shouldThrowInvalidUserIdInRefreshTokenException_whenUserIsNotFound() {
         String validToken = "valid-token";
         String jti = "jti-value";
         String userId = UUID.randomUUID().toString();
@@ -79,7 +79,7 @@ public class RefreshUseCaseUnitTest {
     }
 
     @Test
-    void shouldCreateANewAccessToken() {
+    void refreshAccessToken_shouldReturnNewAccessToken_whenRefreshTokenIsValid() {
         String validToken = "valid-token";
         String jti = "jti-value";
         UUID userId = UUID.randomUUID();

@@ -52,7 +52,7 @@ public class RegisterUseCaseUnitTest {
         }
 
         @Test
-        public void shouldNotRegisterWithAnUsedEmail() {
+        public void register_shouldThrowEmailAlreadyUsedException_whenEmailIsAlreadyTaken() {
                 RegisterCommand command = getCommand();
 
                 Credentials existingCredentials = mock(Credentials.class);
@@ -63,7 +63,7 @@ public class RegisterUseCaseUnitTest {
         }
 
         @Test
-        public void shouldNotRegisterIfErrorWhileHashingPassword() {
+        public void register_shouldThrowCannotHashPasswordException_whenPasswordHashingFails() {
                 RegisterCommand command = getCommand();
 
                 when(credentialsRepository.findByEmail(command.email()))
@@ -79,7 +79,7 @@ public class RegisterUseCaseUnitTest {
         }
 
         @Test
-        public void shouldNotRegisterIfErrorWhileSavingToDB() {
+        public void register_shouldThrowRegistrationTechnicalException_whenDatabaseSaveFails() {
                 RegisterCommand command = getCommand();
 
                 when(credentialsRepository.findByEmail(command.email()))
@@ -98,7 +98,7 @@ public class RegisterUseCaseUnitTest {
         }
 
         @Test
-        public void shouldRegisterUserAndReturnID() {
+        public void register_shouldReturnUserId_whenRegistrationSucceeds() {
                 RegisterCommand command = getCommand();
 
                 when(credentialsRepository.findByEmail(command.email()))

@@ -49,7 +49,7 @@ public class LoginUseCaseUnitTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfUserNotFound() {
+    public void login_shouldThrowUserNotFoundException_whenEmailDoesNotExist() {
         LoginCommand command = generateCommand();
 
         when(this.credentialsRepository.findByEmail(command.email())).thenReturn(Optional.empty());
@@ -60,7 +60,7 @@ public class LoginUseCaseUnitTest {
     }
 
     @Test
-    void shouldThrowExceptionIfPasswordNotMatch() {
+    void login_shouldThrowPasswordNotMatchException_whenPasswordIsIncorrect() {
         LoginCommand command = generateCommand();
 
         Credentials existingCredentials = mock(Credentials.class);
@@ -75,7 +75,7 @@ public class LoginUseCaseUnitTest {
     }
 
     @Test
-    void shouldReturnTokensIfLoginIsSuccessful() {
+    void login_shouldReturnTokens_whenCredentialsAreValid() {
         LoginCommand command = generateCommand();
         UUID userId = UUID.randomUUID();
         Role consumerRole = new Role(RoleName.CONSUMER, null);
@@ -98,7 +98,7 @@ public class LoginUseCaseUnitTest {
     }
 
     @Test
-    void shouldStoreRefreshTokenWithCorrectParameters() {
+    void login_shouldStoreRefreshTokenWithCorrectParameters_whenLoginIsSuccessful() {
         LoginCommand command = generateCommand();
         UUID userId = UUID.randomUUID();
         Role consumerRole = new Role(RoleName.CONSUMER, null);

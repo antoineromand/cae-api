@@ -18,7 +18,7 @@ import com.pickandeat.authentication.domain.valueobject.Scope;
 public class CredentialsTest {
 
     @Test
-    public void shouldCreateCredentialsInstanceForAdminUser() {
+    public void credentials_shouldHaveFullAccess_whenRoleIsAdmin() {
         Set<Scope> scopes = new HashSet<>();
         scopes.add(new Scope("*", "*"));
         Credentials adminCredentials = new Credentials(
@@ -42,7 +42,7 @@ public class CredentialsTest {
     }
 
     @Test
-    public void shouldCreateCredentialsForConsummerUser() {
+    public void credentials_shouldHaveCorrectConsumerPermissions_whenRoleIsConsumer() {
         Set<Scope> scopes = new HashSet<>();
         scopes.add(new Scope("read", "menu"));
         scopes.add(new Scope("create", "order"));
@@ -65,7 +65,7 @@ public class CredentialsTest {
     }
 
     @Test
-    public void shouldCreateCredentialsForProUser() {
+    public void credentials_shouldHaveCorrectProPermissions_whenRoleIsPro() {
         Set<Scope> scopes = new HashSet<>();
         scopes.add(new Scope("read", "menu"));
         scopes.add(new Scope("update", "menu"));

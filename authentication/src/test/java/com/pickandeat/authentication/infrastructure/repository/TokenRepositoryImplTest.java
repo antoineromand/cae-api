@@ -18,7 +18,7 @@ public class TokenRepositoryImplTest extends AbstractDatabaseContainersTest {
     TokenRepositoryImpl tokenRepositoryImpl;
 
     @Test
-    void shouldInsertUserId() throws InterruptedException {
+    void storeRefreshToken_shouldSaveUserId_whenJtiAndDurationProvided() throws InterruptedException {
         String jti = UUID.randomUUID().toString();
         String userId = UUID.randomUUID().toString();
         Duration duration = Duration.ofMinutes(5);
@@ -32,7 +32,7 @@ public class TokenRepositoryImplTest extends AbstractDatabaseContainersTest {
     }
 
     @Test
-    void shouldExpireTokenAfterTTL() throws InterruptedException {
+    void getUserIdByJti_shouldReturnNull_whenTokenIsExpired() throws InterruptedException {
         String jti = UUID.randomUUID().toString();
         String userId = UUID.randomUUID().toString();
         Duration duration = Duration.ofSeconds(2);
