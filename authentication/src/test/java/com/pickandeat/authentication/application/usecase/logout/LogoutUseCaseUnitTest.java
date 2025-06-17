@@ -3,9 +3,7 @@ package com.pickandeat.authentication.application.usecase.logout;
 import com.pickandeat.authentication.application.exceptions.InvalidTokenException;
 import com.pickandeat.authentication.domain.repository.ITokenRepository;
 import com.pickandeat.shared.token.application.TokenService;
-import com.pickandeat.shared.token.domain.ITokenProvider;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

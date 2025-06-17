@@ -2,6 +2,7 @@ package com.pickandeat.api.authentication.controllers;
 
 import java.util.UUID;
 
+import com.pickandeat.authentication.application.usecase.logout.ILogoutUseCase;
 import com.pickandeat.authentication.application.usecase.refresh.IRefreshUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,14 +38,16 @@ public class PublicAuthenticationController {
     private final IRegisterUseCase registerUseCase;
     private final ILoginUseCase loginUseCase;
     private final IRefreshUseCase refreshUseCase;
+    private final ILogoutUseCase logoutUseCase;
 
-    public PublicAuthenticationController(IRegisterUseCase registerUseCase, ILoginUseCase loginUseCase, IRefreshUseCase refreshUseCase) {
+    public PublicAuthenticationController(IRegisterUseCase registerUseCase, ILoginUseCase loginUseCase, IRefreshUseCase refreshUseCase, ILogoutUseCase logoutUseCase) {
         this.registerUseCase = registerUseCase;
         this.loginUseCase = loginUseCase;
         this.refreshUseCase = refreshUseCase;
+        this.logoutUseCase = logoutUseCase;
     }
 
-    @Operation(summary = "Register a user", description = "Registers a new user and returns an api response with userID.", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User registration data", required = true, content = @Content(schema = @Schema(implementation = RegisterRequestDto.class), examples = @ExampleObject(name = "RegisterRequestExample", summary = "Example registration", value = """
+    @Operation(summary = "Register a user", description = "Registers a new user and returns an api response.", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User registration data", required = true, content = @Content(schema = @Schema(implementation = RegisterRequestDto.class), examples = @ExampleObject(name = "RegisterRequestExample", summary = "Example registration", value = """
                 {
                     "email": "example@example.com",
                     "password": "AstrongPassw0rd!",
@@ -64,9 +67,8 @@ public class PublicAuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<GenericApiResponse<UUID>> register(@Valid @RequestBody RegisterRequestDto dto) {
         RegisterCommand command = RegisterRequestMapper.toCommand(dto);
-        UUID userId = this.registerUseCase.execute(command);
-        return ResponseEntity.status(201).body(new GenericApiResponse<>("Registration completed successfully." + //
-                "", userId));
+        this.registerUseCase.execute(command);
+        return ResponseEntity.status(201).body(new GenericApiResponse<>("Registration completed successfully.", null));
     }
 
     @Operation(summary = "Log a user", description = "Log a new user and returns an api response with tokens.", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User registration data", required = true, content = @Content(schema = @Schema(implementation = RegisterRequestDto.class), examples = @ExampleObject(name = "RegisterRequestExample", summary = "Example registration", value = """
@@ -92,7 +94,14 @@ public class PublicAuthenticationController {
     public ResponseEntity<GenericApiResponse<Token>> refreshToken(@RequestHeader("Authorization") String refreshTokenHeader) throws Exception {
         String refreshToken = refreshTokenHeader.replace("Bearer ", "");
         Token generatedTokens = this.refreshUseCase.execute(refreshToken);
-        return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", generatedTokens));
+        return ResponseEntity.ok(new GenericApiResponse<>("Refresh tokens successful.", generatedTokens));
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<GenericApiResponse<Token>> logout(@RequestHeader("Authorization") String refreshTokenHeader) throws Exception {
+        String refreshToken = refreshTokenHeader.replace("Bearer ", "");
+        this.logoutUseCase.execute(refreshToken);
+        return ResponseEntity.ok(new GenericApiResponse<>("Logout successful.", null));
     }
 
 }
