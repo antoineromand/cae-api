@@ -106,7 +106,6 @@ public class RefreshTokenUseCaseUnitTest {
 
         Credentials creds = createFakeCredentials();
 
-        // mocks
         when(tokenService.isRefreshTokenValid(token)).thenReturn(true);
         when(tokenService.extractJti(token)).thenReturn(oldJti);
         when(tokenRepository.getUserIdByJti(oldJti)).thenReturn(creds.getId().toString());

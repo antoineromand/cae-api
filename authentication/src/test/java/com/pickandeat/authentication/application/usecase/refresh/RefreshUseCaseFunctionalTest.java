@@ -88,6 +88,7 @@ public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest
         Assertions.assertThrows(InvalidUserIdInRefreshToken.class, () -> this.refreshUseCase.execute(refreshToken));
     }
 
+
     @Test
     void refreshAccessToken_shouldReturnNewTokenPair_whenTokenIsValid() {
         String oldRefreshToken = this.token.getRefreshToken();
@@ -99,5 +100,16 @@ public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest
         Assertions.assertNotNull(newTokens.getRefreshToken());
         Assertions.assertNotEquals(oldRefreshToken, newTokens.getRefreshToken());
         Assertions.assertNotEquals(this.token.getAccessToken(), newTokens.getAccessToken());
+    }
+
+    @Test
+    void refreshAccessToken_shouldSupportRotationMultipleTimes() {
+        String firstRefresh = token.getRefreshToken();
+
+        Token firstRotation = refreshUseCase.execute(firstRefresh);
+        Token secondRotation = refreshUseCase.execute(firstRotation.getRefreshToken());
+
+        Assertions.assertNotEquals(firstRotation.getAccessToken(), secondRotation.getAccessToken());
+        Assertions.assertNotEquals(firstRotation.getRefreshToken(), secondRotation.getRefreshToken());
     }
 }
