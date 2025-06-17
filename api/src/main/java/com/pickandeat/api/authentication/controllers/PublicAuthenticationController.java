@@ -82,7 +82,7 @@ public class PublicAuthenticationController {
             @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/login")
-    public ResponseEntity<GenericApiResponse<Token>> login(@Valid @RequestBody LoginRequestDto dto) throws Exception {
+    public ResponseEntity<GenericApiResponse<Token>> login(@Valid @RequestBody LoginRequestDto dto) {
         LoginCommand command = LoginRequestMapper.toCommand(dto);
         Token token = this.loginUseCase.execute(command);
         return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", token));
@@ -96,7 +96,7 @@ public class PublicAuthenticationController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/refresh-token")
-    public ResponseEntity<GenericApiResponse<Token>> refreshToken(@RequestHeader("Authorization") String refreshTokenHeader) throws Exception {
+    public ResponseEntity<GenericApiResponse<Token>> refreshToken(@RequestHeader("Authorization") String refreshTokenHeader) {
         String refreshToken = refreshTokenHeader.replace("Bearer ", "");
         Token generatedTokens = this.refreshUseCase.execute(refreshToken);
         return ResponseEntity.ok(new GenericApiResponse<>("Refresh tokens successful.", generatedTokens));
@@ -110,7 +110,7 @@ public class PublicAuthenticationController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/logout")
-    public ResponseEntity<GenericApiResponse<Token>> logout(@RequestHeader("Authorization") String refreshTokenHeader) throws Exception {
+    public ResponseEntity<GenericApiResponse<Token>> logout(@RequestHeader("Authorization") String refreshTokenHeader) {
         String refreshToken = refreshTokenHeader.replace("Bearer ", "");
         this.logoutUseCase.execute(refreshToken);
         return ResponseEntity.ok(new GenericApiResponse<>("Logout successful.", null));
