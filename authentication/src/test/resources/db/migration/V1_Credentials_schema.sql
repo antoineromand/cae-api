@@ -79,7 +79,7 @@ INSERT INTO role_scope (role_id, scope_id) VALUES
     (1, 20);
 
 
--- Link PRO to previous scopes
+-- Scopes for PRO
 INSERT INTO scope (scope_id, action, target) VALUES
     (21, 'create', 'store'),
     (22, 'update', 'store'),
@@ -96,6 +96,23 @@ INSERT INTO scope (scope_id, action, target) VALUES
     
     (31, 'update', 'user-profile'),
     (32, 'update', 'user-password');
+
+INSERT INTO role_scope (role_id, scope_id) VALUES
+    (2, 21),
+    (2, 22),
+    (2, 23),
+    (2, 24),
+    (2, 25),
+    (2, 26),
+    (2, 27),
+    (2, 28),
+    (2, 29),
+    (2, 30),
+    (2, 31),
+    (2, 32),
+    (2, 13),
+    (2, 14);
+
 
 -- Scope for ADMIN
 INSERT INTO scope (scope_id, action, target) VALUES

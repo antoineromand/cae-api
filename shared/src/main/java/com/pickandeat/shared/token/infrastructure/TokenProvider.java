@@ -1,5 +1,6 @@
 package com.pickandeat.shared.token.infrastructure;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class TokenProvider implements ITokenProvider {
     }
 
     @Override
-    public String generateRefreshToken(TokenPayload payload) {
+    public String generateRefreshToken(TokenPayload payload, Duration dynamicExpiration) {
         return buildToken(payload, refreshExpirationMs);
     }
 
@@ -82,6 +83,13 @@ public class TokenProvider implements ITokenProvider {
         Claims claims = Jwts.parser().verifyWith(this.getSigningKey()).build().parseSignedClaims(token).getPayload();
 
         return claims.getId();
+    }
+
+    @Override
+    public Date extractExpirationFromToken(String token) {
+        Claims claims = Jwts.parser().verifyWith(this.getSigningKey()).build().parseSignedClaims(token).getPayload();
+
+        return claims.getExpiration();
     }
 
     private SecretKey getSigningKey() {

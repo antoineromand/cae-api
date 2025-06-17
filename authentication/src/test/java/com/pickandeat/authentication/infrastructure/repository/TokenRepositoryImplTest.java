@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +20,7 @@ public class TokenRepositoryImplTest extends AbstractDatabaseContainersTest {
     TokenRepositoryImpl tokenRepositoryImpl;
 
     @Test
-    void shouldInsertUserId() throws InterruptedException {
+    void storeRefreshToken_shouldSaveUserId_whenJtiAndDurationProvided() throws InterruptedException {
         String jti = UUID.randomUUID().toString();
         String userId = UUID.randomUUID().toString();
         Duration duration = Duration.ofMinutes(5);
@@ -27,23 +29,38 @@ public class TokenRepositoryImplTest extends AbstractDatabaseContainersTest {
 
         Thread.sleep(3000);
 
-        assertEquals(userId, tokenRepositoryImpl.getUserIdByJti(jti));
+        Assertions.assertEquals(userId, tokenRepositoryImpl.getUserIdByJti(jti));
 
     }
 
     @Test
-    void shouldExpireTokenAfterTTL() throws InterruptedException {
+    void getUserIdByJti_shouldReturnNull_whenTokenIsExpired() throws InterruptedException {
         String jti = UUID.randomUUID().toString();
         String userId = UUID.randomUUID().toString();
         Duration duration = Duration.ofSeconds(2);
 
         tokenRepositoryImpl.storeRefreshToken(jti, userId, duration);
 
-        assertEquals(userId, tokenRepositoryImpl.getUserIdByJti(jti));
+        Assertions.assertEquals(userId, tokenRepositoryImpl.getUserIdByJti(jti));
 
         Thread.sleep(2500);
 
-        assertEquals(null, tokenRepositoryImpl.getUserIdByJti(jti));
+        Assertions.assertNull(tokenRepositoryImpl.getUserIdByJti(jti));
     }
+
+    @Test
+    void deleteByJti_shouldDeleteToken_whenJtiExists() throws InterruptedException {
+        String jti = UUID.randomUUID().toString();
+        String userId = UUID.randomUUID().toString();
+        Duration duration = Duration.ofMinutes(5);
+
+        tokenRepositoryImpl.storeRefreshToken(jti, userId, duration);
+
+        tokenRepositoryImpl.deleteByJti(jti);
+
+        Assertions.assertNull(tokenRepositoryImpl.getUserIdByJti(jti));
+    }
+
+
 
 }

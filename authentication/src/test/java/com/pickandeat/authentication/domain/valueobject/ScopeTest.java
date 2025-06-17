@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 public class ScopeTest {
     @Test
-    public void shouldCreateAScope() {
+    public void scope_shouldReturnFormattedValue_whenCreatedWithActionAndResource() {
         Scope scope = new Scope("read", "menu");
         assertEquals("read:menu", scope.getScope());
     }

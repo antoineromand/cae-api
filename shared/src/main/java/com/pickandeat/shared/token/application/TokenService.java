@@ -1,5 +1,7 @@
 package com.pickandeat.shared.token.application;
 
+import java.time.Duration;
+import java.util.Date;
 import java.util.UUID;
 
 import com.pickandeat.shared.token.domain.ITokenProvider;
@@ -16,8 +18,8 @@ public class TokenService {
         return this.tokenProvider.generateAccessToken(new TokenPayload(id, role));
     }
 
-    public String createRefreshToken(UUID id, String role) {
-        return this.tokenProvider.generateRefreshToken(new TokenPayload(id, role));
+    public String createRefreshToken(UUID id, String role, Duration dynamicExpiration) {
+        return this.tokenProvider.generateRefreshToken(new TokenPayload(id, role), dynamicExpiration);
     }
 
     public boolean isAccessTokenValid(String accessToken) {
@@ -34,5 +36,9 @@ public class TokenService {
 
     public String extractJti(String refreshToken) {
         return this.tokenProvider.extractJtiFromToken(refreshToken);
+    }
+
+    public Date extractExpiration(String accessToken) {
+        return this.tokenProvider.extractExpirationFromToken(accessToken);
     }
 }

@@ -1,4 +1,4 @@
-package com.pickandeat.authentication.application.usecase;
+package com.pickandeat.authentication.application.usecase.register;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -7,6 +7,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -16,17 +18,14 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import com.pickandeat.authentication.application.exceptions.EmailAlreadyUsedException;
 import com.pickandeat.authentication.application.exceptions.RegistrationTechnicalException;
-import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
-import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;
-import com.pickandeat.authentication.domain.repository.ICredentialsRespository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import com.pickandeat.authentication.domain.valueobject.Role;
 
 public class RegisterUseCaseUnitTest {
-        private ICredentialsRespository credentialsRespository;
+        private ICredentialsRepository credentialsRepository;
 
         private RegisterUseCase registerUseCase;
 
@@ -47,27 +46,27 @@ public class RegisterUseCaseUnitTest {
 
         @BeforeEach
         void init() {
-                this.credentialsRespository = mock(ICredentialsRespository.class);
+                this.credentialsRepository = mock(ICredentialsRepository.class);
                 this.passwordService = mock(IPasswordService.class);
-                this.registerUseCase = new RegisterUseCase(credentialsRespository, passwordService);
+                this.registerUseCase = new RegisterUseCase(credentialsRepository, passwordService);
         }
 
         @Test
-        public void shouldNotRegisterWithAnUsedEmail() {
+        public void register_shouldThrowEmailAlreadyUsedException_whenEmailIsAlreadyTaken() {
                 RegisterCommand command = getCommand();
 
                 Credentials existingCredentials = mock(Credentials.class);
-                when(credentialsRespository.findByEmail(command.email()))
+                when(credentialsRepository.findByEmail(command.email()))
                                 .thenReturn(Optional.of(existingCredentials));
 
-                assertThrows(EmailAlreadyUsedException.class, () -> registerUseCase.register(command));
+                assertThrows(EmailAlreadyUsedException.class, () -> registerUseCase.execute(command));
         }
 
         @Test
-        public void shouldNotRegisterIfErrorWhileHashingPassword() {
+        public void register_shouldThrowCannotHashPasswordException_whenPasswordHashingFails() {
                 RegisterCommand command = getCommand();
 
-                when(credentialsRespository.findByEmail(command.email()))
+                when(credentialsRepository.findByEmail(command.email()))
                                 .thenReturn(Optional.empty());
 
                 RuntimeException rootCause = new RuntimeException("Hashing failed");
@@ -76,33 +75,33 @@ public class RegisterUseCaseUnitTest {
 
                 assertThrows(
                                 CannotHashPasswordException.class,
-                                () -> registerUseCase.register(command));
+                                () -> registerUseCase.execute(command));
         }
 
         @Test
-        public void shouldNotRegisterIfErrorWhileSavingToDB() {
+        public void register_shouldThrowRegistrationTechnicalException_whenDatabaseSaveFails() {
                 RegisterCommand command = getCommand();
 
-                when(credentialsRespository.findByEmail(command.email()))
+                when(credentialsRepository.findByEmail(command.email()))
                                 .thenReturn(Optional.empty());
 
                 String hashPassword = "hashPassword";
 
                 when(passwordService.hashPassword(command.password())).thenReturn(hashPassword);
 
-                when(credentialsRespository.save(any(Credentials.class)))
+                when(credentialsRepository.save(any(Credentials.class)))
                                 .thenThrow(DataIntegrityViolationException.class);
 
                 assertThrows(
                                 RegistrationTechnicalException.class,
-                                () -> registerUseCase.register(command));
+                                () -> registerUseCase.execute(command));
         }
 
         @Test
-        public void shouldRegisterUserAndReturnID() {
+        public void register_shouldReturnUserId_whenRegistrationSucceeds() {
                 RegisterCommand command = getCommand();
 
-                when(credentialsRespository.findByEmail(command.email()))
+                when(credentialsRepository.findByEmail(command.email()))
                                 .thenReturn(Optional.empty());
 
                 String hashPassword = "hashPassword";
@@ -111,9 +110,9 @@ public class RegisterUseCaseUnitTest {
 
                 UUID credentialsId = UUID.randomUUID();
 
-                when(credentialsRespository.save(any(Credentials.class))).thenReturn(credentialsId);
+                when(credentialsRepository.save(any(Credentials.class))).thenReturn(credentialsId);
 
-                UUID result = registerUseCase.register(command);
+                UUID result = registerUseCase.execute(command);
 
                 assertEquals(credentialsId, result);
 

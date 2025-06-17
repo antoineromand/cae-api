@@ -3,15 +3,15 @@ package com.pickandeat.authentication.infrastructure.repository;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import org.springframework.stereotype.Component;
 
 import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.authentication.domain.repository.ICredentialsRespository;
 import com.pickandeat.authentication.infrastructure.model.CredentialsEntity;
 import com.pickandeat.authentication.infrastructure.model.RoleEntity;
 
 @Component
-public class CredentialsRepositoryImpl implements ICredentialsRespository {
+public class CredentialsRepositoryImpl implements ICredentialsRepository {
 
     private final CredentialsEntityJPARepository iCredentialsJPARespository;
     private final RoleEntityJPARepository roleEntityJPARepository;
@@ -36,6 +36,13 @@ public class CredentialsRepositoryImpl implements ICredentialsRespository {
         var credentialsEntity = CredentialsEntity.fromDomain(credentials, roleEntity);
         CredentialsEntity savedCredentials = this.iCredentialsJPARespository.save(credentialsEntity);
         return savedCredentials.getId();
+    }
+
+    @Override
+    public Optional<Credentials> findByUserId(String userId) {
+        Optional<CredentialsEntity> entityModel = this.iCredentialsJPARespository.findById(UUID.fromString(userId));
+
+        return entityModel.map(CredentialsEntity::toDomain);
     }
 
 }

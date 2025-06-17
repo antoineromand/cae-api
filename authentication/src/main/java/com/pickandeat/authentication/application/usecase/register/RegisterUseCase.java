@@ -3,6 +3,7 @@ package com.pickandeat.authentication.application.usecase.register;
 import java.util.Date;
 import java.util.UUID;
 
+import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,23 +12,22 @@ import com.pickandeat.authentication.application.exceptions.EmailAlreadyUsedExce
 import com.pickandeat.authentication.application.exceptions.RegistrationTechnicalException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;
-import com.pickandeat.authentication.domain.repository.ICredentialsRespository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 
 @Service
 @Transactional
 public class RegisterUseCase implements IRegisterUseCase {
 
-    private final ICredentialsRespository credentialsRepository;
+    private final ICredentialsRepository credentialsRepository;
     private final IPasswordService passwordService;
 
-    public RegisterUseCase(ICredentialsRespository respository, IPasswordService service) {
+    public RegisterUseCase(ICredentialsRepository respository, IPasswordService service) {
         this.credentialsRepository = respository;
         this.passwordService = service;
     }
 
     @Override
-    public UUID register(RegisterCommand command) {
+    public UUID execute(RegisterCommand command) {
         ensureEmailIsUnique(command.email());
 
         String hashedPassword = hashPassword(command.password());
