@@ -2,6 +2,7 @@ package com.pickandeat.api.authentication.controllers;
 
 import java.util.UUID;
 
+import com.pickandeat.api.authentication.swagger.*;
 import com.pickandeat.authentication.application.usecase.logout.ILogoutUseCase;
 import com.pickandeat.authentication.application.usecase.refresh.IRefreshUseCase;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,6 @@ import com.pickandeat.api.authentication.dto.LoginRequestDto;
 import com.pickandeat.api.authentication.dto.RegisterRequestDto;
 import com.pickandeat.api.authentication.mapper.LoginRequestMapper;
 import com.pickandeat.api.authentication.mapper.RegisterRequestMapper;
-import com.pickandeat.api.authentication.swagger.ErrorResponse;
-import com.pickandeat.api.authentication.swagger.LoginApiResponse;
-import com.pickandeat.api.authentication.swagger.RegisterApiResponse;
 import com.pickandeat.api.shared.GenericApiResponse;
 import com.pickandeat.authentication.application.usecase.login.ILoginUseCase;
 import com.pickandeat.authentication.application.usecase.login.LoginCommand;
@@ -90,6 +88,13 @@ public class PublicAuthenticationController {
         return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", token));
     }
 
+    @Operation(summary = "Refresh JWT tokens using a valid refresh token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tokens refreshed successfully",
+                    content = @Content(schema = @Schema(implementation = RefreshTokenApiResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid or expired refresh token",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping("/refresh-token")
     public ResponseEntity<GenericApiResponse<Token>> refreshToken(@RequestHeader("Authorization") String refreshTokenHeader) throws Exception {
         String refreshToken = refreshTokenHeader.replace("Bearer ", "");
@@ -97,6 +102,13 @@ public class PublicAuthenticationController {
         return ResponseEntity.ok(new GenericApiResponse<>("Refresh tokens successful.", generatedTokens));
     }
 
+    @Operation(summary = "Log out the user by invalidating the refresh token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Logout successful",
+                    content = @Content(schema = @Schema(implementation = LogoutApiResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid refresh token",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @DeleteMapping("/logout")
     public ResponseEntity<GenericApiResponse<Token>> logout(@RequestHeader("Authorization") String refreshTokenHeader) throws Exception {
         String refreshToken = refreshTokenHeader.replace("Bearer ", "");
