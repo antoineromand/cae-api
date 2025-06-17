@@ -2,11 +2,9 @@ package com.pickandeat.api.authentication.controllers;
 
 import java.util.UUID;
 
+import com.pickandeat.authentication.application.usecase.refresh.IRefreshUseCase;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.pickandeat.api.authentication.dto.LoginRequestDto;
 import com.pickandeat.api.authentication.dto.RegisterRequestDto;
@@ -38,10 +36,12 @@ public class PublicAuthenticationController {
 
     private final IRegisterUseCase registerUseCase;
     private final ILoginUseCase loginUseCase;
+    private final IRefreshUseCase refreshUseCase;
 
-    public PublicAuthenticationController(IRegisterUseCase registerUseCase, ILoginUseCase loginUseCase) {
+    public PublicAuthenticationController(IRegisterUseCase registerUseCase, ILoginUseCase loginUseCase, IRefreshUseCase refreshUseCase) {
         this.registerUseCase = registerUseCase;
         this.loginUseCase = loginUseCase;
+        this.refreshUseCase = refreshUseCase;
     }
 
     @Operation(summary = "Register a user", description = "Registers a new user and returns an api response with userID.", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User registration data", required = true, content = @Content(schema = @Schema(implementation = RegisterRequestDto.class), examples = @ExampleObject(name = "RegisterRequestExample", summary = "Example registration", value = """
@@ -86,6 +86,13 @@ public class PublicAuthenticationController {
         LoginCommand command = LoginRequestMapper.toCommand(dto);
         Token token = this.loginUseCase.execute(command);
         return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", token));
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<GenericApiResponse<Token>> refreshToken(@RequestHeader("Authorization") String refreshTokenHeader) throws Exception {
+        String refreshToken = refreshTokenHeader.replace("Bearer ", "");
+        Token generatedTokens = this.refreshUseCase.execute(refreshToken);
+        return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", generatedTokens));
     }
 
 }
