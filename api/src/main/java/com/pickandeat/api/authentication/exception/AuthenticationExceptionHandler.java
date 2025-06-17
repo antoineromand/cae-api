@@ -54,6 +54,6 @@ public class AuthenticationExceptionHandler {
 
     @ExceptionHandler({InvalidTokenException.class, InvalidUserIdInRefreshToken.class, JtiNotFoundInCacheException.class})
     public ResponseEntity<GenericApiResponse<String>> handleInvalidTokenException(Exception ex) {
-        return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(new GenericApiResponse<>(ex.getMessage(), null));
+        return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(new GenericApiResponse<>("Error with the refresh token", null));
     }
 }
