@@ -3,18 +3,16 @@ package com.pickandeat.api.authentication.exception;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.pickandeat.authentication.application.exceptions.*;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.pickandeat.api.authentication.controllers.PublicAuthenticationController;
 import com.pickandeat.api.shared.GenericApiResponse;
-import com.pickandeat.authentication.application.exceptions.EmailAlreadyUsedException;
-import com.pickandeat.authentication.application.exceptions.PasswordNotMatchException;
-import com.pickandeat.authentication.application.exceptions.RegistrationTechnicalException;
-import com.pickandeat.authentication.application.exceptions.UserNotFoundException;
 
 @RestControllerAdvice(basePackageClasses = { PublicAuthenticationController.class })
 public class AuthenticationExceptionHandler {
@@ -47,5 +45,15 @@ public class AuthenticationExceptionHandler {
     public ResponseEntity<GenericApiResponse<String>> handleLoginError(Exception ex) {
         return ResponseEntity.status(HttpStatusCode.valueOf(401))
                 .body(new GenericApiResponse<>(CREDENTIALS_ERROR, null));
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    public ResponseEntity<GenericApiResponse<String>> handleMissingRequestHeaderException(MissingRequestHeaderException ex) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(new GenericApiResponse<>(ex.getMessage(), null));
+    }
+
+    @ExceptionHandler({InvalidTokenException.class, InvalidUserIdInRefreshToken.class, JtiNotFoundInCacheException.class})
+    public ResponseEntity<GenericApiResponse<String>> handleInvalidTokenException(Exception ex) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(new GenericApiResponse<>(ex.getMessage(), null));
     }
 }
