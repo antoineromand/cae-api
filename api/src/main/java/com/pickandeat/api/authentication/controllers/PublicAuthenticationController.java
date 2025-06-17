@@ -2,6 +2,8 @@ package com.pickandeat.api.authentication.controllers;
 
 import java.util.UUID;
 
+import com.pickandeat.api.authentication.swagger.*;
+import com.pickandeat.authentication.application.usecase.logout.ILogoutUseCase;
 import com.pickandeat.authentication.application.usecase.refresh.IRefreshUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +12,6 @@ import com.pickandeat.api.authentication.dto.LoginRequestDto;
 import com.pickandeat.api.authentication.dto.RegisterRequestDto;
 import com.pickandeat.api.authentication.mapper.LoginRequestMapper;
 import com.pickandeat.api.authentication.mapper.RegisterRequestMapper;
-import com.pickandeat.api.authentication.swagger.ErrorResponse;
-import com.pickandeat.api.authentication.swagger.LoginApiResponse;
-import com.pickandeat.api.authentication.swagger.RegisterApiResponse;
 import com.pickandeat.api.shared.GenericApiResponse;
 import com.pickandeat.authentication.application.usecase.login.ILoginUseCase;
 import com.pickandeat.authentication.application.usecase.login.LoginCommand;
@@ -37,14 +36,16 @@ public class PublicAuthenticationController {
     private final IRegisterUseCase registerUseCase;
     private final ILoginUseCase loginUseCase;
     private final IRefreshUseCase refreshUseCase;
+    private final ILogoutUseCase logoutUseCase;
 
-    public PublicAuthenticationController(IRegisterUseCase registerUseCase, ILoginUseCase loginUseCase, IRefreshUseCase refreshUseCase) {
+    public PublicAuthenticationController(IRegisterUseCase registerUseCase, ILoginUseCase loginUseCase, IRefreshUseCase refreshUseCase, ILogoutUseCase logoutUseCase) {
         this.registerUseCase = registerUseCase;
         this.loginUseCase = loginUseCase;
         this.refreshUseCase = refreshUseCase;
+        this.logoutUseCase = logoutUseCase;
     }
 
-    @Operation(summary = "Register a user", description = "Registers a new user and returns an api response with userID.", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User registration data", required = true, content = @Content(schema = @Schema(implementation = RegisterRequestDto.class), examples = @ExampleObject(name = "RegisterRequestExample", summary = "Example registration", value = """
+    @Operation(summary = "Register a user", description = "Registers a new user and returns an api response.", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User registration data", required = true, content = @Content(schema = @Schema(implementation = RegisterRequestDto.class), examples = @ExampleObject(name = "RegisterRequestExample", summary = "Example registration", value = """
                 {
                     "email": "example@example.com",
                     "password": "AstrongPassw0rd!",
@@ -64,9 +65,8 @@ public class PublicAuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<GenericApiResponse<UUID>> register(@Valid @RequestBody RegisterRequestDto dto) {
         RegisterCommand command = RegisterRequestMapper.toCommand(dto);
-        UUID userId = this.registerUseCase.execute(command);
-        return ResponseEntity.status(201).body(new GenericApiResponse<>("Registration completed successfully." + //
-                "", userId));
+        this.registerUseCase.execute(command);
+        return ResponseEntity.status(201).body(new GenericApiResponse<>("Registration completed successfully.", null));
     }
 
     @Operation(summary = "Log a user", description = "Log a new user and returns an api response with tokens.", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User registration data", required = true, content = @Content(schema = @Schema(implementation = RegisterRequestDto.class), examples = @ExampleObject(name = "RegisterRequestExample", summary = "Example registration", value = """
@@ -82,17 +82,38 @@ public class PublicAuthenticationController {
             @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/login")
-    public ResponseEntity<GenericApiResponse<Token>> login(@Valid @RequestBody LoginRequestDto dto) throws Exception {
+    public ResponseEntity<GenericApiResponse<Token>> login(@Valid @RequestBody LoginRequestDto dto) {
         LoginCommand command = LoginRequestMapper.toCommand(dto);
         Token token = this.loginUseCase.execute(command);
         return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", token));
     }
 
+    @Operation(summary = "Refresh JWT tokens using a valid refresh token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tokens refreshed successfully",
+                    content = @Content(schema = @Schema(implementation = RefreshTokenApiResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid or expired refresh token",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping("/refresh-token")
-    public ResponseEntity<GenericApiResponse<Token>> refreshToken(@RequestHeader("Authorization") String refreshTokenHeader) throws Exception {
+    public ResponseEntity<GenericApiResponse<Token>> refreshToken(@RequestHeader("Authorization") String refreshTokenHeader) {
         String refreshToken = refreshTokenHeader.replace("Bearer ", "");
         Token generatedTokens = this.refreshUseCase.execute(refreshToken);
-        return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", generatedTokens));
+        return ResponseEntity.ok(new GenericApiResponse<>("Refresh tokens successful.", generatedTokens));
+    }
+
+    @Operation(summary = "Log out the user by invalidating the refresh token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Logout successful",
+                    content = @Content(schema = @Schema(implementation = LogoutApiResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid refresh token",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @DeleteMapping("/logout")
+    public ResponseEntity<GenericApiResponse<Token>> logout(@RequestHeader("Authorization") String refreshTokenHeader) {
+        String refreshToken = refreshTokenHeader.replace("Bearer ", "");
+        this.logoutUseCase.execute(refreshToken);
+        return ResponseEntity.ok(new GenericApiResponse<>("Logout successful.", null));
     }
 
 }
