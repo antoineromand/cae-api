@@ -15,7 +15,7 @@ import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 import com.pickandeat.shared.token.application.TokenService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +29,7 @@ import java.util.UUID;
 @SpringBootTest(classes = TestConfiguration.class)
 @Transactional
 public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
+
     @Autowired
     LoginUseCase loginUseCase;
 
@@ -36,7 +37,7 @@ public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest
     RegisterUseCase registerUseCase;
 
     @Autowired
-    RefreshUseCase refreshUseCase;
+    RefreshTokenUseCase refreshUseCase;
 
     @Autowired
     TokenService tokenService;
@@ -57,48 +58,46 @@ public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest
                 "+33650333340",
                 LocalDate.parse(dateString, formatter),
                 new Role(RoleName.CONSUMER, null));
-        this.registerUseCase.register(command);
-        return this.loginUseCase.login(new LoginCommand(command.email(), command.password()));
+        this.registerUseCase.execute(command);
+        return this.loginUseCase.execute(new LoginCommand(command.email(), command.password()));
     }
 
-    @BeforeAll
+    @BeforeEach
     void init() {
         this.token = this.createCredentials();
     }
 
     @Test
     void refreshAccessToken_shouldThrowInvalidTokenException_whenTokenIsMalformed() {
-        Assertions.assertThrows(InvalidTokenException.class, () -> this.refreshUseCase.refreshAccessToken("invalid-token"));
+        Assertions.assertThrows(InvalidTokenException.class, () -> this.refreshUseCase.execute("invalid-token"));
     }
 
     @Test
     void refreshAccessToken_shouldThrowJtiNotFoundInCacheException_whenJtiMissing() {
-        String refreshToken = this.tokenService.createRefreshToken(UUID.randomUUID(), "CONSUMER");
-        Assertions.assertThrows(JtiNotFoundInCacheException.class, () -> this.refreshUseCase.refreshAccessToken(refreshToken));
+        String refreshToken = this.tokenService.createRefreshToken(UUID.randomUUID(), "CONSUMER", Duration.ofDays(1));
+        Assertions.assertThrows(JtiNotFoundInCacheException.class, () -> this.refreshUseCase.execute(refreshToken));
     }
 
     @Test
     void refreshAccessToken_shouldThrowInvalidUserIdInRefreshTokenException_whenUserIdDoesNotMatch() {
         UUID expectedUserId = UUID.randomUUID();
-        String refreshToken = this.tokenService.createRefreshToken(expectedUserId, "CONSUMER");
+        String refreshToken = this.tokenService.createRefreshToken(expectedUserId, "CONSUMER", Duration.ofDays(3));
         String expectedJti = this.tokenService.extractJti(refreshToken);
-        this.tokenRepository.storeRefreshToken(expectedJti, expectedUserId.toString(), Duration.ofDays(14));
+        this.tokenRepository.storeRefreshToken(expectedJti, expectedUserId.toString(), Duration.ofDays(3));
 
-        Assertions.assertThrows(InvalidUserIdInRefreshToken.class, () -> this.refreshUseCase.refreshAccessToken(refreshToken));
-
+        Assertions.assertThrows(InvalidUserIdInRefreshToken.class, () -> this.refreshUseCase.execute(refreshToken));
     }
 
     @Test
-    void refreshAccessToken_shouldReturnNewRefreshToken_whenTokenIsValid() {
-       String refreshToken = this.token.getRefreshToken();
+    void refreshAccessToken_shouldReturnNewTokenPair_whenTokenIsValid() {
+        String oldRefreshToken = this.token.getRefreshToken();
 
-       String generatedRefreshToken = this.refreshUseCase.refreshAccessToken(refreshToken);
+        Token newTokens = this.refreshUseCase.execute(oldRefreshToken);
 
-       Assertions.assertNotNull(generatedRefreshToken);
-       Assertions.assertNotEquals(refreshToken, generatedRefreshToken);
-
+        Assertions.assertNotNull(newTokens);
+        Assertions.assertNotNull(newTokens.getAccessToken());
+        Assertions.assertNotNull(newTokens.getRefreshToken());
+        Assertions.assertNotEquals(oldRefreshToken, newTokens.getRefreshToken());
+        Assertions.assertNotEquals(this.token.getAccessToken(), newTokens.getAccessToken());
     }
-
-
-
 }

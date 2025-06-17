@@ -32,7 +32,7 @@ public class LoginUseCase implements ILoginUseCase {
         }
 
         @Override
-        public Token login(LoginCommand command) {
+        public Token execute(LoginCommand command) {
                 Credentials credentials = this.getCredentials(command);
                 this.checkPassword(command, credentials.getPassword());
                 return this.generateTokens(credentials.getId(), credentials.getRole().name().toString());
@@ -51,7 +51,7 @@ public class LoginUseCase implements ILoginUseCase {
 
         private Token generateTokens(UUID id, String role) {
                 String accessToken = this.tokenService.createAccessToken(id, role);
-                String refreshToken = this.tokenService.createRefreshToken(id, role);
+                String refreshToken = this.tokenService.createRefreshToken(id, role, REFRESH_TOKEN_DURATION);
                 this.storeRefreshTokenInCache(this.tokenService.extractJti(refreshToken), id.toString(),
                                 REFRESH_TOKEN_DURATION);
                 return new Token(accessToken, refreshToken);

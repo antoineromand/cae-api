@@ -64,7 +64,7 @@ public class PublicAuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<GenericApiResponse<UUID>> register(@Valid @RequestBody RegisterRequestDto dto) {
         RegisterCommand command = RegisterRequestMapper.toCommand(dto);
-        UUID userId = this.registerUseCase.register(command);
+        UUID userId = this.registerUseCase.execute(command);
         return ResponseEntity.status(201).body(new GenericApiResponse<>("Registration completed successfully." + //
                 "", userId));
     }
@@ -84,7 +84,7 @@ public class PublicAuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<GenericApiResponse<Token>> login(@Valid @RequestBody LoginRequestDto dto) throws Exception {
         LoginCommand command = LoginRequestMapper.toCommand(dto);
-        Token token = this.loginUseCase.login(command);
+        Token token = this.loginUseCase.execute(command);
         return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", token));
     }
 

@@ -1,9 +1,12 @@
 package com.pickandeat.shared.token.domain;
 
+import java.time.Duration;
+import java.util.Date;
+
 public interface ITokenProvider {
     String generateAccessToken(TokenPayload payload);
 
-    String generateRefreshToken(TokenPayload payload);
+    String generateRefreshToken(TokenPayload payload, Duration dynamicExpiration);
 
     boolean verifyAccessToken(String accessToken);
 
@@ -12,4 +15,6 @@ public interface ITokenProvider {
     TokenPayload decodeAccessToken(String accessToken);
 
     String extractJtiFromToken(String refreshToken);
+
+    Date extractExpirationFromToken(String jwtToken);
 }

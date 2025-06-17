@@ -1,47 +1,44 @@
 package com.pickandeat.authentication.application.usecase.login;
 
-import java.time.Duration;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-
-import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.pickandeat.authentication.application.exceptions.PasswordNotMatchException;
 import com.pickandeat.authentication.application.exceptions.UserNotFoundException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.repository.ITokenRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.shared.token.application.TokenService;
 import com.pickandeat.shared.token.domain.ITokenProvider;
+import com.pickandeat.shared.token.domain.TokenPayload;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 public class LoginUseCaseUnitTest {
+
     private ICredentialsRepository credentialsRepository;
     private IPasswordService passwordService;
-    private ILoginUseCase loginUseCase;
     private ITokenProvider tokenProvider;
-    private TokenService TokenService;
+    private TokenService tokenService;
     private ITokenRepository tokenRepository;
+    private ILoginUseCase loginUseCase;
 
     @BeforeEach
     void init() {
-        this.credentialsRepository = mock(ICredentialsRepository.class);
-        this.passwordService = mock(IPasswordService.class);
-        this.tokenProvider = mock(ITokenProvider.class);
-        this.tokenRepository = mock(ITokenRepository.class);
-        this.TokenService = new TokenService(tokenProvider);
-        this.loginUseCase = new LoginUseCase(passwordService, credentialsRepository, TokenService, tokenRepository);
+        credentialsRepository = mock(ICredentialsRepository.class);
+        passwordService = mock(IPasswordService.class);
+        tokenProvider = mock(ITokenProvider.class);
+        tokenRepository = mock(ITokenRepository.class);
+        tokenService = new TokenService(tokenProvider); // utilise le vrai service
+        loginUseCase = new LoginUseCase(passwordService, credentialsRepository, tokenService, tokenRepository);
     }
 
     private LoginCommand generateCommand() {
@@ -49,77 +46,81 @@ public class LoginUseCaseUnitTest {
     }
 
     @Test
-    public void login_shouldThrowUserNotFoundException_whenEmailDoesNotExist() {
+    void login_shouldThrowUserNotFoundException_whenEmailDoesNotExist() {
         LoginCommand command = generateCommand();
 
-        when(this.credentialsRepository.findByEmail(command.email())).thenReturn(Optional.empty());
+        when(credentialsRepository.findByEmail(command.email())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> {
-            this.loginUseCase.login(command);
-        });
+        assertThrows(UserNotFoundException.class, () -> loginUseCase.execute(command));
     }
 
     @Test
     void login_shouldThrowPasswordNotMatchException_whenPasswordIsIncorrect() {
         LoginCommand command = generateCommand();
+        Credentials credentials = mock(Credentials.class);
 
-        Credentials existingCredentials = mock(Credentials.class);
+        when(credentialsRepository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
+        when(credentials.getPassword()).thenReturn("hashed-password");
+        when(passwordService.matches(command.password(), "hashed-password")).thenReturn(false);
 
-        when(this.credentialsRepository.findByEmail(command.email())).thenReturn(Optional.of(existingCredentials));
-
-        when(this.passwordService.matches(command.password(), existingCredentials.getPassword())).thenReturn(false);
-
-        assertThrows(PasswordNotMatchException.class, () -> {
-            this.loginUseCase.login(command);
-        });
+        assertThrows(PasswordNotMatchException.class, () -> loginUseCase.execute(command));
     }
 
     @Test
     void login_shouldReturnTokens_whenCredentialsAreValid() {
         LoginCommand command = generateCommand();
         UUID userId = UUID.randomUUID();
-        Role consumerRole = new Role(RoleName.CONSUMER, null);
-
+        Role role = new Role(RoleName.CONSUMER, null);
         Credentials credentials = mock(Credentials.class);
+
         when(credentials.getId()).thenReturn(userId);
-        when(credentials.getRole()).thenReturn(consumerRole);
-        when(credentials.getPassword()).thenReturn("hashed");
+        when(credentials.getRole()).thenReturn(role);
+        when(credentials.getPassword()).thenReturn("hashed-password");
 
-        when(this.credentialsRepository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
-        when(this.passwordService.matches(command.password(), "hashed")).thenReturn(true);
-        when(this.tokenProvider.generateAccessToken(any())).thenReturn("access-token");
-        when(this.tokenProvider.generateRefreshToken(any())).thenReturn("refresh-token");
-        when(this.tokenProvider.extractJtiFromToken("refresh-token")).thenReturn("jti-value");
+        when(credentialsRepository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
+        when(passwordService.matches(command.password(), "hashed-password")).thenReturn(true);
 
-        Token resultToken = this.loginUseCase.login(command);
+        when(tokenProvider.generateAccessToken(any(TokenPayload.class)))
+                .thenReturn("access-token");
+        when(tokenProvider.generateRefreshToken(any(TokenPayload.class), any(Duration.class)))
+                .thenReturn("refresh-token");
+        when(tokenProvider.extractJtiFromToken("refresh-token"))
+                .thenReturn("jti-value");
 
-        assertEquals("access-token", resultToken.getAccessToken());
-        assertEquals("refresh-token", resultToken.getRefreshToken());
+        Token result = loginUseCase.execute(command);
+
+        assertNotNull(result);
+        assertEquals("access-token", result.getAccessToken());
+        assertEquals("refresh-token", result.getRefreshToken());
     }
 
     @Test
     void login_shouldStoreRefreshTokenWithCorrectParameters_whenLoginIsSuccessful() {
         LoginCommand command = generateCommand();
         UUID userId = UUID.randomUUID();
-        Role consumerRole = new Role(RoleName.CONSUMER, null);
-
+        Role role = new Role(RoleName.CONSUMER, null);
         Credentials credentials = mock(Credentials.class);
+
         when(credentials.getId()).thenReturn(userId);
-        when(credentials.getRole()).thenReturn(consumerRole);
-        when(credentials.getPassword()).thenReturn("hashed");
+        when(credentials.getRole()).thenReturn(role);
+        when(credentials.getPassword()).thenReturn("hashed-password");
 
-        when(this.credentialsRepository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
-        when(this.passwordService.matches(command.password(), "hashed")).thenReturn(true);
-        when(this.tokenProvider.generateAccessToken(any())).thenReturn("access-token");
-        when(this.tokenProvider.generateRefreshToken(any())).thenReturn("refresh-token");
-        when(this.tokenProvider.extractJtiFromToken("refresh-token")).thenReturn("jti-value");
+        when(credentialsRepository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
+        when(passwordService.matches(command.password(), "hashed-password")).thenReturn(true);
 
-        this.loginUseCase.login(command);
+        when(tokenProvider.generateAccessToken(any(TokenPayload.class)))
+                .thenReturn("access-token");
+        when(tokenProvider.generateRefreshToken(any(TokenPayload.class), any(Duration.class)))
+                .thenReturn("refresh-token");
+        when(tokenProvider.extractJtiFromToken("refresh-token"))
+                .thenReturn("jti-value");
+
+        loginUseCase.execute(command);
 
         verify(tokenRepository).storeRefreshToken(
                 eq("jti-value"),
                 eq(userId.toString()),
-                eq(Duration.ofMillis(1209600000)));
+                eq(Duration.ofDays(14))
+        );
     }
-
 }

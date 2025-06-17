@@ -27,7 +27,7 @@ public class RegisterUseCase implements IRegisterUseCase {
     }
 
     @Override
-    public UUID register(RegisterCommand command) {
+    public UUID execute(RegisterCommand command) {
         ensureEmailIsUnique(command.email());
 
         String hashedPassword = hashPassword(command.password());

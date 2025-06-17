@@ -59,7 +59,7 @@ public class RegisterUseCaseUnitTest {
                 when(credentialsRepository.findByEmail(command.email()))
                                 .thenReturn(Optional.of(existingCredentials));
 
-                assertThrows(EmailAlreadyUsedException.class, () -> registerUseCase.register(command));
+                assertThrows(EmailAlreadyUsedException.class, () -> registerUseCase.execute(command));
         }
 
         @Test
@@ -75,7 +75,7 @@ public class RegisterUseCaseUnitTest {
 
                 assertThrows(
                                 CannotHashPasswordException.class,
-                                () -> registerUseCase.register(command));
+                                () -> registerUseCase.execute(command));
         }
 
         @Test
@@ -94,7 +94,7 @@ public class RegisterUseCaseUnitTest {
 
                 assertThrows(
                                 RegistrationTechnicalException.class,
-                                () -> registerUseCase.register(command));
+                                () -> registerUseCase.execute(command));
         }
 
         @Test
@@ -112,7 +112,7 @@ public class RegisterUseCaseUnitTest {
 
                 when(credentialsRepository.save(any(Credentials.class))).thenReturn(credentialsId);
 
-                UUID result = registerUseCase.register(command);
+                UUID result = registerUseCase.execute(command);
 
                 assertEquals(credentialsId, result);
 

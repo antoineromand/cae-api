@@ -1,5 +1,6 @@
 package com.pickandeat.shared.token;
 
+import java.time.Duration;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +40,7 @@ class TokenProviderTest {
 
     @Test
     void generateRefreshToken_shouldBeValid() {
-        String token = tokenProvider.generateRefreshToken(new TokenPayload(userId, role));
+        String token = tokenProvider.generateRefreshToken(new TokenPayload(userId, role), Duration.ofDays(2));
         assertNotNull(token);
         assertTrue(tokenProvider.verifyRefreshToken(token));
     }

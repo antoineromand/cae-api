@@ -21,8 +21,15 @@ public class TokenRepositoryImpl implements ITokenRepository {
         this.redisTemplate.opsForValue().set(jti, userId, duration);
     }
 
+    @Override
     public String getUserIdByJti(String jti) {
         return this.redisTemplate.opsForValue().get(jti);
     }
+
+    @Override
+    public void deleteByJti(String jti) {
+        this.redisTemplate.delete(jti);
+    }
+
 
 }

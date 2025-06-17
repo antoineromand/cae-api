@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,7 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
                 "+33650333340",
                 LocalDate.parse(dateString, formatter),
                 new Role(RoleName.CONSUMER, null));
-        this.registerUseCase.register(command);
+        this.registerUseCase.execute(command);
     }
 
     @BeforeAll
@@ -51,7 +53,7 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     void login_shouldThrowUserNotFoundException_whenEmailDoesNotExist() {
         LoginCommand loginCommand = new LoginCommand("not-a-user@email.com", "LePoissonSteve?2");
 
-        assertThrows(UserNotFoundException.class, () -> this.loginUseCase.login(loginCommand));
+        assertThrows(UserNotFoundException.class, () -> this.loginUseCase.execute(loginCommand));
     }
 
     @Test
@@ -59,7 +61,7 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     void login_shouldThrowPasswordNotMatchException_whenPasswordIsIncorrect() {
         LoginCommand loginCommand = new LoginCommand("test@test.com", "MauvaisMotDePasse33?");
 
-        assertThrows(PasswordNotMatchException.class, () -> this.loginUseCase.login(loginCommand));
+        assertThrows(PasswordNotMatchException.class, () -> this.loginUseCase.execute(loginCommand));
     }
 
     @Test
@@ -67,9 +69,9 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     void login_shouldReturnToken_whenCredentialsAreValid() {
         LoginCommand loginCommand = new LoginCommand("test@test.com", "MotDePasseTest06?");
 
-        Token resultToken = this.loginUseCase.login(loginCommand);
+        Token resultToken = this.loginUseCase.execute(loginCommand);
 
-        assertFalse(resultToken.getAccessToken().isBlank());
-        assertFalse(resultToken.getRefreshToken().isBlank());
+        Assertions.assertFalse(resultToken.getAccessToken().isBlank());
+        Assertions.assertFalse(resultToken.getRefreshToken().isBlank());
     }
 }
