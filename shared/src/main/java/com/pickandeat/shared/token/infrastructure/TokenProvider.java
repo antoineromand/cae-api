@@ -53,29 +53,16 @@ public class TokenProvider implements ITokenProvider {
 
     @Override
     public TokenPayload decodeAccessToken(String accessToken) {
-        try {
-            String[] parts = accessToken.split("\\.");
-            if (parts.length != 3) {
-                throw new IllegalArgumentException("Invalid Jwt format !");
-            }
+        Claims claims = Jwts.parser()
+                .verifyWith(this.getSigningKey())
+                .build()
+                .parseSignedClaims(accessToken)
+                .getPayload();
 
-            String payloadJson = new String(java.util.Base64.getUrlDecoder().decode(parts[1]));
-
-            ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> payload = mapper.readValue(payloadJson, new TypeReference<Map<String, Object>>() {
-            });
-
-            String id = (String) payload.get("sub");
-            String role = (String) payload.get("role");
-
-            if (id == null || role == null) {
-                throw new IllegalArgumentException("Missing claims");
-            }
-
-            return new TokenPayload(UUID.fromString(id), role);
-        } catch (Exception e) {
-            throw new RuntimeException("Error while decoding JWT " + e.getMessage());
-        }
+        return new TokenPayload(
+                UUID.fromString(claims.getSubject()),
+                claims.get("role").toString()
+        );
     }
 
     @Override
