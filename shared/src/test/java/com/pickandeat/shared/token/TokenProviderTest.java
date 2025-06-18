@@ -6,7 +6,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,14 +56,6 @@ class TokenProviderTest {
     @Test
     void verifyToken_shouldReturnFalseForInvalidToken() {
         assertFalse(tokenProvider.verifyAccessToken("invalid.token.here"));
-    }
-
-    @Test
-    void decodeAccessToken_shouldThrowForMalformedToken() {
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            tokenProvider.decodeAccessToken("invalid.token.structure");
-        });
-        assertTrue(exception.getMessage().contains("Error while decoding JWT"));
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.pickandeat.api.config;
+package com.pickandeat.api.config.filter;
 
 import com.pickandeat.authentication.domain.valueobject.Scope;
 import com.pickandeat.authentication.infrastructure.model.RoleEntity;
@@ -19,7 +19,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,6 +28,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
     private final RoleEntityJPARepository roleEntityJPARepository;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return !path.startsWith("/private/");
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -67,7 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Set<Scope> resolveScopesFromRole(String roleName) {
-        return this.roleEntityJPARepository.findByName(roleName)
+        return this.roleEntityJPARepository.findByNameWithScopes(roleName)
                 .map(RoleEntity::getScopes)
                 .map(set -> set.stream()
                         .map(se -> new Scope(se.getAction(), se.getTarget()))

@@ -1,4 +1,4 @@
-package com.pickandeat.api.config;
+package com.pickandeat.api.config.filter;
 
 import com.pickandeat.authentication.domain.valueobject.Scope;
 import org.springframework.security.core.GrantedAuthority;
