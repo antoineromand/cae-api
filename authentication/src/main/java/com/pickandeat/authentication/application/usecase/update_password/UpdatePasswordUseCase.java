@@ -22,27 +22,37 @@ public class UpdatePasswordUseCase implements IUpdatePasswordUseCase {
     }
 
     public void execute(UpdatePasswordCommand command) {
-        // find user By userId -> return Domain
-        Credentials credentials = this.credentialsRepository.findByUserId(command.userId().toString()).orElseThrow(() -> new UserNotFoundException(command.userId().toString()));
-        // match oldPassword with userId password
-        if (!this.passwordService.matches(command.oldPassword(),  credentials.getPassword())) {
+        Credentials credentials = this.findCredentials(command.userId().toString());
+        this.checkOldPassword(command.oldPassword(), credentials.getPassword());
+        String encryptedPassword = this.hashPassword(command.newPassword());
+        credentials.changePassword(encryptedPassword);
+        this.updateCredentials(credentials);
+        // TODO: send confirmation email
+    }
+
+    private Credentials findCredentials(String userId) {
+        return this.credentialsRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
+    }
+
+    private void checkOldPassword(String oldPassword, String currentHashedPassword) {
+        if (!this.passwordService.matches(oldPassword,  currentHashedPassword)) {
             throw new PasswordNotMatchException();
         }
-        // encrypt newPassword
-        String encryptedPassword;
+    }
+
+    private String hashPassword(String password) {
         try {
-            encryptedPassword = this.passwordService.hashPassword(command.newPassword());
+            return this.passwordService.hashPassword(password);
         } catch (Exception e) {
             throw new CannotHashPasswordException(e);
         }
-        // change password -> Domain
-        credentials.changePassword(encryptedPassword);
-        // call save method from credentials repository
+    }
+
+    private void updateCredentials(Credentials credentials) {
         try {
             this.credentialsRepository.save(credentials);
         } catch (Exception e) {
             throw new DatabaseTechnicalException("Failed to update credentials", e);
         }
-        // TODO: send confirmation email
     }
 }
