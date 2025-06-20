@@ -12,7 +12,7 @@ import com.pickandeat.shared.token.infrastructure.TokenProvider;
 public class SharedJwtTokenConfig {
     @Bean
     public TokenProvider tokenProvider(SecurityJwtConfig config) {
-        return new TokenProvider(config.getSecret(), config.getAccessExpirationMs(), config.getRefreshExpirationMs());
+        return new TokenProvider(config.getSecret(), config.getAccessExpirationMs());
     }
 
     @Bean

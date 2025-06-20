@@ -8,7 +8,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 public class SecurityJwtConfig {
     private String secret;
     private long accessExpirationMs;
-    private long refreshExpirationMs;
 
     public String getSecret() {
         return secret;
@@ -18,9 +17,6 @@ public class SecurityJwtConfig {
         return accessExpirationMs;
     }
 
-    public long getRefreshExpirationMs() {
-        return refreshExpirationMs;
-    }
 
     public void setSecret(String secret) {
         this.secret = secret;
@@ -30,7 +26,4 @@ public class SecurityJwtConfig {
         this.accessExpirationMs = accessExpirationMs;
     }
 
-    public void setRefreshExpirationMs(long refreshExpirationMs) {
-        this.refreshExpirationMs = refreshExpirationMs;
-    }
 }
