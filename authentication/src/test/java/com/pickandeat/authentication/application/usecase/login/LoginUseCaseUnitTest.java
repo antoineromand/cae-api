@@ -37,7 +37,7 @@ public class LoginUseCaseUnitTest {
         passwordService = mock(IPasswordService.class);
         tokenProvider = mock(ITokenProvider.class);
         tokenRepository = mock(ITokenRepository.class);
-        tokenService = new TokenService(tokenProvider); // utilise le vrai service
+        tokenService = new TokenService(tokenProvider);
         loginUseCase = new LoginUseCase(passwordService, credentialsRepository, tokenService, tokenRepository);
     }
 
@@ -120,7 +120,7 @@ public class LoginUseCaseUnitTest {
         verify(tokenRepository).storeRefreshToken(
                 eq("jti-value"),
                 eq(userId.toString()),
-                eq(Duration.ofDays(14))
+                eq(TokenService.MAX_DURATION_REFRESH_TOKEN)
         );
     }
 }

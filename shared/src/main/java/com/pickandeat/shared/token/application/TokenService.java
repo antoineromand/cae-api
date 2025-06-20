@@ -9,6 +9,7 @@ import com.pickandeat.shared.token.domain.TokenPayload;
 
 public class TokenService {
     private final ITokenProvider tokenProvider;
+    public static final Duration MAX_DURATION_REFRESH_TOKEN = Duration.ofDays(7);
 
     public TokenService(ITokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;

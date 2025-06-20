@@ -1,6 +1,6 @@
 package com.pickandeat.authentication.application.usecase.login;
 
-import java.time.Duration;
+
 import java.util.UUID;
 
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
@@ -21,7 +21,6 @@ public class LoginUseCase implements ILoginUseCase {
         private final ICredentialsRepository credentialsRepository;
         private final TokenService tokenService;
         private final ITokenRepository tokenRepository;
-        private static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
 
         public LoginUseCase(IPasswordService passwordService, ICredentialsRepository repository,
                         TokenService tokenService, ITokenRepository tokenRepository) {
@@ -51,14 +50,13 @@ public class LoginUseCase implements ILoginUseCase {
 
         private Token generateTokens(UUID id, String role) {
                 String accessToken = this.tokenService.createAccessToken(id, role);
-                String refreshToken = this.tokenService.createRefreshToken(id, role, REFRESH_TOKEN_DURATION);
-                this.storeRefreshTokenInCache(this.tokenService.extractJti(refreshToken), id.toString(),
-                                REFRESH_TOKEN_DURATION);
+                String refreshToken = this.tokenService.createRefreshToken(id, role, TokenService.MAX_DURATION_REFRESH_TOKEN);
+                this.storeRefreshTokenInCache(this.tokenService.extractJti(refreshToken), id.toString());
                 return new Token(accessToken, refreshToken);
         }
 
-        private void storeRefreshTokenInCache(String jti, String userId, Duration duration) {
-                this.tokenRepository.storeRefreshToken(jti, userId, duration);
+        private void storeRefreshTokenInCache(String jti, String userId) {
+                this.tokenRepository.storeRefreshToken(jti, userId, TokenService.MAX_DURATION_REFRESH_TOKEN);
         }
 
 }
