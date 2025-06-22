@@ -1,4 +1,4 @@
-package com.pickandeat.authentication.application.usecase.refresh;
+package com.pickandeat.authentication.application.usecase.refresh_token;
 
 import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;

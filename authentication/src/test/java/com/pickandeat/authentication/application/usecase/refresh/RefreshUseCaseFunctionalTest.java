@@ -7,6 +7,7 @@ import com.pickandeat.authentication.application.exceptions.application.JtiNotFo
 import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.application.usecase.login.LoginCommand;
 import com.pickandeat.authentication.application.usecase.login.LoginUseCase;
+import com.pickandeat.authentication.application.usecase.refresh_token.RefreshTokenUseCase;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
 import com.pickandeat.authentication.domain.enums.RoleName;

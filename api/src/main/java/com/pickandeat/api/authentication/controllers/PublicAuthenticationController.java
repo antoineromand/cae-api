@@ -10,7 +10,7 @@ import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.usecase.login.ILoginUseCase;
 import com.pickandeat.authentication.application.usecase.login.LoginCommand;
 import com.pickandeat.authentication.application.usecase.logout.ILogoutUseCase;
-import com.pickandeat.authentication.application.usecase.refresh.IRefreshUseCase;
+import com.pickandeat.authentication.application.usecase.refresh_token.IRefreshUseCase;
 import com.pickandeat.authentication.application.usecase.register.IRegisterUseCase;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 import io.swagger.v3.oas.annotations.Operation;
