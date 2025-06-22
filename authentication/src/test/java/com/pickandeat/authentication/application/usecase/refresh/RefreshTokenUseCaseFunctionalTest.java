@@ -29,7 +29,7 @@ import java.util.UUID;
 
 @SpringBootTest(classes = TestConfiguration.class)
 @Transactional
-public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
+public class RefreshTokenUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
 
     @Autowired
     LoginUseCase loginUseCase;

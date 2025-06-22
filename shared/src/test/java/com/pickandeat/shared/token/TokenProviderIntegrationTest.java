@@ -1,20 +1,16 @@
 package com.pickandeat.shared.token;
 
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.pickandeat.shared.token.application.TokenService;
+import com.pickandeat.shared.token.domain.TokenPayload;
+import com.pickandeat.shared.token.infrastructure.TokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.pickandeat.shared.token.domain.TokenPayload;
-import com.pickandeat.shared.token.infrastructure.TokenProvider;
+import java.util.UUID;
 
-class TokenProviderTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class TokenProviderIntegrationTest {
 
     private TokenProvider tokenProvider;
     private final String secret = java.util.Base64.getEncoder()

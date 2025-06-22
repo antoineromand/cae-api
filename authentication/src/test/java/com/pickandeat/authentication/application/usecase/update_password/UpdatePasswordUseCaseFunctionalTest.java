@@ -24,7 +24,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = TestConfiguration.class)
-class UpdatePasswordFunctionalTest extends AbstractDatabaseContainersTest {
+class UpdatePasswordUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
 
     private static final String OLD_PASSWORD = "clearPassword06?";
     private static final String NEW_PASSWORD = "clearPassword07?";
