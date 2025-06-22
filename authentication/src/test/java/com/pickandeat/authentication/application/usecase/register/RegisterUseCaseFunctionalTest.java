@@ -14,8 +14,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import com.pickandeat.authentication.TestConfiguration;
 import com.pickandeat.authentication.application.exceptions.EmailAlreadyUsedException;
-import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
-import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;

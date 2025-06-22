@@ -3,13 +3,13 @@ package com.pickandeat.authentication.application.usecase.register;
 import java.util.Date;
 import java.util.UUID;
 
+import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.pickandeat.authentication.application.exceptions.EmailAlreadyUsedException;
-import com.pickandeat.authentication.application.exceptions.RegistrationTechnicalException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;
 import com.pickandeat.authentication.domain.service.IPasswordService;
@@ -64,7 +64,7 @@ public class RegisterUseCase implements IRegisterUseCase {
         try {
             return credentialsRepository.save(credentials);
         } catch (DataIntegrityViolationException e) {
-            throw new RegistrationTechnicalException("Une erreur est survenue lors de l'inscription.", e);
+            throw new DatabaseTechnicalException("An error occurred while inserting the user", e);
         }
     }
 }

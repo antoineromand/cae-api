@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.pickandeat.authentication.application.exceptions.*;
+import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,9 +36,9 @@ public class AuthenticationExceptionHandler {
         return ResponseEntity.status(HttpStatusCode.valueOf(409)).body(new GenericApiResponse<>(ex.getMessage(), null));
     }
 
-    @ExceptionHandler(RegistrationTechnicalException.class)
+    @ExceptionHandler(DatabaseTechnicalException.class)
     public ResponseEntity<GenericApiResponse<String>> handleErrorInRegisterIfInsertNotWorking(
-            RegistrationTechnicalException ex) {
+            DatabaseTechnicalException ex) {
         return ResponseEntity.status(HttpStatusCode.valueOf(500)).body(new GenericApiResponse<>(ex.getMessage(), null));
     }
 

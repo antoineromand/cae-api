@@ -1,8 +1,8 @@
 package com.pickandeat.authentication.application.usecase.update_password;
 
-import com.pickandeat.authentication.application.exceptions.DatabaseTechnicalException;
 import com.pickandeat.authentication.application.exceptions.PasswordNotMatchException;
 import com.pickandeat.authentication.application.exceptions.UserNotFoundException;
+import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;

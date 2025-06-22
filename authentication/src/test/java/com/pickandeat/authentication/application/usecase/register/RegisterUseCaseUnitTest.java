@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import com.pickandeat.authentication.application.exceptions.EmailAlreadyUsedException;
-import com.pickandeat.authentication.application.exceptions.RegistrationTechnicalException;
+import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;
@@ -93,7 +93,7 @@ public class RegisterUseCaseUnitTest {
                                 .thenThrow(DataIntegrityViolationException.class);
 
                 assertThrows(
-                                RegistrationTechnicalException.class,
+                        DatabaseTechnicalException.class,
                                 () -> registerUseCase.execute(command));
         }
 
