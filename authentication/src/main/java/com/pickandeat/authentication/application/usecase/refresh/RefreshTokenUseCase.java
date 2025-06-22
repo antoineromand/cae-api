@@ -1,6 +1,6 @@
 package com.pickandeat.authentication.application.usecase.refresh;
 
-import com.pickandeat.authentication.application.exceptions.InvalidTokenException;
+import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
 import com.pickandeat.authentication.application.exceptions.application.JtiNotFoundInCacheException;
 import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.application.usecase.login.Token;
@@ -49,7 +49,7 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
 
     private void validateToken(String token) {
         if (!this.tokenService.isRefreshTokenValid(token)) {
-            throw new InvalidTokenException("Refresh token is not valid");
+            throw new InvalidTokenException();
         }
     }
 
@@ -87,7 +87,7 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
         Date oldExpiration = this.tokenService.extractExpiration(oldRefreshToken);
         Instant remainingExpiration = oldExpiration.toInstant();
         if (remainingExpiration.isBefore(Instant.now())) {
-            throw new InvalidTokenException("Refresh token is already expired");
+            throw new InvalidTokenException();
         }
         return Duration.between(Instant.now(), remainingExpiration);
     }

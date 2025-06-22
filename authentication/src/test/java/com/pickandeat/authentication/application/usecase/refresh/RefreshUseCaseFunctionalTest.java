@@ -1,7 +1,7 @@
 package com.pickandeat.authentication.application.usecase.refresh;
 
 import com.pickandeat.authentication.TestConfiguration;
-import com.pickandeat.authentication.application.exceptions.InvalidTokenException;
+import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
 import com.pickandeat.authentication.application.exceptions.application.JtiNotFoundInCacheException;
 import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.application.usecase.login.LoginCommand;

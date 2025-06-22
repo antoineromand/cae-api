@@ -1,7 +1,7 @@
 package com.pickandeat.authentication.application.usecase.logout;
 
 import com.pickandeat.authentication.TestConfiguration;
-import com.pickandeat.authentication.application.exceptions.InvalidTokenException;
+import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
 import com.pickandeat.authentication.domain.repository.ITokenRepository;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 import com.pickandeat.shared.token.application.TokenService;

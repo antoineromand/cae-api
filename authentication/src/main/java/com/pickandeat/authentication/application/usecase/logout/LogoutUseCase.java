@@ -1,6 +1,6 @@
 package com.pickandeat.authentication.application.usecase.logout;
 
-import com.pickandeat.authentication.application.exceptions.InvalidTokenException;
+import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
 import com.pickandeat.authentication.domain.repository.ITokenRepository;
 import com.pickandeat.shared.token.application.TokenService;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class LogoutUseCase implements ILogoutUseCase {
 
     private void validateToken(String refreshToken) {
         if (!this.tokenService.isRefreshTokenValid(refreshToken)) {
-            throw new InvalidTokenException("Invalid refresh token");
+            throw new InvalidTokenException();
         }
     }
 
