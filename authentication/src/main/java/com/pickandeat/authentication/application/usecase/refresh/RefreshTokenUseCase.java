@@ -1,15 +1,14 @@
 package com.pickandeat.authentication.application.usecase.refresh;
 
 import com.pickandeat.authentication.application.exceptions.InvalidTokenException;
-import com.pickandeat.authentication.application.exceptions.InvalidUserIdInRefreshToken;
-import com.pickandeat.authentication.application.exceptions.JtiNotFoundInCacheException;
+import com.pickandeat.authentication.application.exceptions.application.JtiNotFoundInCacheException;
+import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.application.usecase.login.Token;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
-import org.springframework.stereotype.Service;
-
 import com.pickandeat.authentication.domain.repository.ITokenRepository;
 import com.pickandeat.shared.token.application.TokenService;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -60,13 +59,13 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
 
     private String getUserIdFromCache(String jti) {
         String userId = tokenRepository.getUserIdByJti(jti);
-        if (userId == null) throw new JtiNotFoundInCacheException("Jti not found");
+        if (userId == null) throw new JtiNotFoundInCacheException();
         return userId;
     }
 
     private Credentials getCredentials(String userId) {
         return credentialsRepository.findByUserId(userId)
-                .orElseThrow(() -> new InvalidUserIdInRefreshToken("User not found"));
+                .orElseThrow(UserNotFoundException::new);
     }
 
     private void deleteOldJti(String jti) {

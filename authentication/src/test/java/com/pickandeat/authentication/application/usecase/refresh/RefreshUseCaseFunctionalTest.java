@@ -2,8 +2,8 @@ package com.pickandeat.authentication.application.usecase.refresh;
 
 import com.pickandeat.authentication.TestConfiguration;
 import com.pickandeat.authentication.application.exceptions.InvalidTokenException;
-import com.pickandeat.authentication.application.exceptions.InvalidUserIdInRefreshToken;
-import com.pickandeat.authentication.application.exceptions.JtiNotFoundInCacheException;
+import com.pickandeat.authentication.application.exceptions.application.JtiNotFoundInCacheException;
+import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.application.usecase.login.LoginCommand;
 import com.pickandeat.authentication.application.usecase.login.LoginUseCase;
 import com.pickandeat.authentication.application.usecase.login.Token;
@@ -85,7 +85,7 @@ public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest
         String expectedJti = this.tokenService.extractJti(refreshToken);
         this.tokenRepository.storeRefreshToken(expectedJti, expectedUserId.toString(), Duration.ofDays(3));
 
-        Assertions.assertThrows(InvalidUserIdInRefreshToken.class, () -> this.refreshUseCase.execute(refreshToken));
+        Assertions.assertThrows(UserNotFoundException.class, () -> this.refreshUseCase.execute(refreshToken));
     }
 
 

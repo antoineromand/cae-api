@@ -1,8 +1,8 @@
 package com.pickandeat.authentication.application.usecase.update_password;
 
 import com.pickandeat.authentication.TestConfiguration;
-import com.pickandeat.authentication.application.exceptions.PasswordNotMatchException;
-import com.pickandeat.authentication.application.exceptions.UserNotFoundException;
+import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
+import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
@@ -65,11 +65,9 @@ class UpdatePasswordFunctionalTest extends AbstractDatabaseContainersTest {
     @Test
     @Transactional
     void shouldThrow_whenOldPasswordDoesNotMatch() {
-        // given
         UpdatePasswordCommand command =
                 new UpdatePasswordCommand(existingUserId, "wrongOldPwd", NEW_PASSWORD);
 
-        // expect
         assertThrows(PasswordNotMatchException.class,
                 () -> updatePasswordUseCase.execute(command));
     }

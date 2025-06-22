@@ -2,8 +2,11 @@ package com.pickandeat.api.authentication.exception;
 
 import com.pickandeat.api.authentication.controllers.PublicAuthenticationController;
 import com.pickandeat.api.shared.GenericApiResponse;
-import com.pickandeat.authentication.application.exceptions.*;
+import com.pickandeat.authentication.application.exceptions.InvalidTokenException;
 import com.pickandeat.authentication.application.exceptions.application.EmailAlreadyUsedException;
+import com.pickandeat.authentication.application.exceptions.application.JtiNotFoundInCacheException;
+import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
+import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +56,7 @@ public class AuthenticationExceptionHandler {
         return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(new GenericApiResponse<>(ex.getMessage(), null));
     }
 
-    @ExceptionHandler({InvalidTokenException.class, InvalidUserIdInRefreshToken.class, JtiNotFoundInCacheException.class})
+    @ExceptionHandler({InvalidTokenException.class, JtiNotFoundInCacheException.class})
     public ResponseEntity<GenericApiResponse<String>> handleInvalidTokenException(Exception ex) {
         return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(new GenericApiResponse<>("Error with the refresh token", null));
     }

@@ -1,7 +1,7 @@
 package com.pickandeat.authentication.application.usecase.login;
 
-import com.pickandeat.authentication.application.exceptions.PasswordNotMatchException;
-import com.pickandeat.authentication.application.exceptions.UserNotFoundException;
+import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
+import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
@@ -19,7 +19,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class LoginUseCaseUnitTest {

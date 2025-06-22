@@ -1,8 +1,8 @@
 package com.pickandeat.authentication.application.usecase.refresh;
 
 import com.pickandeat.authentication.application.exceptions.InvalidTokenException;
-import com.pickandeat.authentication.application.exceptions.InvalidUserIdInRefreshToken;
-import com.pickandeat.authentication.application.exceptions.JtiNotFoundInCacheException;
+import com.pickandeat.authentication.application.exceptions.application.JtiNotFoundInCacheException;
+import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.application.usecase.login.Token;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
@@ -19,7 +19,8 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class RefreshTokenUseCaseUnitTest {
@@ -71,7 +72,7 @@ public class RefreshTokenUseCaseUnitTest {
         when(tokenRepository.getUserIdByJti(jti)).thenReturn(userId);
         when(credentialsRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
-        assertThrows(InvalidUserIdInRefreshToken.class, () -> refreshTokenUseCase.execute(validToken));
+        assertThrows(UserNotFoundException.class, () -> refreshTokenUseCase.execute(validToken));
     }
 
     @Test

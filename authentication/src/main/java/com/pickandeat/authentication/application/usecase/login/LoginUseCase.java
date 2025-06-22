@@ -1,18 +1,17 @@
 package com.pickandeat.authentication.application.usecase.login;
 
 
-import java.util.UUID;
-
-import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
-import org.springframework.stereotype.Service;
-
-import com.pickandeat.authentication.application.exceptions.PasswordNotMatchException;
-import com.pickandeat.authentication.application.exceptions.UserNotFoundException;
+import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
+import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.domain.Credentials;
+import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.repository.ITokenRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import com.pickandeat.shared.token.application.TokenService;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -39,7 +38,7 @@ public class LoginUseCase implements ILoginUseCase {
 
         private Credentials getCredentials(LoginCommand command) {
                 return this.credentialsRepository.findByEmail(command.email())
-                                .orElseThrow(() -> new UserNotFoundException(command.email()));
+                        .orElseThrow(UserNotFoundException::new);
         }
 
         private void checkPassword(LoginCommand command, String hashedPassword) {
