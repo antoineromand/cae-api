@@ -1,9 +1,9 @@
 package com.pickandeat.authentication.application.usecase.refresh;
 
+import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
 import com.pickandeat.authentication.application.exceptions.application.JtiNotFoundInCacheException;
 import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
-import com.pickandeat.authentication.application.usecase.login.Token;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
@@ -121,7 +121,7 @@ public class RefreshTokenUseCaseUnitTest {
 
         when(tokenService.extractJti(newRefreshToken)).thenReturn(newJti);
 
-        Token result = refreshTokenUseCase.execute(token);
+        TokenPair result = refreshTokenUseCase.execute(token);
 
         assertEquals(newAccessToken,  result.getAccessToken());
         assertEquals(newRefreshToken, result.getRefreshToken());

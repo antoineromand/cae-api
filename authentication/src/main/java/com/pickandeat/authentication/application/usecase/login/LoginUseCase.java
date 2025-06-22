@@ -1,6 +1,7 @@
 package com.pickandeat.authentication.application.usecase.login;
 
 
+import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
 import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.domain.Credentials;
@@ -30,7 +31,7 @@ public class LoginUseCase implements ILoginUseCase {
         }
 
         @Override
-        public Token execute(LoginCommand command) {
+        public TokenPair execute(LoginCommand command) {
                 Credentials credentials = this.getCredentials(command);
                 this.checkPassword(command, credentials.getPassword());
                 return this.generateTokens(credentials.getId(), credentials.getRole().name().toString());
@@ -47,11 +48,11 @@ public class LoginUseCase implements ILoginUseCase {
                 }
         }
 
-        private Token generateTokens(UUID id, String role) {
+        private TokenPair generateTokens(UUID id, String role) {
                 String accessToken = this.tokenService.createAccessToken(id, role);
                 String refreshToken = this.tokenService.createRefreshToken(id, role, TokenService.MAX_DURATION_REFRESH_TOKEN);
                 this.storeRefreshTokenInCache(this.tokenService.extractJti(refreshToken), id.toString());
-                return new Token(accessToken, refreshToken);
+                return new TokenPair(accessToken, refreshToken);
         }
 
         private void storeRefreshTokenInCache(String jti, String userId) {

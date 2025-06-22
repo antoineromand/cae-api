@@ -1,12 +1,12 @@
 package com.pickandeat.authentication.application.usecase.refresh;
 
 import com.pickandeat.authentication.TestConfiguration;
+import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
 import com.pickandeat.authentication.application.exceptions.application.JtiNotFoundInCacheException;
 import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.application.usecase.login.LoginCommand;
 import com.pickandeat.authentication.application.usecase.login.LoginUseCase;
-import com.pickandeat.authentication.application.usecase.login.Token;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
 import com.pickandeat.authentication.domain.enums.RoleName;
@@ -45,9 +45,9 @@ public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest
     @Autowired
     ITokenRepository tokenRepository;
 
-    Token token;
+    TokenPair token;
 
-    public Token createCredentials() {
+    public TokenPair createCredentials() {
         String dateString = "2025-05-24";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         RegisterCommand command = new RegisterCommand(
@@ -93,7 +93,7 @@ public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest
     void refreshAccessToken_shouldReturnNewTokenPair_whenTokenIsValid() {
         String oldRefreshToken = this.token.getRefreshToken();
 
-        Token newTokens = this.refreshUseCase.execute(oldRefreshToken);
+        TokenPair newTokens = this.refreshUseCase.execute(oldRefreshToken);
 
         Assertions.assertNotNull(newTokens);
         Assertions.assertNotNull(newTokens.getAccessToken());
@@ -106,8 +106,8 @@ public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest
     void refreshAccessToken_shouldSupportRotationMultipleTimes() {
         String firstRefresh = token.getRefreshToken();
 
-        Token firstRotation = refreshUseCase.execute(firstRefresh);
-        Token secondRotation = refreshUseCase.execute(firstRotation.getRefreshToken());
+        TokenPair firstRotation = refreshUseCase.execute(firstRefresh);
+        TokenPair secondRotation = refreshUseCase.execute(firstRotation.getRefreshToken());
 
         Assertions.assertNotEquals(firstRotation.getAccessToken(), secondRotation.getAccessToken());
         Assertions.assertNotEquals(firstRotation.getRefreshToken(), secondRotation.getRefreshToken());

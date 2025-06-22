@@ -1,24 +1,18 @@
 package com.pickandeat.api.authentication.controllers;
 
-import java.util.UUID;
-
-import com.pickandeat.api.authentication.swagger.*;
-import com.pickandeat.authentication.application.usecase.logout.ILogoutUseCase;
-import com.pickandeat.authentication.application.usecase.refresh.IRefreshUseCase;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import com.pickandeat.api.authentication.dto.LoginRequestDto;
 import com.pickandeat.api.authentication.dto.RegisterRequestDto;
 import com.pickandeat.api.authentication.mapper.LoginRequestMapper;
 import com.pickandeat.api.authentication.mapper.RegisterRequestMapper;
+import com.pickandeat.api.authentication.swagger.*;
 import com.pickandeat.api.shared.GenericApiResponse;
+import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.usecase.login.ILoginUseCase;
 import com.pickandeat.authentication.application.usecase.login.LoginCommand;
-import com.pickandeat.authentication.application.usecase.login.Token;
+import com.pickandeat.authentication.application.usecase.logout.ILogoutUseCase;
+import com.pickandeat.authentication.application.usecase.refresh.IRefreshUseCase;
 import com.pickandeat.authentication.application.usecase.register.IRegisterUseCase;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -27,6 +21,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController()
 @RequestMapping("public/api/v1/authentication")
@@ -82,9 +80,9 @@ public class PublicAuthenticationController {
             @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/login")
-    public ResponseEntity<GenericApiResponse<Token>> login(@Valid @RequestBody LoginRequestDto dto) {
+    public ResponseEntity<GenericApiResponse<TokenPair>> login(@Valid @RequestBody LoginRequestDto dto) {
         LoginCommand command = LoginRequestMapper.toCommand(dto);
-        Token token = this.loginUseCase.execute(command);
+        TokenPair token = this.loginUseCase.execute(command);
         return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", token));
     }
 
@@ -96,9 +94,9 @@ public class PublicAuthenticationController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping("/refresh-token")
-    public ResponseEntity<GenericApiResponse<Token>> refreshToken(@RequestHeader("Authorization") String refreshTokenHeader) {
+    public ResponseEntity<GenericApiResponse<TokenPair>> refreshToken(@RequestHeader("Authorization") String refreshTokenHeader) {
         String refreshToken = refreshTokenHeader.replace("Bearer ", "");
-        Token generatedTokens = this.refreshUseCase.execute(refreshToken);
+        TokenPair generatedTokens = this.refreshUseCase.execute(refreshToken);
         return ResponseEntity.ok(new GenericApiResponse<>("Refresh tokens successful.", generatedTokens));
     }
 
@@ -110,7 +108,7 @@ public class PublicAuthenticationController {
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/logout")
-    public ResponseEntity<GenericApiResponse<Token>> logout(@RequestHeader("Authorization") String refreshTokenHeader) {
+    public ResponseEntity<GenericApiResponse<?>> logout(@RequestHeader("Authorization") String refreshTokenHeader) {
         String refreshToken = refreshTokenHeader.replace("Bearer ", "");
         this.logoutUseCase.execute(refreshToken);
         return ResponseEntity.ok(new GenericApiResponse<>("Logout successful.", null));

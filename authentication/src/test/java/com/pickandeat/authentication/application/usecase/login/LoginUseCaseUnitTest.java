@@ -1,5 +1,6 @@
 package com.pickandeat.authentication.application.usecase.login;
 
+import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
 import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.domain.Credentials;
@@ -88,7 +89,7 @@ public class LoginUseCaseUnitTest {
         when(tokenProvider.extractJtiFromToken("refresh-token"))
                 .thenReturn("jti-value");
 
-        Token result = loginUseCase.execute(command);
+        TokenPair result = loginUseCase.execute(command);
 
         assertNotNull(result);
         assertEquals("access-token", result.getAccessToken());

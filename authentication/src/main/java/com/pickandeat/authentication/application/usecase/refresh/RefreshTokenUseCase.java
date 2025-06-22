@@ -1,9 +1,9 @@
 package com.pickandeat.authentication.application.usecase.refresh;
 
+import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
 import com.pickandeat.authentication.application.exceptions.application.JtiNotFoundInCacheException;
 import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
-import com.pickandeat.authentication.application.usecase.login.Token;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.repository.ITokenRepository;
@@ -32,7 +32,7 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
     }
 
     @Override
-    public Token execute(String token) {
+    public TokenPair execute(String token) {
         this.validateToken(token);
         String jti = this.extractJti(token);
         String userId = this.getUserIdFromCache(jti);
@@ -41,7 +41,7 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
         Duration remainingExpiration = this.getRemainingDuration(token);
         this.deleteOldJti(jti);
 
-        Token newTokens = this.createRotatedTokens(credentials, remainingExpiration);
+        TokenPair newTokens = this.createRotatedTokens(credentials, remainingExpiration);
         storeNewJti(newTokens.getRefreshToken(), credentials.getId(), remainingExpiration);
 
         return newTokens;
@@ -77,10 +77,10 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
         tokenRepository.storeRefreshToken(newJti, userId.toString(), ttl);
     }
 
-    private Token createRotatedTokens(Credentials c, Duration ttl) {
+    private TokenPair createRotatedTokens(Credentials c, Duration ttl) {
         String access  = tokenService.createAccessToken(c.getId(), c.getRole().name().toString());
         String refresh = tokenService.createRefreshToken(c.getId(), c.getRole().name().toString(), ttl);
-        return new Token(access, refresh);
+        return new TokenPair(access, refresh);
     }
 
     private Duration getRemainingDuration(String oldRefreshToken) {

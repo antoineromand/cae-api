@@ -1,7 +1,7 @@
 package com.pickandeat.authentication.application.usecase.refresh;
 
-import com.pickandeat.authentication.application.usecase.login.Token;
+import com.pickandeat.authentication.application.TokenPair;
 
 public interface IRefreshUseCase {
-    Token execute(String refreshToken);
+    TokenPair execute(String refreshToken);
 }

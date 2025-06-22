@@ -1,6 +1,7 @@
 package com.pickandeat.authentication.application.usecase.login;
 
 import com.pickandeat.authentication.TestConfiguration;
+import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
 import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
@@ -67,7 +68,7 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     void login_shouldReturnToken_whenCredentialsAreValid() {
         LoginCommand loginCommand = new LoginCommand("test@test.com", "MotDePasseTest06?");
 
-        Token resultToken = this.loginUseCase.execute(loginCommand);
+        TokenPair resultToken = this.loginUseCase.execute(loginCommand);
 
         Assertions.assertFalse(resultToken.getAccessToken().isBlank());
         Assertions.assertFalse(resultToken.getRefreshToken().isBlank());

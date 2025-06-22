@@ -1,5 +1,7 @@
 package com.pickandeat.authentication.application.usecase.login;
 
+import com.pickandeat.authentication.application.TokenPair;
+
 public interface ILoginUseCase {
-    Token execute(LoginCommand command);
+    TokenPair execute(LoginCommand command);
 }
