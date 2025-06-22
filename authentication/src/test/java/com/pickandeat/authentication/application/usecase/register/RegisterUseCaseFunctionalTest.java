@@ -1,24 +1,21 @@
 package com.pickandeat.authentication.application.usecase.register;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import com.pickandeat.authentication.TestConfiguration;
+import com.pickandeat.authentication.application.exceptions.application.EmailAlreadyUsedException;
+import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.authentication.domain.valueobject.Role;
+import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import com.pickandeat.authentication.TestConfiguration;
-import com.pickandeat.authentication.application.exceptions.EmailAlreadyUsedException;
-import com.pickandeat.authentication.domain.enums.RoleName;
-import com.pickandeat.authentication.domain.valueobject.Role;
-import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
-import jakarta.transaction.Transactional;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = TestConfiguration.class)
 @Testcontainers

@@ -1,18 +1,17 @@
 package com.pickandeat.authentication.application.usecase.register;
 
-import java.util.Date;
-import java.util.UUID;
-
+import com.pickandeat.authentication.application.exceptions.application.EmailAlreadyUsedException;
 import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
+import com.pickandeat.authentication.domain.Credentials;
+import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
+import com.pickandeat.authentication.domain.service.IPasswordService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.pickandeat.authentication.application.exceptions.EmailAlreadyUsedException;
-import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;
-import com.pickandeat.authentication.domain.service.IPasswordService;
+import java.util.Date;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -38,7 +37,7 @@ public class RegisterUseCase implements IRegisterUseCase {
 
     private void ensureEmailIsUnique(String email) {
         if (credentialsRepository.findByEmail(email).isPresent()) {
-            throw new EmailAlreadyUsedException(email);
+            throw new EmailAlreadyUsedException();
         }
     }
 

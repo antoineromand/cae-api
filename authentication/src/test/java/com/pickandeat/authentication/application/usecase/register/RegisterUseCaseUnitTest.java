@@ -1,5 +1,17 @@
 package com.pickandeat.authentication.application.usecase.register;
 
+import com.pickandeat.authentication.application.exceptions.application.EmailAlreadyUsedException;
+import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
+import com.pickandeat.authentication.domain.Credentials;
+import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;
+import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
+import com.pickandeat.authentication.domain.service.IPasswordService;
+import com.pickandeat.authentication.domain.valueobject.Role;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataIntegrityViolationException;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -7,22 +19,9 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import org.springframework.dao.DataIntegrityViolationException;
-
-import com.pickandeat.authentication.application.exceptions.EmailAlreadyUsedException;
-import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
-import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.authentication.domain.enums.RoleName;
-import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;
-import com.pickandeat.authentication.domain.service.IPasswordService;
-import com.pickandeat.authentication.domain.valueobject.Role;
 
 public class RegisterUseCaseUnitTest {
         private ICredentialsRepository credentialsRepository;

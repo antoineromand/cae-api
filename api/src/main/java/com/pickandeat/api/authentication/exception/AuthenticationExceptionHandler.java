@@ -1,9 +1,9 @@
 package com.pickandeat.api.authentication.exception;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.pickandeat.api.authentication.controllers.PublicAuthenticationController;
+import com.pickandeat.api.shared.GenericApiResponse;
 import com.pickandeat.authentication.application.exceptions.*;
+import com.pickandeat.authentication.application.exceptions.application.EmailAlreadyUsedException;
 import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.pickandeat.api.authentication.controllers.PublicAuthenticationController;
-import com.pickandeat.api.shared.GenericApiResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice(basePackageClasses = { PublicAuthenticationController.class })
 public class AuthenticationExceptionHandler {
