@@ -1,4 +1,4 @@
-package com.pickandeat.shared.token.domain;
+package com.pickandeat.shared.token;
 
 import java.util.UUID;
 

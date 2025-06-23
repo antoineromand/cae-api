@@ -1,21 +1,18 @@
 package com.pickandeat.authentication.infrastructure.repository;
 
-import java.time.Duration;
-import java.util.UUID;
-
-import static org.junit.Assert.assertEquals;
-
+import com.pickandeat.authentication.TestConfiguration;
+import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
+import com.pickandeat.authentication.infrastructure.repository.cache.TokenRepositoryImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.pickandeat.authentication.TestConfiguration;
-import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
-import com.pickandeat.authentication.infrastructure.repository.cache.TokenRepositoryImpl;
+import java.time.Duration;
+import java.util.UUID;
 
 @SpringBootTest(classes = TestConfiguration.class)
-public class TokenRepositoryImplTest extends AbstractDatabaseContainersTest {
+public class TokenRepositoryImplIntegrationTest extends AbstractDatabaseContainersTest {
     @Autowired
     TokenRepositoryImpl tokenRepositoryImpl;
 

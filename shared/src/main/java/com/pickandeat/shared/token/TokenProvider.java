@@ -1,17 +1,4 @@
-package com.pickandeat.shared.token.infrastructure;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
-
-import javax.crypto.SecretKey;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pickandeat.shared.token.domain.ITokenProvider;
-import com.pickandeat.shared.token.domain.TokenPayload;
+package com.pickandeat.shared.token;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -19,16 +6,20 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
+import javax.crypto.SecretKey;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
+import java.util.UUID;
+
 public class TokenProvider implements ITokenProvider {
 
-    private String secret;
-    private long accessExpirationMs;
-    private long refreshExpirationMs;
+    private final String secret;
+    private final long accessExpirationMs;
 
-    public TokenProvider(String secret, long accessExpirationMs, long refreshExpirationMs) {
+    public TokenProvider(String secret, long accessExpirationMs) {
         this.secret = secret;
         this.accessExpirationMs = accessExpirationMs;
-        this.refreshExpirationMs = refreshExpirationMs;
     }
 
     @Override
@@ -38,7 +29,7 @@ public class TokenProvider implements ITokenProvider {
 
     @Override
     public String generateRefreshToken(TokenPayload payload, Duration dynamicExpiration) {
-        return buildToken(payload, refreshExpirationMs);
+        return buildToken(payload, dynamicExpiration.toMillis());
     }
 
     @Override

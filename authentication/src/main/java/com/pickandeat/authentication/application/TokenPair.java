@@ -1,11 +1,11 @@
 
-package com.pickandeat.authentication.application.usecase.login;
+package com.pickandeat.authentication.application;
 
-public class Token {
+public class TokenPair {
     private final String accessToken;
     private final String refreshToken;
 
-    public Token(String accessToken, String refreshToken) {
+    public TokenPair(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }

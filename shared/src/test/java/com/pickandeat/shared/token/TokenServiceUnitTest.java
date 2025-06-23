@@ -1,21 +1,16 @@
 package com.pickandeat.shared.token;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-import com.pickandeat.shared.token.application.TokenService;
-import com.pickandeat.shared.token.domain.ITokenProvider;
-import com.pickandeat.shared.token.domain.TokenPayload;
-
-class TokenServiceTest {
+class TokenServiceUnitTest {
 
     private ITokenProvider tokenProvider;
     private TokenService tokenService;

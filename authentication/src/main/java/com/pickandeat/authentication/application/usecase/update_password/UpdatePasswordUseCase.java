@@ -1,10 +1,10 @@
 package com.pickandeat.authentication.application.usecase.update_password;
 
-import com.pickandeat.authentication.application.exceptions.DatabaseTechnicalException;
-import com.pickandeat.authentication.application.exceptions.PasswordNotMatchException;
-import com.pickandeat.authentication.application.exceptions.UserNotFoundException;
+import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
+import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
+import com.pickandeat.authentication.application.exceptions.technical.CannotHashPasswordException;
+import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
 import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class UpdatePasswordUseCase implements IUpdatePasswordUseCase {
     }
 
     private Credentials findCredentials(String userId) {
-        return this.credentialsRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        return this.credentialsRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
     }
 
     private void checkOldPassword(String oldPassword, String currentHashedPassword) {

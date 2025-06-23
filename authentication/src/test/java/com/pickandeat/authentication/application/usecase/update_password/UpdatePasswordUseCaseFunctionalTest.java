@@ -1,8 +1,8 @@
 package com.pickandeat.authentication.application.usecase.update_password;
 
 import com.pickandeat.authentication.TestConfiguration;
-import com.pickandeat.authentication.application.exceptions.PasswordNotMatchException;
-import com.pickandeat.authentication.application.exceptions.UserNotFoundException;
+import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
+import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
@@ -24,7 +24,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = TestConfiguration.class)
-class UpdatePasswordFunctionalTest extends AbstractDatabaseContainersTest {
+class UpdatePasswordUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
 
     private static final String OLD_PASSWORD = "clearPassword06?";
     private static final String NEW_PASSWORD = "clearPassword07?";
@@ -65,11 +65,9 @@ class UpdatePasswordFunctionalTest extends AbstractDatabaseContainersTest {
     @Test
     @Transactional
     void shouldThrow_whenOldPasswordDoesNotMatch() {
-        // given
         UpdatePasswordCommand command =
                 new UpdatePasswordCommand(existingUserId, "wrongOldPwd", NEW_PASSWORD);
 
-        // expect
         assertThrows(PasswordNotMatchException.class,
                 () -> updatePasswordUseCase.execute(command));
     }

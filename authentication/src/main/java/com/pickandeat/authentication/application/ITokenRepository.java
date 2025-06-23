@@ -1,4 +1,4 @@
-package com.pickandeat.authentication.domain.repository;
+package com.pickandeat.authentication.application;
 
 import java.time.Duration;
 

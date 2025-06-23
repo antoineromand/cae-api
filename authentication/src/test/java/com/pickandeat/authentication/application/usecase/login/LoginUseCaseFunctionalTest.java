@@ -1,11 +1,14 @@
 package com.pickandeat.authentication.application.usecase.login;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThrows;
-
+import com.pickandeat.authentication.TestConfiguration;
+import com.pickandeat.authentication.application.TokenPair;
+import com.pickandeat.authentication.application.exceptions.application.EmailNotFoundException;
+import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
+import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
+import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
+import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.authentication.domain.valueobject.Role;
+import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,14 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.pickandeat.authentication.TestConfiguration;
-import com.pickandeat.authentication.application.exceptions.PasswordNotMatchException;
-import com.pickandeat.authentication.application.exceptions.UserNotFoundException;
-import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
-import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
-import com.pickandeat.authentication.domain.enums.RoleName;
-import com.pickandeat.authentication.domain.valueobject.Role;
-import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import static org.junit.Assert.assertThrows;
 
 @SpringBootTest(classes = TestConfiguration.class)
 public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
@@ -53,7 +52,7 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     void login_shouldThrowUserNotFoundException_whenEmailDoesNotExist() {
         LoginCommand loginCommand = new LoginCommand("not-a-user@email.com", "LePoissonSteve?2");
 
-        assertThrows(UserNotFoundException.class, () -> this.loginUseCase.execute(loginCommand));
+        assertThrows(EmailNotFoundException.class, () -> this.loginUseCase.execute(loginCommand));
     }
 
     @Test
@@ -69,7 +68,7 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     void login_shouldReturnToken_whenCredentialsAreValid() {
         LoginCommand loginCommand = new LoginCommand("test@test.com", "MotDePasseTest06?");
 
-        Token resultToken = this.loginUseCase.execute(loginCommand);
+        TokenPair resultToken = this.loginUseCase.execute(loginCommand);
 
         Assertions.assertFalse(resultToken.getAccessToken().isBlank());
         Assertions.assertFalse(resultToken.getRefreshToken().isBlank());

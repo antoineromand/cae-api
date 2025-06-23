@@ -1,15 +1,14 @@
-package com.pickandeat.authentication.application.usecase.refresh;
+package com.pickandeat.authentication.application.usecase.refresh_token;
 
-import com.pickandeat.authentication.application.exceptions.InvalidTokenException;
-import com.pickandeat.authentication.application.exceptions.InvalidUserIdInRefreshToken;
-import com.pickandeat.authentication.application.exceptions.JtiNotFoundInCacheException;
-import com.pickandeat.authentication.application.usecase.login.Token;
+import com.pickandeat.authentication.application.ITokenRepository;
+import com.pickandeat.authentication.application.TokenPair;
+import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
+import com.pickandeat.authentication.application.exceptions.application.JtiNotFoundInCacheException;
+import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
+import com.pickandeat.shared.token.TokenService;
 import org.springframework.stereotype.Service;
-
-import com.pickandeat.authentication.domain.repository.ITokenRepository;
-import com.pickandeat.shared.token.application.TokenService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -33,7 +32,7 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
     }
 
     @Override
-    public Token execute(String token) {
+    public TokenPair execute(String token) {
         this.validateToken(token);
         String jti = this.extractJti(token);
         String userId = this.getUserIdFromCache(jti);
@@ -42,7 +41,7 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
         Duration remainingExpiration = this.getRemainingDuration(token);
         this.deleteOldJti(jti);
 
-        Token newTokens = this.createRotatedTokens(credentials, remainingExpiration);
+        TokenPair newTokens = this.createRotatedTokens(credentials, remainingExpiration);
         storeNewJti(newTokens.getRefreshToken(), credentials.getId(), remainingExpiration);
 
         return newTokens;
@@ -50,7 +49,7 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
 
     private void validateToken(String token) {
         if (!this.tokenService.isRefreshTokenValid(token)) {
-            throw new InvalidTokenException("Refresh token is not valid");
+            throw new InvalidTokenException();
         }
     }
 
@@ -60,13 +59,13 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
 
     private String getUserIdFromCache(String jti) {
         String userId = tokenRepository.getUserIdByJti(jti);
-        if (userId == null) throw new JtiNotFoundInCacheException("Jti not found");
+        if (userId == null) throw new JtiNotFoundInCacheException();
         return userId;
     }
 
     private Credentials getCredentials(String userId) {
         return credentialsRepository.findByUserId(userId)
-                .orElseThrow(() -> new InvalidUserIdInRefreshToken("User not found"));
+                .orElseThrow(UserNotFoundException::new);
     }
 
     private void deleteOldJti(String jti) {
@@ -78,17 +77,17 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
         tokenRepository.storeRefreshToken(newJti, userId.toString(), ttl);
     }
 
-    private Token createRotatedTokens(Credentials c, Duration ttl) {
+    private TokenPair createRotatedTokens(Credentials c, Duration ttl) {
         String access  = tokenService.createAccessToken(c.getId(), c.getRole().name().toString());
         String refresh = tokenService.createRefreshToken(c.getId(), c.getRole().name().toString(), ttl);
-        return new Token(access, refresh);
+        return new TokenPair(access, refresh);
     }
 
     private Duration getRemainingDuration(String oldRefreshToken) {
         Date oldExpiration = this.tokenService.extractExpiration(oldRefreshToken);
         Instant remainingExpiration = oldExpiration.toInstant();
         if (remainingExpiration.isBefore(Instant.now())) {
-            throw new InvalidTokenException("Refresh token is already expired");
+            throw new InvalidTokenException();
         }
         return Duration.between(Instant.now(), remainingExpiration);
     }

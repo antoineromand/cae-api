@@ -9,13 +9,13 @@ public class UpdatePasswordRequestDto {
     @NotBlank(message = "password must be provided.")
     @Size(min = 8)
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "password must contain at least 8 characters, including a lowercase letter, an uppercase letter, a digit, and a special character.")
-    @Schema(description = "User actual password", example = "AstrongPassw0rd!")
+    @Schema(description = "User actual password", example = "AOldstrongPassw0rd!")
     private final String oldPassword;
 
     @NotBlank(message = "password must be provided.")
     @Size(min = 8)
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "password must contain at least 8 characters, including a lowercase letter, an uppercase letter, a digit, and a special character.")
-    @Schema(description = "User new password", example = "AstrongPassw0rd!")
+    @Schema(description = "User new password", example = "ANewstrongPassw0rd!")
     private final String newPassword;
 
     public UpdatePasswordRequestDto(String oldPassword, String newPassword) {

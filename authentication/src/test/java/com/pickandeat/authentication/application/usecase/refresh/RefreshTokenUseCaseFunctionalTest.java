@@ -1,19 +1,20 @@
 package com.pickandeat.authentication.application.usecase.refresh;
 
 import com.pickandeat.authentication.TestConfiguration;
-import com.pickandeat.authentication.application.exceptions.InvalidTokenException;
-import com.pickandeat.authentication.application.exceptions.InvalidUserIdInRefreshToken;
-import com.pickandeat.authentication.application.exceptions.JtiNotFoundInCacheException;
+import com.pickandeat.authentication.application.ITokenRepository;
+import com.pickandeat.authentication.application.TokenPair;
+import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
+import com.pickandeat.authentication.application.exceptions.application.JtiNotFoundInCacheException;
+import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.application.usecase.login.LoginCommand;
 import com.pickandeat.authentication.application.usecase.login.LoginUseCase;
-import com.pickandeat.authentication.application.usecase.login.Token;
+import com.pickandeat.authentication.application.usecase.refresh_token.RefreshTokenUseCase;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
 import com.pickandeat.authentication.domain.enums.RoleName;
-import com.pickandeat.authentication.domain.repository.ITokenRepository;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
-import com.pickandeat.shared.token.application.TokenService;
+import com.pickandeat.shared.token.TokenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ import java.util.UUID;
 
 @SpringBootTest(classes = TestConfiguration.class)
 @Transactional
-public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
+public class RefreshTokenUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
 
     @Autowired
     LoginUseCase loginUseCase;
@@ -45,9 +46,9 @@ public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest
     @Autowired
     ITokenRepository tokenRepository;
 
-    Token token;
+    TokenPair token;
 
-    public Token createCredentials() {
+    public TokenPair createCredentials() {
         String dateString = "2025-05-24";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         RegisterCommand command = new RegisterCommand(
@@ -85,7 +86,7 @@ public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest
         String expectedJti = this.tokenService.extractJti(refreshToken);
         this.tokenRepository.storeRefreshToken(expectedJti, expectedUserId.toString(), Duration.ofDays(3));
 
-        Assertions.assertThrows(InvalidUserIdInRefreshToken.class, () -> this.refreshUseCase.execute(refreshToken));
+        Assertions.assertThrows(UserNotFoundException.class, () -> this.refreshUseCase.execute(refreshToken));
     }
 
 
@@ -93,7 +94,7 @@ public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest
     void refreshAccessToken_shouldReturnNewTokenPair_whenTokenIsValid() {
         String oldRefreshToken = this.token.getRefreshToken();
 
-        Token newTokens = this.refreshUseCase.execute(oldRefreshToken);
+        TokenPair newTokens = this.refreshUseCase.execute(oldRefreshToken);
 
         Assertions.assertNotNull(newTokens);
         Assertions.assertNotNull(newTokens.getAccessToken());
@@ -106,8 +107,8 @@ public class RefreshUseCaseFunctionalTest extends AbstractDatabaseContainersTest
     void refreshAccessToken_shouldSupportRotationMultipleTimes() {
         String firstRefresh = token.getRefreshToken();
 
-        Token firstRotation = refreshUseCase.execute(firstRefresh);
-        Token secondRotation = refreshUseCase.execute(firstRotation.getRefreshToken());
+        TokenPair firstRotation = refreshUseCase.execute(firstRefresh);
+        TokenPair secondRotation = refreshUseCase.execute(firstRotation.getRefreshToken());
 
         Assertions.assertNotEquals(firstRotation.getAccessToken(), secondRotation.getAccessToken());
         Assertions.assertNotEquals(firstRotation.getRefreshToken(), secondRotation.getRefreshToken());
