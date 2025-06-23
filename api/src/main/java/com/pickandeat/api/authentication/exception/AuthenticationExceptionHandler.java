@@ -1,5 +1,6 @@
 package com.pickandeat.api.authentication.exception;
 
+import com.pickandeat.api.authentication.controllers.PrivateAuthenticationController;
 import com.pickandeat.api.authentication.controllers.PublicAuthenticationController;
 import com.pickandeat.api.shared.ErrorApiResponse;
 import com.pickandeat.authentication.application.exceptions.application.*;
@@ -17,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestControllerAdvice(basePackageClasses = { PublicAuthenticationController.class })
+@RestControllerAdvice(basePackageClasses = {PublicAuthenticationController.class, PrivateAuthenticationController.class})
 public class AuthenticationExceptionHandler {
 
     private static final String CREDENTIALS_ERROR = "Error while login, please check your credentials.";
