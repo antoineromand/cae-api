@@ -1,0 +1,65 @@
+name: Run API tests on Tag
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Java 24
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+
+      - name: Make Gradle executable
+        run: chmod +x gradlew
+
+      - name: Run unit tests
+        run: ./gradlew unitTest
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Java 24
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+
+      - name: Make Gradle executable
+        run: chmod +x gradlew
+
+      - name: Run integration tests
+        run: ./gradlew integrationTest
+
+  functional-tests:
+    name: Functional Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Java 24
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '24'
+
+      - name: Make Gradle executable
+        run: chmod +x gradlew
+
+      - name: Run functional tests
+        run: ./gradlew functionalTest
