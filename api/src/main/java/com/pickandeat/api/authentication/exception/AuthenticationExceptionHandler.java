@@ -38,19 +38,25 @@ public class AuthenticationExceptionHandler {
     }
 
     @ExceptionHandler(EmailAlreadyUsedException.class)
-    public ResponseEntity<ErrorApiResponse> handleErrorInRegisterIfEmailExists(EmailAlreadyUsedException ex) {
+    public ResponseEntity<ErrorApiResponse> handleEmailAlreadyUsedException(EmailAlreadyUsedException ex) {
         return ResponseEntity.status(HttpStatusCode.valueOf(409)).body(new ErrorApiResponse(ex.getKey(), ex.getMessage(), 409, null));
     }
 
     @ExceptionHandler({DatabaseTechnicalException.class, CannotHashPasswordException.class})
-    public ResponseEntity<ErrorApiResponse> handleErrorInRegisterIfInsertNotWorking() {
+    public ResponseEntity<ErrorApiResponse> handleTechnicalException() {
         return ResponseEntity.status(HttpStatusCode.valueOf(500)).body(new ErrorApiResponse("INTERNAL_SERVER_ERROR", "The server encountered an internal error.", 500, null));
     }
 
-    @ExceptionHandler({ UserNotFoundException.class, PasswordNotMatchException.class })
-    public ResponseEntity<ErrorApiResponse> handleLoginError() {
+    @ExceptionHandler({EmailNotFoundException.class, PasswordNotMatchException.class})
+    public ResponseEntity<ErrorApiResponse> handleLoginExceptions() {
         return ResponseEntity.status(HttpStatusCode.valueOf(401))
                 .body(new ErrorApiResponse("INVALID_CREDENTIALS", CREDENTIALS_ERROR, 401, null));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorApiResponse> handleUserNotFoundException(UserNotFoundException ex) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(401))
+                .body(new ErrorApiResponse("USER_NOT_FOUND", ex.getMessage(), 401, null));
     }
 
     @ExceptionHandler(MissingRequestHeaderException.class)
@@ -59,7 +65,7 @@ public class AuthenticationExceptionHandler {
     }
 
     @ExceptionHandler({InvalidTokenException.class, JtiNotFoundInCacheException.class})
-    public ResponseEntity<ErrorApiResponse> handleInvalidTokenException(AbstractApplicationException ex) {
+    public ResponseEntity<ErrorApiResponse> handleInvalidTokenExceptions(AbstractApplicationException ex) {
         return ResponseEntity.status(HttpStatusCode.valueOf(400)).body(new ErrorApiResponse(ex.getKey(), ex.getMessage(), 400, null));
     }
 }

@@ -2,10 +2,17 @@ package com.pickandeat.api.authentication.controllers;
 
 import com.pickandeat.api.authentication.dto.UpdatePasswordRequestDto;
 import com.pickandeat.api.authentication.mapper.UpdatePasswordRequestMapper;
+import com.pickandeat.api.authentication.swagger.ErrorResponse;
+import com.pickandeat.api.authentication.swagger.LogoutApiResponse;
 import com.pickandeat.api.config.filter.CustomUserDetails;
 import com.pickandeat.api.shared.GenericApiResponse;
 import com.pickandeat.authentication.application.usecase.update_password.IUpdatePasswordUseCase;
 import com.pickandeat.authentication.application.usecase.update_password.UpdatePasswordCommand;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,8 +29,19 @@ public class PrivateAuthenticationController {
         this.updatePasswordUseCase = updatePasswordUseCase;
     }
 
+
     @PreAuthorize("hasRole('CONSUMER') and hasAuthority('SCOPE_UPDATE:USER-PASSWORD')")
     @PutMapping("update-password")
+    @Operation(summary = "Log out the user by invalidating the refresh token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Update password with success",
+                    content = @Content(schema = @Schema(implementation = LogoutApiResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Given password does not match with actual password",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @DeleteMapping("/logout")
     public ResponseEntity<GenericApiResponse<String>> test(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody UpdatePasswordRequestDto dto) {
         UpdatePasswordCommand command = UpdatePasswordRequestMapper.toCommand(dto, userDetails.getUsername());
         this.updatePasswordUseCase.execute(command);

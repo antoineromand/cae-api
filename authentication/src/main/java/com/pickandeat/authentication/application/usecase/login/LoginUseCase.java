@@ -3,8 +3,8 @@ package com.pickandeat.authentication.application.usecase.login;
 
 import com.pickandeat.authentication.application.ITokenRepository;
 import com.pickandeat.authentication.application.TokenPair;
+import com.pickandeat.authentication.application.exceptions.application.EmailNotFoundException;
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
-import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
@@ -39,7 +39,7 @@ public class LoginUseCase implements ILoginUseCase {
 
         private Credentials getCredentials(LoginCommand command) {
                 return this.credentialsRepository.findByEmail(command.email())
-                        .orElseThrow(UserNotFoundException::new);
+                        .orElseThrow(EmailNotFoundException::new);
         }
 
         private void checkPassword(LoginCommand command, String hashedPassword) {

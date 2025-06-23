@@ -2,8 +2,8 @@ package com.pickandeat.authentication.application.usecase.login;
 
 import com.pickandeat.authentication.TestConfiguration;
 import com.pickandeat.authentication.application.TokenPair;
+import com.pickandeat.authentication.application.exceptions.application.EmailNotFoundException;
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
-import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
 import com.pickandeat.authentication.domain.enums.RoleName;
@@ -52,7 +52,7 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     void login_shouldThrowUserNotFoundException_whenEmailDoesNotExist() {
         LoginCommand loginCommand = new LoginCommand("not-a-user@email.com", "LePoissonSteve?2");
 
-        assertThrows(UserNotFoundException.class, () -> this.loginUseCase.execute(loginCommand));
+        assertThrows(EmailNotFoundException.class, () -> this.loginUseCase.execute(loginCommand));
     }
 
     @Test
