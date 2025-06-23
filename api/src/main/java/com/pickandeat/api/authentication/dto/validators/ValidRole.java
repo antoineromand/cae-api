@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidRole {
-    String message() default "Invalid role. Must be one of: CONSUMER, ADMIN, PRO.";
+    String message() default "Invalid role.";
 
     Class<?>[] groups() default {};
 
