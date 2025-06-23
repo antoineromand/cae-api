@@ -13,6 +13,7 @@ import com.pickandeat.shared.token.ITokenProvider;
 import com.pickandeat.shared.token.TokenPayload;
 import com.pickandeat.shared.token.TokenService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -24,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+@Tag("unit")
 public class LoginUseCaseUnitTest {
 
     private ICredentialsRepository credentialsRepository;

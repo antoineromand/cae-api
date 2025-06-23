@@ -6,6 +6,7 @@ import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = TestConfiguration.class)
 @Testcontainers
+@Tag("functional")
 public class RegisterUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     @Autowired
     private RegisterUseCase registerUseCase;

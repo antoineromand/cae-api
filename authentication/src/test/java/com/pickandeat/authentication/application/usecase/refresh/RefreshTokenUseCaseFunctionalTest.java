@@ -17,6 +17,7 @@ import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseCon
 import com.pickandeat.shared.token.TokenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +30,7 @@ import java.util.UUID;
 
 @SpringBootTest(classes = TestConfiguration.class)
 @Transactional
+@Tag("functional")
 public class RefreshTokenUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
 
     @Autowired
