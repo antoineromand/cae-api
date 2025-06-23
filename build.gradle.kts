@@ -47,6 +47,31 @@ subprojects {
     }
 }
 
+tasks.register("unitTest") {
+	group = "verification"
+	description = "Run all unit tests across modules"
+	dependsOn(
+		subprojects.mapNotNull { it.tasks.findByName("unitTest") }
+	)
+}
+
+tasks.register("integrationTest") {
+	group = "verification"
+	description = "Run all integration tests across modules"
+	dependsOn(
+		subprojects.mapNotNull { it.tasks.findByName("integrationTest") }
+	)
+}
+
+tasks.register("functionalTest") {
+	group = "verification"
+	description = "Run all functional tests across modules"
+	dependsOn(
+		subprojects.mapNotNull { it.tasks.findByName("functionalTest") }
+	)
+}
+
+
 tasks.register<DefaultTask>("aggregateJavadoc") {
     group = "documentation"
     description = "Aggregates Javadoc from all subprojects."

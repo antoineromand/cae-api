@@ -12,6 +12,7 @@ import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseCon
 import com.pickandeat.authentication.infrastructure.repository.CredentialsEntityJPARepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = TestConfiguration.class)
+@Tag("functional")
 class UpdatePasswordUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
 
     private static final String OLD_PASSWORD = "clearPassword06?";

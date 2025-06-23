@@ -1,4 +1,4 @@
-import java.util.Properties
+import java.util.*
 
 
 plugins {
@@ -59,4 +59,31 @@ tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
 
 tasks.withType<Javadoc>().configureEach {
     (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+}
+
+tasks.register<Test>("unitTest") {
+    useJUnitPlatform {
+        includeTags("unit")
+    }
+}
+
+tasks.register<Test>("integrationTest") {
+    useJUnitPlatform {
+        includeTags("integration")
+    }
+}
+
+tasks.register<Test>("functionalTest") {
+    useJUnitPlatform {
+        includeTags("functional")
+    }
+}
+
+tasks.named<Test>("test") {
+    onlyIf {
+        val requested = gradle.startParameter.taskNames
+        !requested.contains("unitTest") &&
+                !requested.contains("integrationTest") &&
+                !requested.contains("functionalTest")
+    }
 }

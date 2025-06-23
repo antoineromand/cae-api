@@ -1,5 +1,17 @@
 package com.pickandeat.authentication.infrastructure.repository;
 
+import com.pickandeat.authentication.TestConfiguration;
+import com.pickandeat.authentication.domain.Credentials;
+import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.authentication.domain.valueobject.Role;
+import com.pickandeat.authentication.domain.valueobject.Scope;
+import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
@@ -7,20 +19,9 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import com.pickandeat.authentication.TestConfiguration;
-import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.authentication.domain.enums.RoleName;
-import com.pickandeat.authentication.domain.valueobject.Role;
-import com.pickandeat.authentication.domain.valueobject.Scope;
-import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
-
-import jakarta.transaction.Transactional;
 
 @SpringBootTest(classes = TestConfiguration.class)
+@Tag("integration")
 public class CredentialsRepositoryImplIntegrationTest extends AbstractDatabaseContainersTest {
 
     @Autowired

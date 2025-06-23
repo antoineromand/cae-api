@@ -11,6 +11,7 @@ import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +23,7 @@ import java.time.format.DateTimeFormatter;
 import static org.junit.Assert.assertThrows;
 
 @SpringBootTest(classes = TestConfiguration.class)
+@Tag("functional")
 public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     @Autowired
     LoginUseCase loginUseCase;

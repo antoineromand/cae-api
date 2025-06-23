@@ -1,21 +1,20 @@
 package com.pickandeat.authentication.domain;
 
+import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.authentication.domain.valueobject.Role;
+import com.pickandeat.authentication.domain.valueobject.Scope;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-import com.pickandeat.authentication.domain.enums.RoleName;
-import com.pickandeat.authentication.domain.valueobject.Role;
-import com.pickandeat.authentication.domain.valueobject.Scope;
-
-public class CredentialsTest {
+@Tag("unit")
+public class CredentialsUnitTest {
 
     @Test
     public void credentials_shouldHaveFullAccess_whenRoleIsAdmin() {
