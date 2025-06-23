@@ -1,8 +1,8 @@
 package com.pickandeat.authentication.application.usecase.logout;
 
+import com.pickandeat.authentication.application.ITokenRepository;
 import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
-import com.pickandeat.authentication.domain.repository.ITokenRepository;
-import com.pickandeat.shared.token.application.TokenService;
+import com.pickandeat.shared.token.TokenService;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -2,9 +2,9 @@ package com.pickandeat.authentication.application.usecase.update_password;
 
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
 import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
+import com.pickandeat.authentication.application.exceptions.technical.CannotHashPasswordException;
 import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
 import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import org.springframework.stereotype.Service;

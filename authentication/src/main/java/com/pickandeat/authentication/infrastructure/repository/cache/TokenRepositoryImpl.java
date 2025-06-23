@@ -1,11 +1,10 @@
 package com.pickandeat.authentication.infrastructure.repository.cache;
 
-import java.time.Duration;
-
+import com.pickandeat.authentication.application.ITokenRepository;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.pickandeat.authentication.domain.repository.ITokenRepository;
+import java.time.Duration;
 
 @Repository
 public class TokenRepositoryImpl implements ITokenRepository {

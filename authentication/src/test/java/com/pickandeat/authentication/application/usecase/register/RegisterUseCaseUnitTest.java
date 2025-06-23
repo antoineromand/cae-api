@@ -1,10 +1,10 @@
 package com.pickandeat.authentication.application.usecase.register;
 
 import com.pickandeat.authentication.application.exceptions.application.EmailAlreadyUsedException;
+import com.pickandeat.authentication.application.exceptions.technical.CannotHashPasswordException;
 import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
-import com.pickandeat.authentication.domain.exceptions.CannotHashPasswordException;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import com.pickandeat.authentication.domain.valueobject.Role;

@@ -1,8 +1,5 @@
 package com.pickandeat.shared.token;
 
-import com.pickandeat.shared.token.application.TokenService;
-import com.pickandeat.shared.token.domain.TokenPayload;
-import com.pickandeat.shared.token.infrastructure.TokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
