@@ -1,5 +1,8 @@
 package com.pickandeat.authentication.infrastructure.database;
 
+import com.pickandeat.authentication.TestConfiguration;
+import com.pickandeat.authentication.infrastructure.database.postgres.SharedPostgresContainer;
+import com.pickandeat.authentication.infrastructure.database.redis.SharedRedisContainer;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -7,10 +10,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import com.pickandeat.authentication.TestConfiguration;
-import com.pickandeat.authentication.infrastructure.database.postgres.SharedPostgresContainer;
-import com.pickandeat.authentication.infrastructure.database.redis.SharedRedisContainer;
 
 @Testcontainers
 @SpringBootTest(classes = TestConfiguration.class)
@@ -31,7 +30,7 @@ public abstract class AbstractDatabaseContainersTest {
     @DynamicPropertySource
     static void configureRedisDatabase(DynamicPropertyRegistry registry) {
         GenericContainer<?> redis = SharedRedisContainer.getInstance();
-        System.setProperty("spring.redis.host", redis.getHost());
-        System.setProperty("spring.redis.port", redis.getMappedPort(6379).toString());
+        registry.add("spring.redis.host", redis::getHost);
+        registry.add("spring.redis.port", () -> redis.getMappedPort(6379).toString());
     }
 }
