@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  postgresql-db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_PASSWORD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - ${DOCKER_DB_PORTS}
+
+  dragonfly:
+    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
+    ulimits:
+      memlock: -1
+    ports:
+      - "6379:6379"
+    # For better performance, consider `host` mode instead `port` to avoid docker NAT.
+    # `host` mode is NOT currently supported in Swarm Mode.
+    # https://docs.docker.com/compose/compose-file/compose-file-v3/#network_mode
+    # network_mode: "host"
+    volumes:
+      - dragonflydata:/data
+
+  api:
+    image: pick-and-eat-api:0.0.1-snapshot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgresql-db
+      - dragonfly
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    environment:
+      SPRING_PROFILES_ACTIVE: ${PROJECT_MODE}
+      SERVER_PORT: ${SERVER_PORT}
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      EXPIRATION_ACCESS_TOKEN: ${EXPIRATION_ACCESS_TOKEN}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+
+
+volumes:
+  pgdata:
+  dragonflydata:

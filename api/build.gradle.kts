@@ -15,6 +15,9 @@ java {
     }
 }
 
+tasks.named<Jar>("bootJar") {
+    archiveFileName.set("pickandeat-api-${project.version}.jar")
+}
 
 
 dependencies {
@@ -33,9 +36,6 @@ dependencies {
 
 tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
     mainClass.set("com.pickandeat.api.PickAndEatApplication")
-
-	
-
 }
 
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
