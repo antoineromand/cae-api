@@ -26,9 +26,41 @@ jobs:
       - name: Run unit tests
         run: ./gradlew unitTest
 
+      - name: Upload unit test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-reports
+          path: |
+            shared/build/reports/tests/unitTest
+            authentication/build/reports/tests/unitTest
+            api/build/reports/tests/unitTest
+
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7.2
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: pae-api
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U testuser"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v3
@@ -42,12 +74,59 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x gradlew
 
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..10}; do
+            pg_isready -h localhost -p 5432 -U testuser && break
+            sleep 5
+          done
+
+      - name: Run DB init script
+        run: |
+          psql -h localhost -U testuser -d pae-api -f authentication/src/main/resources/db/migration/V1_Credentials_schema.sql
+        env:
+          PGPASSWORD: testpass
+
       - name: Run integration tests
+        env:
+          USE_TESTCONTAINERS: false
         run: ./gradlew integrationTest
+
+      - name: Upload integration test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-reports
+          path: |
+            shared/build/reports/tests/integrationTest
+            authentication/build/reports/tests/integrationTest
+            api/build/reports/tests/integrationTest
 
   functional-tests:
     name: Functional Tests
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7.2
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: pae-api
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U testuser"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v3
@@ -61,5 +140,29 @@ jobs:
       - name: Make Gradle executable
         run: chmod +x gradlew
 
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..10}; do
+            pg_isready -h localhost -p 5432 -U testuser && break
+            sleep 5
+          done
+
+      - name: Run DB init script
+        run: |
+          psql -h localhost -U testuser -d pae-api -f authentication/src/main/resources/db/migration/V1_Credentials_schema.sql
+        env:
+          PGPASSWORD: testpass
+
       - name: Run functional tests
+        env:
+          USE_TESTCONTAINERS: false
         run: ./gradlew functionalTest
+
+      - name: Upload functional test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: functional-test-reports
+          path: |
+            shared/build/reports/tests/functionalTest
+            authentication/build/reports/tests/functionalTest
+            api/build/reports/tests/functionalTest

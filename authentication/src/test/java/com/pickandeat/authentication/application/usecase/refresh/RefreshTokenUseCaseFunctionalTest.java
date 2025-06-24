@@ -1,6 +1,5 @@
 package com.pickandeat.authentication.application.usecase.refresh;
 
-import com.pickandeat.authentication.TestConfiguration;
 import com.pickandeat.authentication.application.ITokenRepository;
 import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
@@ -20,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -28,7 +26,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-@SpringBootTest(classes = TestConfiguration.class)
 @Transactional
 @Tag("functional")
 public class RefreshTokenUseCaseFunctionalTest extends AbstractDatabaseContainersTest {

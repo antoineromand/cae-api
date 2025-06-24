@@ -1,16 +1,13 @@
 package com.pickandeat.authentication.application.usecase.register;
 
-import com.pickandeat.authentication.TestConfiguration;
 import com.pickandeat.authentication.application.exceptions.application.EmailAlreadyUsedException;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -18,9 +15,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = TestConfiguration.class)
-@Testcontainers
 @Tag("functional")
+@Transactional
 public class RegisterUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     @Autowired
     private RegisterUseCase registerUseCase;
@@ -39,7 +35,6 @@ public class RegisterUseCaseFunctionalTest extends AbstractDatabaseContainersTes
     }
 
     @Test
-    @Transactional
     void register_shouldSucceed_whenEmailIsUnique() {
         RegisterCommand command = getCommand("unique-user@example.com");
         UUID result = registerUseCase.execute(command);
@@ -47,7 +42,6 @@ public class RegisterUseCaseFunctionalTest extends AbstractDatabaseContainersTes
     }
 
     @Test
-    @Transactional
     void register_shouldThrowEmailAlreadyUsedException_whenEmailAlreadyExists() {
         String email = "duplicate@example.com";
         RegisterCommand first = getCommand(email);
@@ -58,7 +52,6 @@ public class RegisterUseCaseFunctionalTest extends AbstractDatabaseContainersTes
     }
 
     @Test
-    @Transactional
     void register_shouldReturnDifferentIds_whenRegisteringTwoDifferentUsers() {
         RegisterCommand one = getCommand("user1@example.com");
         RegisterCommand two = getCommand("user2@example.com");
