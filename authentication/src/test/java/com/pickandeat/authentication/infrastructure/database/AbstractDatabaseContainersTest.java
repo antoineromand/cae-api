@@ -13,25 +13,39 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @SpringBootTest(classes = TestConfiguration.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractDatabaseContainersTest {
+
     private static void configurePostgreSQLDatabase(DynamicPropertyRegistry registry) {
-        PostgreSQLContainer<?> container = SharedPostgresContainer.getInstance();
-        registry.add("spring.datasource.url", container::getJdbcUrl);
-        registry.add("spring.datasource.username", container::getUsername);
-        registry.add("spring.datasource.password", container::getPassword);
-        registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
-        registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "none");
-        registry.add("spring.jpa.show-sql", () -> "true");
+        if (SharedPostgresContainer.isEnabled()) {
+            PostgreSQLContainer<?> container = SharedPostgresContainer.getInstance();
+            registry.add("spring.datasource.url", container::getJdbcUrl);
+            registry.add("spring.datasource.username", container::getUsername);
+            registry.add("spring.datasource.password", container::getPassword);
+            registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
+            registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
+            registry.add("spring.jpa.hibernate.ddl-auto", () -> "none");
+            registry.add("spring.jpa.show-sql", () -> "true");
+            System.out.println("[DEBUG] Using Testcontainers Postgres at " +
+                    container.getHost() + ":" + container.getMappedPort(5432));
+        } else {
+            registry.add("spring.datasource.url", () -> "jdbc:postgresql://localhost:5432/yourdb");
+            registry.add("spring.datasource.username", () -> "youruser");
+            registry.add("spring.datasource.password", () -> "yourpass");
+            System.out.println("[DEBUG] Using CI Postgres at localhost:5432");
+        }
     }
 
     private static void configureRedisDatabase(DynamicPropertyRegistry registry) {
-        GenericContainer<?> redis = SharedRedisContainer.getInstance();
-        registry.add("spring.redis.host", redis::getHost);
-        registry.add("spring.redis.port", () -> redis.getMappedPort(6379).toString());
-
-        System.out.println("[DEBUG] Injecting Redis at " +
-                SharedRedisContainer.getInstance().getHost() + ":" +
-                SharedRedisContainer.getInstance().getMappedPort(6379));
+        if (SharedRedisContainer.isEnabled()) {
+            GenericContainer<?> redis = SharedRedisContainer.getInstance();
+            registry.add("spring.redis.host", redis::getHost);
+            registry.add("spring.redis.port", () -> String.valueOf(redis.getMappedPort(6379)));
+            System.out.println("[DEBUG] Using Testcontainers Redis at " +
+                    redis.getHost() + ":" + redis.getMappedPort(6379));
+        } else {
+            registry.add("spring.redis.host", () -> "localhost");
+            registry.add("spring.redis.port", () -> "6379");
+            System.out.println("[DEBUG] Using CI Redis at localhost:6379");
+        }
     }
 
     @DynamicPropertySource
@@ -40,3 +54,4 @@ public abstract class AbstractDatabaseContainersTest {
         configurePostgreSQLDatabase(registry);
     }
 }
+

@@ -1,24 +1,26 @@
 package com.pickandeat.authentication.infrastructure.database.redis;
 
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
-
-import java.time.Duration;
+import org.testcontainers.utility.DockerImageName;
 
 public class SharedRedisContainer {
-    private static final GenericContainer<?> REDIS_CONTAINER =
-            new GenericContainer<>("redis:7")
-                    .withExposedPorts(6379)
-                    .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)));
+    private static GenericContainer<?> instance;
 
-    static {
-        REDIS_CONTAINER.start();
+    public static boolean isEnabled() {
+        String env = System.getenv("USE_TESTCONTAINERS");
+        return env == null || env.equalsIgnoreCase("true");
     }
 
     public static GenericContainer<?> getInstance() {
-        if (!REDIS_CONTAINER.isRunning()) {
-            REDIS_CONTAINER.start();
+        if (instance == null && isEnabled()) {
+            instance = new GenericContainer<>(DockerImageName.parse("redis:7.2"))
+                    .withExposedPorts(6379);
+            instance.start();
         }
-        return REDIS_CONTAINER;
+        return instance;
+    }
+
+    public static boolean isRunning() {
+        return instance != null && instance.isRunning();
     }
 }
