@@ -1,6 +1,5 @@
 package com.pickandeat.authentication.application.usecase.logout;
 
-import com.pickandeat.authentication.TestConfiguration;
 import com.pickandeat.authentication.application.ITokenRepository;
 import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
@@ -9,12 +8,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Duration;
 import java.util.UUID;
 
-@SpringBootTest(classes = TestConfiguration.class)
 @Tag("functional")
 public class LogoutUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     @Autowired

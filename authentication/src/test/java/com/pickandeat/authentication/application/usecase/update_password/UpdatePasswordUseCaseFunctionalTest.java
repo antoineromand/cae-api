@@ -1,6 +1,5 @@
 package com.pickandeat.authentication.application.usecase.update_password;
 
-import com.pickandeat.authentication.TestConfiguration;
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
 import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.domain.Credentials;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
@@ -24,7 +22,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = TestConfiguration.class)
 @Tag("functional")
 class UpdatePasswordUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
 
@@ -55,11 +52,9 @@ class UpdatePasswordUseCaseFunctionalTest extends AbstractDatabaseContainersTest
 
     @Test
     void shouldThrow_whenUserDoesNotExist() {
-        // given
         UpdatePasswordCommand command =
                 new UpdatePasswordCommand(UUID.randomUUID(), "whatever", NEW_PASSWORD);
 
-        // expect
         assertThrows(UserNotFoundException.class,
                 () -> updatePasswordUseCase.execute(command));
     }

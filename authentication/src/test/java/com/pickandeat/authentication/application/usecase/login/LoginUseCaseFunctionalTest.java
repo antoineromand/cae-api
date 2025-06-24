@@ -1,6 +1,5 @@
 package com.pickandeat.authentication.application.usecase.login;
 
-import com.pickandeat.authentication.TestConfiguration;
 import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.EmailNotFoundException;
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -22,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.assertThrows;
 
-@SpringBootTest(classes = TestConfiguration.class)
 @Tag("functional")
 public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     @Autowired

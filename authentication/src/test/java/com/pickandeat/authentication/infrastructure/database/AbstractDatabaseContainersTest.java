@@ -9,14 +9,11 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Testcontainers
 @SpringBootTest(classes = TestConfiguration.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class AbstractDatabaseContainersTest {
-    @DynamicPropertySource
-    static void configurePostgreSQLDatabase(DynamicPropertyRegistry registry) {
+    private static void configurePostgreSQLDatabase(DynamicPropertyRegistry registry) {
         PostgreSQLContainer<?> container = SharedPostgresContainer.getInstance();
         registry.add("spring.datasource.url", container::getJdbcUrl);
         registry.add("spring.datasource.username", container::getUsername);
@@ -27,10 +24,19 @@ public abstract class AbstractDatabaseContainersTest {
         registry.add("spring.jpa.show-sql", () -> "true");
     }
 
-    @DynamicPropertySource
-    static void configureRedisDatabase(DynamicPropertyRegistry registry) {
+    private static void configureRedisDatabase(DynamicPropertyRegistry registry) {
         GenericContainer<?> redis = SharedRedisContainer.getInstance();
         registry.add("spring.redis.host", redis::getHost);
         registry.add("spring.redis.port", () -> redis.getMappedPort(6379).toString());
+
+        System.out.println("[DEBUG] Injecting Redis at " +
+                SharedRedisContainer.getInstance().getHost() + ":" +
+                SharedRedisContainer.getInstance().getMappedPort(6379));
+    }
+
+    @DynamicPropertySource
+    static void configureSharedDatabases(DynamicPropertyRegistry registry) {
+        configureRedisDatabase(registry);
+        configurePostgreSQLDatabase(registry);
     }
 }
