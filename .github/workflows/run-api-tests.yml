@@ -27,7 +27,7 @@ jobs:
         run: ./gradlew unitTest
 
       - name: Upload unit test reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: unit-test-reports
           path: |
@@ -93,7 +93,7 @@ jobs:
         run: ./gradlew integrationTest
 
       - name: Upload integration test reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: integration-test-reports
           path: |
@@ -159,7 +159,7 @@ jobs:
         run: ./gradlew functionalTest
 
       - name: Upload functional test reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: functional-test-reports
           path: |
