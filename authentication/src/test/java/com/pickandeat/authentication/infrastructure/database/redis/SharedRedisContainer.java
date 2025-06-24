@@ -7,7 +7,7 @@ import java.time.Duration;
 
 public class SharedRedisContainer {
     private static final GenericContainer<?> REDIS_CONTAINER =
-            new GenericContainer<>("docker.dragonflydb.io/dragonflydb/dragonfly")
+            new GenericContainer<>("redis:7")
                     .withExposedPorts(6379)
                     .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(30)));
 
