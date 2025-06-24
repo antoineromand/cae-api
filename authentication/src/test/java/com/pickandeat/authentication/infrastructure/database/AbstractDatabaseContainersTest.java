@@ -24,12 +24,14 @@ public abstract class AbstractDatabaseContainersTest {
             registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
             registry.add("spring.jpa.hibernate.ddl-auto", () -> "none");
             registry.add("spring.jpa.show-sql", () -> "true");
-            System.out.println("[DEBUG] Using Testcontainers Postgres at " +
-                    container.getHost() + ":" + container.getMappedPort(5432));
         } else {
-            registry.add("spring.datasource.url", () -> "jdbc:postgresql://localhost:5432/yourdb");
-            registry.add("spring.datasource.username", () -> "youruser");
-            registry.add("spring.datasource.password", () -> "yourpass");
+            registry.add("spring.datasource.url", () -> "jdbc:postgresql://localhost:5432/pae-api");
+            registry.add("spring.datasource.username", () -> "testuser");
+            registry.add("spring.datasource.password", () -> "testpass");
+            registry.add("spring.datasource.driver-class-name", () -> "org.postgresql.Driver");
+            registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
+            registry.add("spring.jpa.hibernate.ddl-auto", () -> "none");
+            registry.add("spring.jpa.show-sql", () -> "true");
             System.out.println("[DEBUG] Using CI Postgres at localhost:5432");
         }
     }
@@ -39,8 +41,6 @@ public abstract class AbstractDatabaseContainersTest {
             GenericContainer<?> redis = SharedRedisContainer.getInstance();
             registry.add("spring.redis.host", redis::getHost);
             registry.add("spring.redis.port", () -> String.valueOf(redis.getMappedPort(6379)));
-            System.out.println("[DEBUG] Using Testcontainers Redis at " +
-                    redis.getHost() + ":" + redis.getMappedPort(6379));
         } else {
             registry.add("spring.redis.host", () -> "localhost");
             registry.add("spring.redis.port", () -> "6379");
