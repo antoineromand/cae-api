@@ -26,6 +26,15 @@ jobs:
       - name: Run unit tests
         run: ./gradlew unitTest
 
+      - name: Upload unit test reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: unit-test-reports
+          path: |
+            shared/build/reports/tests/unitTest
+            authentication/build/reports/tests/unitTest
+            api/build/reports/tests/unitTest
+
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-latest
@@ -83,6 +92,15 @@ jobs:
           USE_TESTCONTAINERS: false
         run: ./gradlew integrationTest
 
+      - name: Upload integration test reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: integration-test-reports
+          path: |
+            shared/build/reports/tests/integrationTest
+            authentication/build/reports/tests/integrationTest
+            api/build/reports/tests/integrationTest
+
   functional-tests:
     name: Functional Tests
     runs-on: ubuntu-latest
@@ -139,3 +157,12 @@ jobs:
         env:
           USE_TESTCONTAINERS: false
         run: ./gradlew functionalTest
+
+      - name: Upload functional test reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: functional-test-reports
+          path: |
+            shared/build/reports/tests/functionalTest
+            authentication/build/reports/tests/functionalTest
+            api/build/reports/tests/functionalTest
