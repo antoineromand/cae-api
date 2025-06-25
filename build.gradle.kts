@@ -11,9 +11,11 @@ java {
 	}
 }
 
+var currentVersion = "0.0.1-SNAPSHOT"
+
 allprojects {
 	group = "com.pickandeat"
-	version = "0.0.1-SNAPSHOT"
+	version = currentVersion
 	repositories {
 		mavenCentral()
 		gradlePluginPortal()
