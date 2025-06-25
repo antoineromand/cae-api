@@ -1,0 +1,48 @@
+name: Build and Push Docker Image to GHCR
+
+on:
+  workflow_run:
+    workflows: [ "run-api-tests.yml" ]
+    types:
+      - completed
+
+jobs:
+  build-and-push:
+    name: Build and Push Image
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout commit that triggered the tests
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Extract tag from commit
+        id: extract_tag
+        run: |
+          TAG=$(git describe --tags --exact-match 2>/dev/null || true)
+          if [ -z "$TAG" ]; then
+            echo "❌ No tag found on this commit. Exiting."
+            exit 1
+          fi
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_PAT }}
+
+      - name: Build Docker image
+        run: |
+          IMAGE=ghcr.io/pick-and-eat-organization/pick-and-eat-api:${{ steps.extract_tag.outputs.tag }}
+          echo "Building image: $IMAGE"
+          docker build -t $IMAGE .
+
+      - name: Push Docker image
+        run: |
+          IMAGE=ghcr.io/pick-and-eat-organization/pick-and-eat-api:${{ steps.extract_tag.outputs.tag }}
+          echo "Pushing image: $IMAGE"
+          docker push $IMAGE
