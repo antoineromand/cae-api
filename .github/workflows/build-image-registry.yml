@@ -2,7 +2,7 @@ name: Build and Push Docker Image to GHCR
 
 on:
   workflow_run:
-    workflows: [ "run-api-tests.yml" ]
+    workflows: [ "Run API tests on Tag" ]
     types:
       - completed
 
