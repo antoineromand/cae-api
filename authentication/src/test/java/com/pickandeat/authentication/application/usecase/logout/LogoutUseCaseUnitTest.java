@@ -1,7 +1,5 @@
 package com.pickandeat.authentication.application.usecase.logout;
 
-import static org.mockito.Mockito.*;
-
 import com.pickandeat.authentication.application.ITokenRepository;
 import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
 import com.pickandeat.shared.token.TokenService;
@@ -9,6 +7,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import static org.mockito.Mockito.*;
 
 @Tag("unit")
 public class LogoutUseCaseUnitTest {
