@@ -7,26 +7,28 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LogoutUseCase implements ILogoutUseCase {
-    private final ITokenRepository tokenRepository;
-    private final TokenService tokenService;
-    public LogoutUseCase(ITokenRepository tokenRepository, TokenService tokenService) {
-        this.tokenRepository = tokenRepository;
-        this.tokenService = tokenService;
-    }
-    @Override
-    public void execute(String refreshToken) {
-        this.validateToken(refreshToken);
-        this.deleteToken(refreshToken);
-    }
+  private final ITokenRepository tokenRepository;
+  private final TokenService tokenService;
 
-    private void validateToken(String refreshToken) {
-        if (!this.tokenService.isRefreshTokenValid(refreshToken)) {
-            throw new InvalidTokenException();
-        }
-    }
+  public LogoutUseCase(ITokenRepository tokenRepository, TokenService tokenService) {
+    this.tokenRepository = tokenRepository;
+    this.tokenService = tokenService;
+  }
 
-    private void deleteToken(String refreshToken) {
-        String jti = this.tokenService.extractJti(refreshToken);
-        this.tokenRepository.deleteByJti(jti);
+  @Override
+  public void execute(String refreshToken) {
+    this.validateToken(refreshToken);
+    this.deleteToken(refreshToken);
+  }
+
+  private void validateToken(String refreshToken) {
+    if (!this.tokenService.isRefreshTokenValid(refreshToken)) {
+      throw new InvalidTokenException();
     }
+  }
+
+  private void deleteToken(String refreshToken) {
+    String jti = this.tokenService.extractJti(refreshToken);
+    this.tokenRepository.deleteByJti(jti);
+  }
 }

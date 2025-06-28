@@ -1,5 +1,6 @@
 plugins {
 	`java-library`
+
 }
 
 java {
@@ -13,8 +14,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.springframework.security:spring-security-crypto")
-	compileOnly("org.projectlombok:lombok")
-	annotationProcessor("org.projectlombok:lombok")
+//	compileOnly("org.projectlombok:lombok")
+//	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	
@@ -32,12 +33,6 @@ tasks.withType<Test> {
 
 tasks.withType<Javadoc>().configureEach {
     (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
-}
-
-tasks.register<Test>("unitTest") {
-	useJUnitPlatform {
-		includeTags("unit")
-	}
 }
 
 tasks.register<Test>("integrationTest") {
@@ -60,3 +55,4 @@ tasks.named<Test>("test") {
 				!requested.contains("functionalTest")
 	}
 }
+
