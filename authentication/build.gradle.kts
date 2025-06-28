@@ -28,16 +28,14 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+	onlyIf {
+		val requested = gradle.startParameter.taskNames
+		requested.none { it.contains("unitTest") || it.contains("integrationTest") || it.contains("functionalTest") }
+	}
 }
 
 tasks.withType<Javadoc>().configureEach {
     (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
-}
-
-tasks.register<Test>("unitTest") {
-	useJUnitPlatform {
-		includeTags("unit")
-	}
 }
 
 tasks.register<Test>("integrationTest") {

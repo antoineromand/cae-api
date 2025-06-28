@@ -2,7 +2,7 @@ plugins {
 	java
 	id("io.spring.dependency-management") version "1.1.7"
 	id("co.uzzu.dotenv.gradle") version "4.0.0"
-
+	id("com.diffplug.spotless") version "7.0.4"
 }
 
 java {
@@ -26,11 +26,21 @@ subprojects {
 	apply(plugin = "java")
 	apply(plugin = "io.spring.dependency-management")
 	apply(plugin= "jacoco")
+	apply(plugin = "com.diffplug.spotless")
+
 	dependencyManagement {
 		imports {
 			mavenBom("org.springframework.boot:spring-boot-dependencies:3.4.5")
 		}
 	}
+
+	spotless {
+		java {
+			googleJavaFormat("1.17.0")
+			target("src/**/*.java")
+		}
+	}
+
 	dependencies {
         testImplementation("org.junit.jupiter:junit-jupiter")
 		testImplementation("org.mockito:mockito-junit-jupiter:5.18.0")
@@ -41,21 +51,71 @@ subprojects {
     }
 	tasks.withType<Test> {
 		useJUnitPlatform()
-		finalizedBy(tasks.named("jacocoTestReport"))
 	}
 
 	tasks.named("jacocoTestReport") {
         dependsOn(tasks.named("test"))
     }
+
+	plugins.withId("java") {
+		val coverageLimit: BigDecimal =
+			(project.findProperty("limit") as String?)?.toBigDecimalOrNull() ?: BigDecimal("0.8")
+
+		val unitTest: TaskProvider<Test> = tasks.register("unitTest", Test::class) {
+			finalizedBy(tasks.named("jacocoTestReport"))
+			useJUnitPlatform {
+				includeTags("unit")
+			}
+		}
+
+		val jacocoUnitTestReport = tasks.register<JacocoReport>("jacocoUnitTestReport") {
+			dependsOn(unitTest)
+			reports {
+				xml.required.set(true)
+				html.required.set(true)
+			}
+			classDirectories.setFrom(
+				layout.files(layout.buildDirectory.dir("classes/java/main")).asFileTree.matching {
+					exclude("**/generated/**")
+				}
+			)
+			sourceDirectories.setFrom(files("src/main/java"))
+			executionData.setFrom(fileTree(layout.buildDirectory).include("jacoco/unitTest.exec"))
+		}
+
+		val jacocoUnitTestCoverageVerification =
+			tasks.register<JacocoCoverageVerification>("jacocoUnitTestCoverageVerification") {
+				dependsOn(unitTest)
+				violationRules {
+					rule {
+						limit {
+							minimum = coverageLimit
+						}
+					}
+				}
+				classDirectories.setFrom(
+					layout.files(layout.buildDirectory.dir("classes/java/main")).asFileTree.matching {
+						exclude("**/generated/**")
+					}
+				)
+				sourceDirectories.setFrom(files("src/main/java"))
+				executionData.setFrom(fileTree(layout.buildDirectory).include("jacoco/unitTest.exec"))
+			}
+
+		unitTest.configure {
+			finalizedBy(jacocoUnitTestReport, jacocoUnitTestCoverageVerification)
+		}
+	}
+
 }
 
-tasks.register("unitTest") {
-	group = "verification"
-	description = "Run all unit tests across modules"
-	dependsOn(
-		subprojects.mapNotNull { it.tasks.findByName("unitTest") }
-	)
-}
+//tasks.register("unitTest") {
+//	group = "verification"
+//	description = "Run all unit tests across modules"
+//	dependsOn(
+//		subprojects.mapNotNull { it.tasks.findByName("unitTest") }
+//	)
+//}
 
 tasks.register("integrationTest") {
 	group = "verification"
