@@ -6,12 +6,12 @@ import com.pickandeat.authentication.application.exceptions.technical.DatabaseTe
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
-
-import java.util.Date;
-import java.util.UUID;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.UUID;
 
 @Service
 @Transactional

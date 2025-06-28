@@ -11,7 +11,8 @@ public class ErrorApiResponse {
     private final int statusCode;
     private final Map<String, List<String>> multipleErrors;
 
-    public ErrorApiResponse(String code, String message, int statusCode, Map<String, List<String>> multipleErrors) {
+    public ErrorApiResponse(
+            String code, String message, int statusCode, Map<String, List<String>> multipleErrors) {
         this.code = code;
         this.message = message;
         this.statusCode = statusCode;

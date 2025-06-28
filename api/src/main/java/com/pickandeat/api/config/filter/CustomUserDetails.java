@@ -1,10 +1,10 @@
 package com.pickandeat.api.config.filter;
 
 import com.pickandeat.authentication.domain.valueobject.Scope;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class CustomUserDetails implements UserDetails {
 
@@ -34,7 +34,11 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(() -> "ROLE_" + role);
-        scopes.forEach(scope -> authorities.add(() -> "SCOPE_" + scope.action().toUpperCase() + ":" +scope.target().toUpperCase()));
+        scopes.forEach(
+                scope ->
+                        authorities.add(
+                                () ->
+                                        "SCOPE_" + scope.action().toUpperCase() + ":" + scope.target().toUpperCase()));
         return authorities;
     }
 
@@ -48,10 +52,23 @@ public class CustomUserDetails implements UserDetails {
         return userId.toString();
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-    @Override public boolean isAccountNonExpired()     { return true; }
-    @Override public boolean isAccountNonLocked()      { return true; }
-    @Override public boolean isCredentialsNonExpired() { return true; }
-    @Override public boolean isEnabled()               { return true; }
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

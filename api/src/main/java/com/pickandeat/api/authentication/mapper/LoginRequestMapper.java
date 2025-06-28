@@ -7,5 +7,4 @@ public class LoginRequestMapper {
     public static LoginCommand toCommand(LoginRequestDto loginRequestDto) {
         return new LoginCommand(loginRequestDto.getEmail(), loginRequestDto.getPassword());
     }
-
 }

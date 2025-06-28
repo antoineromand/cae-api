@@ -8,13 +8,13 @@ import com.pickandeat.authentication.application.exceptions.application.UserNotF
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.shared.token.TokenService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional

@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
 @EnableWebSecurity
@@ -26,14 +25,17 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.formLogin(FormLoginConfigurer::disable);
         httpSecurity.authorizeHttpRequests(
-                (e) -> e.requestMatchers("/public/**").permitAll().requestMatchers(
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/swagger.html",
-                        "/swagger-ui.html").permitAll()
-                        .requestMatchers("/private/**").authenticated());
+                (e) ->
+                        e.requestMatchers("/public/**")
+                                .permitAll()
+                                .requestMatchers(
+                                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger.html", "/swagger-ui.html")
+                                .permitAll()
+                                .requestMatchers("/private/**")
+                                .authenticated());
 
-        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        httpSecurity.addFilterBefore(
+                jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

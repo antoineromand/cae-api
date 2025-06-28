@@ -1,9 +1,5 @@
 package com.pickandeat.authentication.application.usecase.refresh;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
-
 import com.pickandeat.authentication.application.ITokenRepository;
 import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
@@ -15,15 +11,19 @@ import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.shared.token.TokenService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @Tag("unit")
 public class RefreshTokenUseCaseUnitTest {

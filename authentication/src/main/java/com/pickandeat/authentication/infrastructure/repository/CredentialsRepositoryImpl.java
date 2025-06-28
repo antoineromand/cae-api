@@ -4,10 +4,8 @@ import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.infrastructure.model.CredentialsEntity;
 import com.pickandeat.authentication.infrastructure.model.RoleEntity;
-
 import java.util.Optional;
 import java.util.UUID;
-
 import org.springframework.stereotype.Component;
 
 @Component

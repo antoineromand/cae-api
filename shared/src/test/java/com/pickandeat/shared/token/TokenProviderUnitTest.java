@@ -13,7 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("unit")
 public class TokenProviderUnitTest {
 
-    private static final String SECRET = "YmFzZTY0ZW5jb2RlZHNlY3JldGtleUhlcmVXaXRoMzJieXRlcw=="; // base64 32-byte key
+    private static final String SECRET =
+            "YmFzZTY0ZW5jb2RlZHNlY3JldGtleUhlcmVXaXRoMzJieXRlcw=="; // base64 32-byte key
     private static final long ACCESS_EXPIRATION_MS = 3600;
 
     private TokenProvider tokenProvider;

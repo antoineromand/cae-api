@@ -12,8 +12,8 @@ import java.util.UUID;
 
 @Tag("integration")
 public class TokenRepositoryImplIntegrationTest extends AbstractDatabaseContainersTest {
-  @Autowired
-  TokenRepositoryImpl tokenRepositoryImpl;
+    @Autowired
+    TokenRepositoryImpl tokenRepositoryImpl;
 
   @Test
   void storeRefreshToken_shouldSaveUserId_whenJtiAndDurationProvided() throws InterruptedException {

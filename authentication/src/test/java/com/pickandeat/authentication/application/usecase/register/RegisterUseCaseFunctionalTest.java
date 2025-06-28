@@ -1,19 +1,19 @@
 package com.pickandeat.authentication.application.usecase.register;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import com.pickandeat.authentication.application.exceptions.application.EmailAlreadyUsedException;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("functional")
 @Transactional

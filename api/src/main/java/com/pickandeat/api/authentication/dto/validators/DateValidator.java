@@ -1,11 +1,10 @@
 package com.pickandeat.api.authentication.dto.validators;
 
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
 
 public class DateValidator implements ConstraintValidator<ValidDate, String> {
 
@@ -18,8 +17,7 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null || value.isBlank())
-            return true;
+        if (value == null || value.isBlank()) return true;
 
         try {
             LocalDate.parse(value, DateTimeFormatter.ofPattern(format));
@@ -28,5 +26,4 @@ public class DateValidator implements ConstraintValidator<ValidDate, String> {
             return false;
         }
     }
-
 }

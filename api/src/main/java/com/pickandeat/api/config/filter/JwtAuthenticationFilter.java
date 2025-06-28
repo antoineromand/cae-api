@@ -36,7 +36,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
         String token = extractBearerToken(request);
         if (token == null || token.isBlank()) {
@@ -52,10 +54,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         Set<Scope> scopes = this.resolveScopesFromRole(tokenPayload.getRole());
 
-        CustomUserDetails customUserDetails = new CustomUserDetails(tokenPayload.getUserId(), tokenPayload.getRole(), scopes);
+        CustomUserDetails customUserDetails =
+                new CustomUserDetails(tokenPayload.getUserId(), tokenPayload.getRole(), scopes);
         authenticateUser(request, customUserDetails);
         filterChain.doFilter(request, response);
-
     }
 
     private void reject(HttpServletResponse response, String message) throws IOException {
@@ -72,22 +74,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Set<Scope> resolveScopesFromRole(String roleName) {
-        return this.roleEntityJPARepository.findByNameWithScopes(roleName)
+        return this.roleEntityJPARepository
+                .findByNameWithScopes(roleName)
                 .map(RoleEntity::getScopes)
-                .map(set -> set.stream()
-                        .map(se -> new Scope(se.getAction(), se.getTarget()))
-                        .collect(Collectors.toSet()))
+                .map(
+                        set ->
+                                set.stream()
+                                        .map(se -> new Scope(se.getAction(), se.getTarget()))
+                                        .collect(Collectors.toSet()))
                 .orElse(Collections.emptySet());
     }
 
     private void authenticateUser(HttpServletRequest request, CustomUserDetails userDetails) {
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                userDetails.getAuthorities()
-        );
+        UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
-
 }

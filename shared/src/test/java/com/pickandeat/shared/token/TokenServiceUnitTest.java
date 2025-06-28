@@ -69,7 +69,8 @@ class TokenServiceUnitTest {
         String expectedToken = "access.token";
         Date expectedExpirationDate = Date.from(Instant.now());
         when(tokenProvider.generateAccessToken(any())).thenReturn(expectedToken);
-        when(tokenProvider.extractExpirationFromToken(expectedToken)).thenReturn(expectedExpirationDate);
+        when(tokenProvider.extractExpirationFromToken(expectedToken))
+                .thenReturn(expectedExpirationDate);
         Date result = this.tokenService.extractExpiration(expectedToken);
         assertEquals(expectedExpirationDate, result);
     }
@@ -83,7 +84,6 @@ class TokenServiceUnitTest {
         String result = this.tokenService.extractJti(expectedToken);
 
         assertEquals(expectedJti, result);
-
     }
 
     @Test

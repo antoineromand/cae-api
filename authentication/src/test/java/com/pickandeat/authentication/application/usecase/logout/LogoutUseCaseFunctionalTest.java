@@ -4,13 +4,13 @@ import com.pickandeat.authentication.application.ITokenRepository;
 import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 import com.pickandeat.shared.token.TokenService;
-
-import java.time.Duration;
-import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.Duration;
+import java.util.UUID;
 
 @Tag("functional")
 public class LogoutUseCaseFunctionalTest extends AbstractDatabaseContainersTest {

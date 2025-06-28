@@ -12,8 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class TokenProviderIntegrationTest {
 
     private TokenProvider tokenProvider;
-    private final String secret = java.util.Base64.getEncoder()
-            .encodeToString("my-super-secret-key-which-is-long-enough".getBytes());
+    private final String secret =
+            java.util.Base64.getEncoder()
+                    .encodeToString("my-super-secret-key-which-is-long-enough".getBytes());
     private UUID userId;
     private String role;
 
@@ -35,7 +36,9 @@ class TokenProviderIntegrationTest {
     @Test
     void generateRefreshToken_shouldBeValid() {
 
-        String token = tokenProvider.generateRefreshToken(new TokenPayload(userId, role), TokenService.MAX_DURATION_REFRESH_TOKEN);
+        String token =
+                tokenProvider.generateRefreshToken(
+                        new TokenPayload(userId, role), TokenService.MAX_DURATION_REFRESH_TOKEN);
         assertNotNull(token);
         assertTrue(tokenProvider.verifyRefreshToken(token));
     }

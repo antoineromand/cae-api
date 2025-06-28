@@ -14,7 +14,10 @@ public class LoginRequestDto {
 
     @NotBlank(message = "password must be provided.")
     @Size(min = 8)
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$", message = "password must contain at least 8 characters, including a lowercase letter, an uppercase letter, a digit, and a special character.")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+            message =
+                    "password must contain at least 8 characters, including a lowercase letter, an uppercase letter, a digit, and a special character.")
     @Schema(description = "User's password", example = "AstrongPassw0rd!")
     private final String password;
 

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class GenericApiResponse<T> {
     @Schema(description = "Descriptive success or error message")
     private final String message;
+
     @Schema(description = "Payload data (may be null)")
     private final T data;
 

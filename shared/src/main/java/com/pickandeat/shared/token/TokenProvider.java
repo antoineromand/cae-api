@@ -44,28 +44,36 @@ public class TokenProvider implements ITokenProvider {
 
     @Override
     public TokenPayload decodeAccessToken(String accessToken) {
-        Claims claims = Jwts.parser()
-                .verifyWith(this.getSigningKey())
-                .build()
-                .parseSignedClaims(accessToken)
-                .getPayload();
+        Claims claims =
+                Jwts.parser()
+                        .verifyWith(this.getSigningKey())
+                        .build()
+                        .parseSignedClaims(accessToken)
+                        .getPayload();
 
-        return new TokenPayload(
-                UUID.fromString(claims.getSubject()),
-                claims.get("role").toString()
-        );
+        return new TokenPayload(UUID.fromString(claims.getSubject()), claims.get("role").toString());
     }
 
     @Override
     public String extractJtiFromToken(String token) {
-        Claims claims = Jwts.parser().verifyWith(this.getSigningKey()).build().parseSignedClaims(token).getPayload();
+        Claims claims =
+                Jwts.parser()
+                        .verifyWith(this.getSigningKey())
+                        .build()
+                        .parseSignedClaims(token)
+                        .getPayload();
 
         return claims.getId();
     }
 
     @Override
     public Date extractExpirationFromToken(String token) {
-        Claims claims = Jwts.parser().verifyWith(this.getSigningKey()).build().parseSignedClaims(token).getPayload();
+        Claims claims =
+                Jwts.parser()
+                        .verifyWith(this.getSigningKey())
+                        .build()
+                        .parseSignedClaims(token)
+                        .getPayload();
 
         return claims.getExpiration();
     }
@@ -93,12 +101,15 @@ public class TokenProvider implements ITokenProvider {
             return false;
         }
         try {
-            Claims claims = Jwts.parser().verifyWith(this.getSigningKey()).build().parseSignedClaims(token)
-                    .getPayload();
+            Claims claims =
+                    Jwts.parser()
+                            .verifyWith(this.getSigningKey())
+                            .build()
+                            .parseSignedClaims(token)
+                            .getPayload();
             return !claims.getExpiration().before(new Date());
         } catch (JwtException e) {
             return false;
         }
     }
-
 }
