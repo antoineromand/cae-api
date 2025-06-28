@@ -8,10 +8,9 @@ import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import com.pickandeat.shared.token.TokenService;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -22,10 +21,10 @@ public class LoginUseCase implements ILoginUseCase {
   private final ITokenRepository tokenRepository;
 
   public LoginUseCase(
-          IPasswordService passwordService,
-          ICredentialsRepository repository,
-          TokenService tokenService,
-          ITokenRepository tokenRepository) {
+      IPasswordService passwordService,
+      ICredentialsRepository repository,
+      TokenService tokenService,
+      ITokenRepository tokenRepository) {
     this.passwordService = passwordService;
     this.credentialsRepository = repository;
     this.tokenService = tokenService;
@@ -41,8 +40,8 @@ public class LoginUseCase implements ILoginUseCase {
 
   private Credentials getCredentials(LoginCommand command) {
     return this.credentialsRepository
-            .findByEmail(command.email())
-            .orElseThrow(EmailNotFoundException::new);
+        .findByEmail(command.email())
+        .orElseThrow(EmailNotFoundException::new);
   }
 
   private void checkPassword(LoginCommand command, String hashedPassword) {
@@ -54,7 +53,7 @@ public class LoginUseCase implements ILoginUseCase {
   private TokenPair generateTokens(UUID id, String role) {
     String accessToken = this.tokenService.createAccessToken(id, role);
     String refreshToken =
-            this.tokenService.createRefreshToken(id, role, TokenService.MAX_DURATION_REFRESH_TOKEN);
+        this.tokenService.createRefreshToken(id, role, TokenService.MAX_DURATION_REFRESH_TOKEN);
     this.storeRefreshTokenInCache(this.tokenService.extractJti(refreshToken), id.toString());
     return new TokenPair(accessToken, refreshToken);
   }

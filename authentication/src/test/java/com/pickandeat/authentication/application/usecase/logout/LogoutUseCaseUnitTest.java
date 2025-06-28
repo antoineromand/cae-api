@@ -1,5 +1,7 @@
 package com.pickandeat.authentication.application.usecase.logout;
 
+import static org.mockito.Mockito.*;
+
 import com.pickandeat.authentication.application.ITokenRepository;
 import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
 import com.pickandeat.shared.token.TokenService;
@@ -8,49 +10,47 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.*;
-
 @Tag("unit")
 public class LogoutUseCaseUnitTest {
-    private LogoutUseCase logoutUseCase;
-    private TokenService tokenService;
-    private ITokenRepository tokenRepository;
+  private LogoutUseCase logoutUseCase;
+  private TokenService tokenService;
+  private ITokenRepository tokenRepository;
 
-    @BeforeEach
-    void init() {
+  @BeforeEach
+  void init() {
 
-        this.tokenRepository = mock(ITokenRepository.class);
-        this.tokenService = mock(TokenService.class);
-        this.logoutUseCase = new LogoutUseCase(tokenRepository, tokenService);
-    }
+    this.tokenRepository = mock(ITokenRepository.class);
+    this.tokenService = mock(TokenService.class);
+    this.logoutUseCase = new LogoutUseCase(tokenRepository, tokenService);
+  }
 
-    @Test
-    void logout_shouldThrowException_whenTokenIsNull() {
-        Assertions.assertThrows(InvalidTokenException.class, () -> logoutUseCase.execute(null));
-    }
+  @Test
+  void logout_shouldThrowException_whenTokenIsNull() {
+    Assertions.assertThrows(InvalidTokenException.class, () -> logoutUseCase.execute(null));
+  }
 
-    @Test
-    void logout_shouldThrowException_whenTokenNotValid() {
-        String refreshToken = "refresh-token";
-        String expectedJti = "jti";
-        when(this.tokenService.isRefreshTokenValid(refreshToken)).thenReturn(Boolean.FALSE);
+  @Test
+  void logout_shouldThrowException_whenTokenNotValid() {
+    String refreshToken = "refresh-token";
+    String expectedJti = "jti";
+    when(this.tokenService.isRefreshTokenValid(refreshToken)).thenReturn(Boolean.FALSE);
 
-        Assertions.assertThrows(InvalidTokenException.class, () -> logoutUseCase.execute(refreshToken));
+    Assertions.assertThrows(InvalidTokenException.class, () -> logoutUseCase.execute(refreshToken));
 
-        verify(this.tokenService, times(0)).extractJti(refreshToken);
-        verify(this.tokenRepository, times(0)).deleteByJti(expectedJti);
-    }
+    verify(this.tokenService, times(0)).extractJti(refreshToken);
+    verify(this.tokenRepository, times(0)).deleteByJti(expectedJti);
+  }
 
-    @Test
-    void logout_shouldLogout_whenTokenValid() {
-        String refreshToken = "refresh-token";
-        String expectedJti = "jti";
+  @Test
+  void logout_shouldLogout_whenTokenValid() {
+    String refreshToken = "refresh-token";
+    String expectedJti = "jti";
 
-        when(this.tokenService.isRefreshTokenValid(refreshToken)).thenReturn(Boolean.TRUE);
-        when(this.tokenService.extractJti(refreshToken)).thenReturn(expectedJti);
+    when(this.tokenService.isRefreshTokenValid(refreshToken)).thenReturn(Boolean.TRUE);
+    when(this.tokenService.extractJti(refreshToken)).thenReturn(expectedJti);
 
-        this.logoutUseCase.execute(refreshToken);
+    this.logoutUseCase.execute(refreshToken);
 
-        verify(this.tokenRepository, times(1)).deleteByJti(expectedJti);
-    }
+    verify(this.tokenRepository, times(1)).deleteByJti(expectedJti);
+  }
 }

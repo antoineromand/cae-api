@@ -16,7 +16,7 @@ public class UpdatePasswordUseCase implements IUpdatePasswordUseCase {
   private final IPasswordService passwordService;
 
   public UpdatePasswordUseCase(
-          ICredentialsRepository credentialsRepository, IPasswordService passwordService) {
+      ICredentialsRepository credentialsRepository, IPasswordService passwordService) {
     this.credentialsRepository = credentialsRepository;
     this.passwordService = passwordService;
   }

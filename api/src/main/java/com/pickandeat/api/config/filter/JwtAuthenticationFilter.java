@@ -25,69 +25,69 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final TokenService tokenService;
-    private final RoleEntityJPARepository roleEntityJPARepository;
+  private final TokenService tokenService;
+  private final RoleEntityJPARepository roleEntityJPARepository;
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String path = request.getRequestURI();
-        return !path.startsWith("/private/");
+  @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    String path = request.getRequestURI();
+    return !path.startsWith("/private/");
+  }
+
+  @Override
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
+
+    String token = extractBearerToken(request);
+    if (token == null || token.isBlank()) {
+      reject(response, "Missing Bearer token");
+      return;
+    }
+    if (!this.tokenService.isAccessTokenValid(token)) {
+      reject(response, "Token not valid");
+      return;
     }
 
-    @Override
-    protected void doFilterInternal(
-            HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    TokenPayload tokenPayload = this.tokenService.extractPayload(token);
 
-        String token = extractBearerToken(request);
-        if (token == null || token.isBlank()) {
-            reject(response, "Missing Bearer token");
-            return;
-        }
-        if (!this.tokenService.isAccessTokenValid(token)) {
-            reject(response, "Token not valid");
-            return;
-        }
+    Set<Scope> scopes = this.resolveScopesFromRole(tokenPayload.getRole());
 
-        TokenPayload tokenPayload = this.tokenService.extractPayload(token);
+    CustomUserDetails customUserDetails =
+        new CustomUserDetails(tokenPayload.getUserId(), tokenPayload.getRole(), scopes);
+    authenticateUser(request, customUserDetails);
+    filterChain.doFilter(request, response);
+  }
 
-        Set<Scope> scopes = this.resolveScopesFromRole(tokenPayload.getRole());
+  private void reject(HttpServletResponse response, String message) throws IOException {
+    SecurityContextHolder.clearContext();
+    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, message);
+  }
 
-        CustomUserDetails customUserDetails =
-                new CustomUserDetails(tokenPayload.getUserId(), tokenPayload.getRole(), scopes);
-        authenticateUser(request, customUserDetails);
-        filterChain.doFilter(request, response);
+  private String extractBearerToken(HttpServletRequest request) {
+    String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+    if (header != null && header.startsWith("Bearer ")) {
+      return header.substring("Bearer ".length()).trim();
     }
+    return null;
+  }
 
-    private void reject(HttpServletResponse response, String message) throws IOException {
-        SecurityContextHolder.clearContext();
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, message);
-    }
+  private Set<Scope> resolveScopesFromRole(String roleName) {
+    return this.roleEntityJPARepository
+        .findByNameWithScopes(roleName)
+        .map(RoleEntity::getScopes)
+        .map(
+            set ->
+                set.stream()
+                    .map(se -> new Scope(se.getAction(), se.getTarget()))
+                    .collect(Collectors.toSet()))
+        .orElse(Collections.emptySet());
+  }
 
-    private String extractBearerToken(HttpServletRequest request) {
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header != null && header.startsWith("Bearer ")) {
-            return header.substring("Bearer ".length()).trim();
-        }
-        return null;
-    }
-
-    private Set<Scope> resolveScopesFromRole(String roleName) {
-        return this.roleEntityJPARepository
-                .findByNameWithScopes(roleName)
-                .map(RoleEntity::getScopes)
-                .map(
-                        set ->
-                                set.stream()
-                                        .map(se -> new Scope(se.getAction(), se.getTarget()))
-                                        .collect(Collectors.toSet()))
-                .orElse(Collections.emptySet());
-    }
-
-    private void authenticateUser(HttpServletRequest request, CustomUserDetails userDetails) {
-        UsernamePasswordAuthenticationToken auth =
-                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(auth);
-    }
+  private void authenticateUser(HttpServletRequest request, CustomUserDetails userDetails) {
+    UsernamePasswordAuthenticationToken auth =
+        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+    SecurityContextHolder.getContext().setAuthentication(auth);
+  }
 }

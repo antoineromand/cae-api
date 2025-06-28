@@ -2,18 +2,16 @@ package com.pickandeat.authentication.infrastructure.repository;
 
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 import com.pickandeat.authentication.infrastructure.repository.cache.TokenRepositoryImpl;
+import java.time.Duration;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.Duration;
-import java.util.UUID;
-
 @Tag("integration")
 public class TokenRepositoryImplIntegrationTest extends AbstractDatabaseContainersTest {
-  @Autowired
-  TokenRepositoryImpl tokenRepositoryImpl;
+  @Autowired TokenRepositoryImpl tokenRepositoryImpl;
 
   @Test
   void storeRefreshToken_shouldSaveUserId_whenJtiAndDurationProvided() throws InterruptedException {

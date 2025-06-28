@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(basePackages = "com.pickandeat.authentication.infrastructure.repository")
 @EntityScan(basePackages = "com.pickandeat.authentication.infrastructure.model")
 public class PickAndEatApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(PickAndEatApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(PickAndEatApplication.class, args);
+  }
 }

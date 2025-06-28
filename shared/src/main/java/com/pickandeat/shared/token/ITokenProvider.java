@@ -4,17 +4,17 @@ import java.time.Duration;
 import java.util.Date;
 
 public interface ITokenProvider {
-    String generateAccessToken(TokenPayload payload);
+  String generateAccessToken(TokenPayload payload);
 
-    String generateRefreshToken(TokenPayload payload, Duration dynamicExpiration);
+  String generateRefreshToken(TokenPayload payload, Duration dynamicExpiration);
 
-    boolean verifyAccessToken(String accessToken);
+  boolean verifyAccessToken(String accessToken);
 
-    boolean verifyRefreshToken(String refreshToken);
+  boolean verifyRefreshToken(String refreshToken);
 
-    TokenPayload decodeAccessToken(String accessToken);
+  TokenPayload decodeAccessToken(String accessToken);
 
-    String extractJtiFromToken(String refreshToken);
+  String extractJtiFromToken(String refreshToken);
 
-    Date extractExpirationFromToken(String jwtToken);
+  Date extractExpirationFromToken(String jwtToken);
 }

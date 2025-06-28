@@ -18,25 +18,25 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(AbstractHttpConfigurer::disable);
-        httpSecurity.formLogin(FormLoginConfigurer::disable);
-        httpSecurity.authorizeHttpRequests(
-                (e) ->
-                        e.requestMatchers("/public/**")
-                                .permitAll()
-                                .requestMatchers(
-                                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger.html", "/swagger-ui.html")
-                                .permitAll()
-                                .requestMatchers("/private/**")
-                                .authenticated());
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    httpSecurity.csrf(AbstractHttpConfigurer::disable);
+    httpSecurity.formLogin(FormLoginConfigurer::disable);
+    httpSecurity.authorizeHttpRequests(
+        (e) ->
+            e.requestMatchers("/public/**")
+                .permitAll()
+                .requestMatchers(
+                    "/swagger-ui/**", "/v3/api-docs/**", "/swagger.html", "/swagger-ui.html")
+                .permitAll()
+                .requestMatchers("/private/**")
+                .authenticated());
 
-        httpSecurity.addFilterBefore(
-                jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    httpSecurity.addFilterBefore(
+        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return httpSecurity.build();
-    }
+    return httpSecurity.build();
+  }
 }

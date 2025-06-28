@@ -1,5 +1,9 @@
 package com.pickandeat.authentication.application.usecase.refresh;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
+
 import com.pickandeat.authentication.application.ITokenRepository;
 import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.InvalidTokenException;
@@ -11,135 +15,130 @@ import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.shared.token.TokenService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("unit")
 public class RefreshTokenUseCaseUnitTest {
 
-    private ICredentialsRepository credentialsRepository;
-    private ITokenRepository tokenRepository;
-    private TokenService tokenService;
-    private RefreshTokenUseCase refreshTokenUseCase;
+  private ICredentialsRepository credentialsRepository;
+  private ITokenRepository tokenRepository;
+  private TokenService tokenService;
+  private RefreshTokenUseCase refreshTokenUseCase;
 
-    @BeforeEach
-    void setUp() {
-        credentialsRepository = mock(ICredentialsRepository.class);
-        tokenRepository = mock(ITokenRepository.class);
-        tokenService = mock(TokenService.class);
-        refreshTokenUseCase =
-                new RefreshTokenUseCase(tokenRepository, credentialsRepository, tokenService);
-    }
+  @BeforeEach
+  void setUp() {
+    credentialsRepository = mock(ICredentialsRepository.class);
+    tokenRepository = mock(ITokenRepository.class);
+    tokenService = mock(TokenService.class);
+    refreshTokenUseCase =
+        new RefreshTokenUseCase(tokenRepository, credentialsRepository, tokenService);
+  }
 
-    @Test
-    void refreshAccessToken_shouldThrowInvalidTokenException_whenTokenIsInvalid() {
-        String invalidToken = "invalid-token";
-        when(tokenService.isRefreshTokenValid(invalidToken)).thenReturn(false);
+  @Test
+  void refreshAccessToken_shouldThrowInvalidTokenException_whenTokenIsInvalid() {
+    String invalidToken = "invalid-token";
+    when(tokenService.isRefreshTokenValid(invalidToken)).thenReturn(false);
 
-        assertThrows(InvalidTokenException.class, () -> refreshTokenUseCase.execute(invalidToken));
+    assertThrows(InvalidTokenException.class, () -> refreshTokenUseCase.execute(invalidToken));
 
-        verify(tokenRepository, never()).getUserIdByJti(any());
-        verify(credentialsRepository, never()).findByUserId(any());
-    }
+    verify(tokenRepository, never()).getUserIdByJti(any());
+    verify(credentialsRepository, never()).findByUserId(any());
+  }
 
-    @Test
-    void refreshAccessToken_shouldThrowJtiNotFoundInCacheException_whenJtiIsMissing() {
-        String validToken = "valid-token";
-        String jti = "some-jti";
+  @Test
+  void refreshAccessToken_shouldThrowJtiNotFoundInCacheException_whenJtiIsMissing() {
+    String validToken = "valid-token";
+    String jti = "some-jti";
 
-        when(tokenService.isRefreshTokenValid(validToken)).thenReturn(true);
-        when(tokenService.extractJti(validToken)).thenReturn(jti);
-        when(tokenRepository.getUserIdByJti(jti)).thenReturn(null);
+    when(tokenService.isRefreshTokenValid(validToken)).thenReturn(true);
+    when(tokenService.extractJti(validToken)).thenReturn(jti);
+    when(tokenRepository.getUserIdByJti(jti)).thenReturn(null);
 
-        assertThrows(JtiNotFoundInCacheException.class, () -> refreshTokenUseCase.execute(validToken));
-    }
+    assertThrows(JtiNotFoundInCacheException.class, () -> refreshTokenUseCase.execute(validToken));
+  }
 
-    @Test
-    void refreshAccessToken_shouldThrowInvalidUserIdInRefreshTokenException_whenUserIsNotFound() {
-        String validToken = "valid-token";
-        String jti = "jti-value";
-        String userId = UUID.randomUUID().toString();
+  @Test
+  void refreshAccessToken_shouldThrowInvalidUserIdInRefreshTokenException_whenUserIsNotFound() {
+    String validToken = "valid-token";
+    String jti = "jti-value";
+    String userId = UUID.randomUUID().toString();
 
-        when(tokenService.isRefreshTokenValid(validToken)).thenReturn(true);
-        when(tokenService.extractJti(validToken)).thenReturn(jti);
-        when(tokenRepository.getUserIdByJti(jti)).thenReturn(userId);
-        when(credentialsRepository.findByUserId(userId)).thenReturn(Optional.empty());
+    when(tokenService.isRefreshTokenValid(validToken)).thenReturn(true);
+    when(tokenService.extractJti(validToken)).thenReturn(jti);
+    when(tokenRepository.getUserIdByJti(jti)).thenReturn(userId);
+    when(credentialsRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> refreshTokenUseCase.execute(validToken));
-    }
+    assertThrows(UserNotFoundException.class, () -> refreshTokenUseCase.execute(validToken));
+  }
 
-    @Test
-    void refreshAccessToken_shouldThrowInvalidTokenException_whenTokenIsExpired() {
-        String expiredToken = "expired-token";
-        String jti = "expired-jti";
-        String userId = UUID.randomUUID().toString();
-        Credentials credentials = mock(Credentials.class);
+  @Test
+  void refreshAccessToken_shouldThrowInvalidTokenException_whenTokenIsExpired() {
+    String expiredToken = "expired-token";
+    String jti = "expired-jti";
+    String userId = UUID.randomUUID().toString();
+    Credentials credentials = mock(Credentials.class);
 
-        when(tokenService.isRefreshTokenValid(expiredToken)).thenReturn(true);
-        when(tokenService.extractJti(expiredToken)).thenReturn(jti);
-        when(tokenRepository.getUserIdByJti(jti)).thenReturn(userId);
-        when(credentialsRepository.findByUserId(userId)).thenReturn(Optional.of(credentials));
-        when(tokenService.extractExpiration(expiredToken))
-                .thenReturn(Date.from(Instant.now().minusSeconds(10)));
+    when(tokenService.isRefreshTokenValid(expiredToken)).thenReturn(true);
+    when(tokenService.extractJti(expiredToken)).thenReturn(jti);
+    when(tokenRepository.getUserIdByJti(jti)).thenReturn(userId);
+    when(credentialsRepository.findByUserId(userId)).thenReturn(Optional.of(credentials));
+    when(tokenService.extractExpiration(expiredToken))
+        .thenReturn(Date.from(Instant.now().minusSeconds(10)));
 
-        assertThrows(InvalidTokenException.class, () -> refreshTokenUseCase.execute(expiredToken));
-    }
+    assertThrows(InvalidTokenException.class, () -> refreshTokenUseCase.execute(expiredToken));
+  }
 
-    private Credentials createFakeCredentials() {
-        return new Credentials(
-                UUID.randomUUID(),
-                "test@test.com",
-                "A.Hefjizie99",
-                new Role(RoleName.CONSUMER, null),
-                Date.from(Instant.now()),
-                null);
-    }
+  private Credentials createFakeCredentials() {
+    return new Credentials(
+        UUID.randomUUID(),
+        "test@test.com",
+        "A.Hefjizie99",
+        new Role(RoleName.CONSUMER, null),
+        Date.from(Instant.now()),
+        null);
+  }
 
-    @Test
-    void refreshAccessToken_shouldReturnNewTokens_whenTokenIsValid() {
-        String token = "valid-refresh-token";
-        String oldJti = "jti-old";
-        String newAccessToken = "new-access-token";
-        String newRefreshToken = "new-refresh-token";
-        String newJti = "jti-new";
-        Date expiryDate = Date.from(Instant.now().plusSeconds(300));
+  @Test
+  void refreshAccessToken_shouldReturnNewTokens_whenTokenIsValid() {
+    String token = "valid-refresh-token";
+    String oldJti = "jti-old";
+    String newAccessToken = "new-access-token";
+    String newRefreshToken = "new-refresh-token";
+    String newJti = "jti-new";
+    Date expiryDate = Date.from(Instant.now().plusSeconds(300));
 
-        Credentials creds = createFakeCredentials();
+    Credentials creds = createFakeCredentials();
 
-        when(tokenService.isRefreshTokenValid(token)).thenReturn(true);
-        when(tokenService.extractJti(token)).thenReturn(oldJti);
-        when(tokenRepository.getUserIdByJti(oldJti)).thenReturn(creds.getId().toString());
-        when(credentialsRepository.findByUserId(creds.getId().toString()))
-                .thenReturn(Optional.of(creds));
-        when(tokenService.extractExpiration(token)).thenReturn(expiryDate);
+    when(tokenService.isRefreshTokenValid(token)).thenReturn(true);
+    when(tokenService.extractJti(token)).thenReturn(oldJti);
+    when(tokenRepository.getUserIdByJti(oldJti)).thenReturn(creds.getId().toString());
+    when(credentialsRepository.findByUserId(creds.getId().toString()))
+        .thenReturn(Optional.of(creds));
+    when(tokenService.extractExpiration(token)).thenReturn(expiryDate);
 
-        when(tokenService.createAccessToken(eq(creds.getId()), eq(creds.getRole().name().toString())))
-                .thenReturn(newAccessToken);
+    when(tokenService.createAccessToken(eq(creds.getId()), eq(creds.getRole().name().toString())))
+        .thenReturn(newAccessToken);
 
-        when(tokenService.createRefreshToken(
-                eq(creds.getId()), eq(creds.getRole().name().toString()), any(Duration.class)))
-                .thenReturn(newRefreshToken);
+    when(tokenService.createRefreshToken(
+            eq(creds.getId()), eq(creds.getRole().name().toString()), any(Duration.class)))
+        .thenReturn(newRefreshToken);
 
-        when(tokenService.extractJti(newRefreshToken)).thenReturn(newJti);
+    when(tokenService.extractJti(newRefreshToken)).thenReturn(newJti);
 
-        TokenPair result = refreshTokenUseCase.execute(token);
+    TokenPair result = refreshTokenUseCase.execute(token);
 
-        assertEquals(newAccessToken, result.getAccessToken());
-        assertEquals(newRefreshToken, result.getRefreshToken());
+    assertEquals(newAccessToken, result.getAccessToken());
+    assertEquals(newRefreshToken, result.getRefreshToken());
 
-        verify(tokenRepository).deleteByJti(oldJti);
-        verify(tokenRepository)
-                .storeRefreshToken(eq(newJti), eq(creds.getId().toString()), any(Duration.class));
-    }
+    verify(tokenRepository).deleteByJti(oldJti);
+    verify(tokenRepository)
+        .storeRefreshToken(eq(newJti), eq(creds.getId().toString()), any(Duration.class));
+  }
 }

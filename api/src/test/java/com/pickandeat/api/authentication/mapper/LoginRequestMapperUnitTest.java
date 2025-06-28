@@ -1,11 +1,11 @@
 package com.pickandeat.api.authentication.mapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.pickandeat.api.authentication.dto.LoginRequestDto;
 import com.pickandeat.authentication.application.usecase.login.LoginCommand;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Tag("unit")
 public class LoginRequestMapperUnitTest {

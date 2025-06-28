@@ -1,15 +1,14 @@
 package com.pickandeat.api.authentication.mapper;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.pickandeat.api.authentication.dto.RegisterRequestDto;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 import com.pickandeat.authentication.domain.enums.RoleName;
+import java.time.LocalDate;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("unit")
 public class RegisterRequestMapperUnitTest {
@@ -17,14 +16,14 @@ public class RegisterRequestMapperUnitTest {
   @Test
   void shouldMapRegisterRequestDtoToRegisterCommand() {
     RegisterRequestDto dto =
-            new RegisterRequestDto(
-                    "test@example.com",
-                    "securePass123",
-                    "John",
-                    "Doe",
-                    "0123456789",
-                    "2000-01-15",
-                    "CONSUMER");
+        new RegisterRequestDto(
+            "test@example.com",
+            "securePass123",
+            "John",
+            "Doe",
+            "0123456789",
+            "2000-01-15",
+            "CONSUMER");
 
     RegisterCommand command = RegisterRequestMapper.toCommand(dto);
 
@@ -40,38 +39,38 @@ public class RegisterRequestMapperUnitTest {
   @Test
   void shouldThrowExceptionForInvalidRole() {
     RegisterRequestDto dto =
-            new RegisterRequestDto(
-                    "test@example.com",
-                    "securePass123",
-                    "John",
-                    "Doe",
-                    "0123456789",
-                    "2000-01-15",
-                    "not_a_real_role");
+        new RegisterRequestDto(
+            "test@example.com",
+            "securePass123",
+            "John",
+            "Doe",
+            "0123456789",
+            "2000-01-15",
+            "not_a_real_role");
 
     assertThrows(
-            IllegalArgumentException.class,
-            () -> {
-              RegisterRequestMapper.toCommand(dto);
-            });
+        IllegalArgumentException.class,
+        () -> {
+          RegisterRequestMapper.toCommand(dto);
+        });
   }
 
   @Test
   void shouldThrowExceptionForInvalidDate() {
     RegisterRequestDto dto =
-            new RegisterRequestDto(
-                    "test@example.com",
-                    "securePass123",
-                    "John",
-                    "Doe",
-                    "0123456789",
-                    "not-a-date",
-                    "CONSUMER");
+        new RegisterRequestDto(
+            "test@example.com",
+            "securePass123",
+            "John",
+            "Doe",
+            "0123456789",
+            "not-a-date",
+            "CONSUMER");
 
     assertThrows(
-            Exception.class,
-            () -> {
-              RegisterRequestMapper.toCommand(dto);
-            });
+        Exception.class,
+        () -> {
+          RegisterRequestMapper.toCommand(dto);
+        });
   }
 }

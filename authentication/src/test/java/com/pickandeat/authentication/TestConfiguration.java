@@ -11,5 +11,4 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(basePackages = "com.pickandeat.authentication")
 @EntityScan("com.pickandeat.authentication.infrastructure.model")
 @EnableJpaRepositories("com.pickandeat.authentication.infrastructure.repository")
-public class TestConfiguration {
-}
+public class TestConfiguration {}

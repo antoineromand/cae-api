@@ -5,9 +5,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ICredentialsRepository {
-    Optional<Credentials> findByEmail(String email);
+  Optional<Credentials> findByEmail(String email);
 
-    UUID save(Credentials credentials);
+  UUID save(Credentials credentials);
 
-    Optional<Credentials> findByUserId(String userId);
+  Optional<Credentials> findByUserId(String userId);
 }

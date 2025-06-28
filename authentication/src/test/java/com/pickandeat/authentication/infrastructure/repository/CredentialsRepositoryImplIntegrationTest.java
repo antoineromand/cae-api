@@ -20,8 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Tag("integration")
 public class CredentialsRepositoryImplIntegrationTest extends AbstractDatabaseContainersTest {
 
-  @Autowired
-  private CredentialsRepositoryImpl credentialsRepository;
+  @Autowired private CredentialsRepositoryImpl credentialsRepository;
 
   @Test
   @Transactional

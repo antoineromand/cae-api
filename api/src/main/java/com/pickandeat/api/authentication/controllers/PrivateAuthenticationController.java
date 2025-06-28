@@ -25,36 +25,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("private/api/v1/authentication")
 public class PrivateAuthenticationController {
 
-    private final IUpdatePasswordUseCase updatePasswordUseCase;
+  private final IUpdatePasswordUseCase updatePasswordUseCase;
 
-    public PrivateAuthenticationController(IUpdatePasswordUseCase updatePasswordUseCase) {
-        this.updatePasswordUseCase = updatePasswordUseCase;
-    }
+  public PrivateAuthenticationController(IUpdatePasswordUseCase updatePasswordUseCase) {
+    this.updatePasswordUseCase = updatePasswordUseCase;
+  }
 
-    @PreAuthorize("hasRole('CONSUMER') and hasAuthority('SCOPE_UPDATE:USER-PASSWORD')")
-    @PutMapping("update-password")
-    @Operation(summary = "Update password when user is authenticated.")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(
-                            responseCode = "200",
-                            description = "Update password with success",
-                            content = @Content(schema = @Schema(implementation = UpdatePasswordApiResponse.class))),
-                    @ApiResponse(
-                            responseCode = "401",
-                            description = "Given password does not match with actual password",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
-                    @ApiResponse(
-                            responseCode = "500",
-                            description = "Internal server error.",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
-            })
-    public ResponseEntity<GenericApiResponse<String>> updatePassword(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody UpdatePasswordRequestDto dto) {
-        UpdatePasswordCommand command =
-                UpdatePasswordRequestMapper.toCommand(dto, userDetails.getUsername());
-        this.updatePasswordUseCase.execute(command);
-        return ResponseEntity.ok(new GenericApiResponse<>("Password updated successfully", null));
-    }
+  @PreAuthorize("hasRole('CONSUMER') and hasAuthority('SCOPE_UPDATE:USER-PASSWORD')")
+  @PutMapping("update-password")
+  @Operation(summary = "Update password when user is authenticated.")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Update password with success",
+            content = @Content(schema = @Schema(implementation = UpdatePasswordApiResponse.class))),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Given password does not match with actual password",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error.",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+      })
+  public ResponseEntity<GenericApiResponse<String>> updatePassword(
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @RequestBody UpdatePasswordRequestDto dto) {
+    UpdatePasswordCommand command =
+        UpdatePasswordRequestMapper.toCommand(dto, userDetails.getUsername());
+    this.updatePasswordUseCase.execute(command);
+    return ResponseEntity.ok(new GenericApiResponse<>("Password updated successfully", null));
+  }
 }

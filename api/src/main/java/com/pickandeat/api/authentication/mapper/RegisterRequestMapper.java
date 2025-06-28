@@ -4,7 +4,6 @@ import com.pickandeat.api.authentication.dto.RegisterRequestDto;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -16,12 +15,12 @@ public class RegisterRequestMapper {
     Role role = new Role(roleName, null);
 
     return new RegisterCommand(
-            dto.getEmail(),
-            dto.getPassword(),
-            dto.getFirstName(),
-            dto.getLastName(),
-            dto.getPhoneNumber(),
-            LocalDate.parse(dto.getBirthDate()),
-            role);
+        dto.getEmail(),
+        dto.getPassword(),
+        dto.getFirstName(),
+        dto.getLastName(),
+        dto.getPhoneNumber(),
+        LocalDate.parse(dto.getBirthDate()),
+        role);
   }
 }

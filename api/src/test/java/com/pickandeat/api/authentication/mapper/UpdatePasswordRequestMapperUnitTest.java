@@ -1,14 +1,13 @@
 package com.pickandeat.api.authentication.mapper;
 
-import com.pickandeat.api.authentication.dto.UpdatePasswordRequestDto;
-import com.pickandeat.authentication.application.usecase.update_password.UpdatePasswordCommand;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import com.pickandeat.api.authentication.dto.UpdatePasswordRequestDto;
+import com.pickandeat.authentication.application.usecase.update_password.UpdatePasswordCommand;
+import java.util.UUID;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("unit")
 public class UpdatePasswordRequestMapperUnitTest {
@@ -31,9 +30,9 @@ public class UpdatePasswordRequestMapperUnitTest {
     String invalidUuid = "not-a-uuid";
 
     assertThrows(
-            IllegalArgumentException.class,
-            () -> {
-              UpdatePasswordRequestMapper.toCommand(dto, invalidUuid);
-            });
+        IllegalArgumentException.class,
+        () -> {
+          UpdatePasswordRequestMapper.toCommand(dto, invalidUuid);
+        });
   }
 }
