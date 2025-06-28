@@ -1,5 +1,6 @@
 plugins {
 	`java-library`
+
 }
 
 java {
@@ -28,10 +29,6 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-	onlyIf {
-		val requested = gradle.startParameter.taskNames
-		requested.none { it.contains("unitTest") || it.contains("integrationTest") || it.contains("functionalTest") }
-	}
 }
 
 tasks.withType<Javadoc>().configureEach {
@@ -58,3 +55,4 @@ tasks.named<Test>("test") {
 				!requested.contains("functionalTest")
 	}
 }
+

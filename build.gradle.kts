@@ -53,16 +53,13 @@ subprojects {
 		useJUnitPlatform()
 	}
 
-	tasks.named("jacocoTestReport") {
-        dependsOn(tasks.named("test"))
-    }
 
 	plugins.withId("java") {
+		println("📦 Applying unitTest + JaCoCo config to project: ${project.name}")
 		val coverageLimit: BigDecimal =
 			(project.findProperty("limit") as String?)?.toBigDecimalOrNull() ?: BigDecimal("0.8")
 
 		val unitTest: TaskProvider<Test> = tasks.register("unitTest", Test::class) {
-			finalizedBy(tasks.named("jacocoTestReport"))
 			useJUnitPlatform {
 				includeTags("unit")
 			}
