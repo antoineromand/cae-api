@@ -12,5 +12,4 @@ public class ScopeUnitTest {
         Scope scope = new Scope("read", "menu");
         assertEquals("read:menu", scope.getScope());
     }
-
 }

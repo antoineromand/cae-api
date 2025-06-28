@@ -14,17 +14,17 @@ import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 import com.pickandeat.shared.token.TokenService;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 
 @Transactional
 @Tag("functional")
@@ -50,14 +50,15 @@ public class RefreshTokenUseCaseFunctionalTest extends AbstractDatabaseContainer
     public TokenPair createCredentials() {
         String dateString = "2025-05-24";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        RegisterCommand command = new RegisterCommand(
-                "test-refresh@test.com",
-                "MotDePasseTest06?",
-                "john",
-                "doe",
-                "+33650333340",
-                LocalDate.parse(dateString, formatter),
-                new Role(RoleName.CONSUMER, null));
+        RegisterCommand command =
+                new RegisterCommand(
+                        "test-refresh@test.com",
+                        "MotDePasseTest06?",
+                        "john",
+                        "doe",
+                        "+33650333340",
+                        LocalDate.parse(dateString, formatter),
+                        new Role(RoleName.CONSUMER, null));
         this.registerUseCase.execute(command);
         return this.loginUseCase.execute(new LoginCommand(command.email(), command.password()));
     }
@@ -69,25 +70,30 @@ public class RefreshTokenUseCaseFunctionalTest extends AbstractDatabaseContainer
 
     @Test
     void refreshAccessToken_shouldThrowInvalidTokenException_whenTokenIsMalformed() {
-        Assertions.assertThrows(InvalidTokenException.class, () -> this.refreshUseCase.execute("invalid-token"));
+        Assertions.assertThrows(
+                InvalidTokenException.class, () -> this.refreshUseCase.execute("invalid-token"));
     }
 
     @Test
     void refreshAccessToken_shouldThrowJtiNotFoundInCacheException_whenJtiMissing() {
-        String refreshToken = this.tokenService.createRefreshToken(UUID.randomUUID(), "CONSUMER", Duration.ofDays(1));
-        Assertions.assertThrows(JtiNotFoundInCacheException.class, () -> this.refreshUseCase.execute(refreshToken));
+        String refreshToken =
+                this.tokenService.createRefreshToken(UUID.randomUUID(), "CONSUMER", Duration.ofDays(1));
+        Assertions.assertThrows(
+                JtiNotFoundInCacheException.class, () -> this.refreshUseCase.execute(refreshToken));
     }
 
     @Test
     void refreshAccessToken_shouldThrowInvalidUserIdInRefreshTokenException_whenUserIdDoesNotMatch() {
         UUID expectedUserId = UUID.randomUUID();
-        String refreshToken = this.tokenService.createRefreshToken(expectedUserId, "CONSUMER", Duration.ofDays(3));
+        String refreshToken =
+                this.tokenService.createRefreshToken(expectedUserId, "CONSUMER", Duration.ofDays(3));
         String expectedJti = this.tokenService.extractJti(refreshToken);
-        this.tokenRepository.storeRefreshToken(expectedJti, expectedUserId.toString(), Duration.ofDays(3));
+        this.tokenRepository.storeRefreshToken(
+                expectedJti, expectedUserId.toString(), Duration.ofDays(3));
 
-        Assertions.assertThrows(UserNotFoundException.class, () -> this.refreshUseCase.execute(refreshToken));
+        Assertions.assertThrows(
+                UserNotFoundException.class, () -> this.refreshUseCase.execute(refreshToken));
     }
-
 
     @Test
     void refreshAccessToken_shouldReturnNewTokenPair_whenTokenIsValid() {

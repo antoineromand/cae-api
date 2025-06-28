@@ -13,8 +13,7 @@ public class SharedRedisContainer {
 
     public static GenericContainer<?> getInstance() {
         if (instance == null && isEnabled()) {
-            instance = new GenericContainer<>(DockerImageName.parse("redis:7.2"))
-                    .withExposedPorts(6379);
+            instance = new GenericContainer<>(DockerImageName.parse("redis:7.2")).withExposedPorts(6379);
             instance.start();
         }
         return instance;

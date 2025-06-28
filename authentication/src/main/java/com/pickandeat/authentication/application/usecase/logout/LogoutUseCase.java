@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 public class LogoutUseCase implements ILogoutUseCase {
     private final ITokenRepository tokenRepository;
     private final TokenService tokenService;
+
     public LogoutUseCase(ITokenRepository tokenRepository, TokenService tokenService) {
         this.tokenRepository = tokenRepository;
         this.tokenService = tokenService;
     }
+
     @Override
     public void execute(String refreshToken) {
         this.validateToken(refreshToken);

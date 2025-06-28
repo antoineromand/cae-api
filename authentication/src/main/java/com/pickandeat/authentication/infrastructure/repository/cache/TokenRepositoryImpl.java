@@ -29,6 +29,4 @@ public class TokenRepositoryImpl implements ITokenRepository {
     public void deleteByJti(String jti) {
         this.redisTemplate.delete(jti);
     }
-
-
 }

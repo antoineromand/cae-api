@@ -1,17 +1,17 @@
 package com.pickandeat.authentication.domain;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.domain.valueobject.Scope;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("unit")
 public class CredentialsUnitTest {
@@ -20,13 +20,14 @@ public class CredentialsUnitTest {
     public void credentials_shouldHaveFullAccess_whenRoleIsAdmin() {
         Set<Scope> scopes = new HashSet<>();
         scopes.add(new Scope("*", "*"));
-        Credentials adminCredentials = new Credentials(
-                UUID.randomUUID(),
-                "test@test.com",
-                "hashedPassword",
-                new Role(RoleName.ADMIN, scopes),
-                new Date(),
-                null);
+        Credentials adminCredentials =
+                new Credentials(
+                        UUID.randomUUID(),
+                        "test@test.com",
+                        "hashedPassword",
+                        new Role(RoleName.ADMIN, scopes),
+                        new Date(),
+                        null);
 
         assertTrue(adminCredentials.getRole().hasWildcardScope());
         assertTrue(adminCredentials.canAccess("read", "menu"));
@@ -48,19 +49,19 @@ public class CredentialsUnitTest {
         scopes.add(new Scope("read", "order"));
         scopes.add(new Scope("read", "stores"));
 
-        Credentials consumerCredentials = new Credentials(
-                UUID.randomUUID(),
-                "test@test.com",
-                "hashedPassword",
-                new Role(RoleName.CONSUMER, scopes),
-                new Date(),
-                null);
+        Credentials consumerCredentials =
+                new Credentials(
+                        UUID.randomUUID(),
+                        "test@test.com",
+                        "hashedPassword",
+                        new Role(RoleName.CONSUMER, scopes),
+                        new Date(),
+                        null);
         assertFalse(consumerCredentials.getRole().hasWildcardScope());
         assertTrue(consumerCredentials.canAccess("read", "menu"));
         assertTrue(consumerCredentials.hasConsummerRole());
         assertFalse(consumerCredentials.hasProRole());
         assertFalse(consumerCredentials.hasAdminRole());
-
     }
 
     @Test
@@ -72,13 +73,14 @@ public class CredentialsUnitTest {
         scopes.add(new Scope("denial", "order"));
         scopes.add(new Scope("list", "stores"));
 
-        Credentials proCredentials = new Credentials(
-                UUID.randomUUID(),
-                "test@test.com",
-                "hashedPassword",
-                new Role(RoleName.PRO, scopes),
-                new Date(),
-                null);
+        Credentials proCredentials =
+                new Credentials(
+                        UUID.randomUUID(),
+                        "test@test.com",
+                        "hashedPassword",
+                        new Role(RoleName.PRO, scopes),
+                        new Date(),
+                        null);
         assertFalse(proCredentials.getRole().hasWildcardScope());
         assertFalse(proCredentials.canAccess("create", "order"));
         assertTrue(proCredentials.canAccess("update", "menu"));

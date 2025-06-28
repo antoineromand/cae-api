@@ -1,9 +1,8 @@
 package com.pickandeat.authentication.infrastructure.external.encryption;
 
+import com.pickandeat.authentication.domain.service.IPasswordService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.pickandeat.authentication.domain.service.IPasswordService;
 
 @Service
 public class PasswordService implements IPasswordService {
@@ -19,5 +18,4 @@ public class PasswordService implements IPasswordService {
     public boolean matches(String raw, String hashed) {
         return encoder.matches(raw, hashed);
     }
-
 }

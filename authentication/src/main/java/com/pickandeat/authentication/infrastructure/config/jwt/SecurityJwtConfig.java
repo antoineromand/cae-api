@@ -17,7 +17,6 @@ public class SecurityJwtConfig {
         return accessExpirationMs;
     }
 
-
     public void setSecret(String secret) {
         this.secret = secret;
     }
@@ -25,5 +24,4 @@ public class SecurityJwtConfig {
     public void setAccessExpirationMs(long accessExpirationMs) {
         this.accessExpirationMs = accessExpirationMs;
     }
-
 }

@@ -1,5 +1,10 @@
 package com.pickandeat.authentication.application.usecase.login;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 import com.pickandeat.authentication.application.ITokenRepository;
 import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.EmailNotFoundException;
@@ -12,18 +17,13 @@ import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.shared.token.ITokenProvider;
 import com.pickandeat.shared.token.TokenPayload;
 import com.pickandeat.shared.token.TokenService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
-
 import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
 @Tag("unit")
 public class LoginUseCaseUnitTest {
@@ -42,7 +42,8 @@ public class LoginUseCaseUnitTest {
         tokenProvider = mock(ITokenProvider.class);
         tokenRepository = mock(ITokenRepository.class);
         tokenService = new TokenService(tokenProvider);
-        loginUseCase = new LoginUseCase(passwordService, credentialsRepository, tokenService, tokenRepository);
+        loginUseCase =
+                new LoginUseCase(passwordService, credentialsRepository, tokenService, tokenRepository);
     }
 
     private LoginCommand generateCommand() {
@@ -84,12 +85,10 @@ public class LoginUseCaseUnitTest {
         when(credentialsRepository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
         when(passwordService.matches(command.password(), "hashed-password")).thenReturn(true);
 
-        when(tokenProvider.generateAccessToken(any(TokenPayload.class)))
-                .thenReturn("access-token");
+        when(tokenProvider.generateAccessToken(any(TokenPayload.class))).thenReturn("access-token");
         when(tokenProvider.generateRefreshToken(any(TokenPayload.class), any(Duration.class)))
                 .thenReturn("refresh-token");
-        when(tokenProvider.extractJtiFromToken("refresh-token"))
-                .thenReturn("jti-value");
+        when(tokenProvider.extractJtiFromToken("refresh-token")).thenReturn("jti-value");
 
         TokenPair result = loginUseCase.execute(command);
 
@@ -112,19 +111,15 @@ public class LoginUseCaseUnitTest {
         when(credentialsRepository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
         when(passwordService.matches(command.password(), "hashed-password")).thenReturn(true);
 
-        when(tokenProvider.generateAccessToken(any(TokenPayload.class)))
-                .thenReturn("access-token");
+        when(tokenProvider.generateAccessToken(any(TokenPayload.class))).thenReturn("access-token");
         when(tokenProvider.generateRefreshToken(any(TokenPayload.class), any(Duration.class)))
                 .thenReturn("refresh-token");
-        when(tokenProvider.extractJtiFromToken("refresh-token"))
-                .thenReturn("jti-value");
+        when(tokenProvider.extractJtiFromToken("refresh-token")).thenReturn("jti-value");
 
         loginUseCase.execute(command);
 
-        verify(tokenRepository).storeRefreshToken(
-                eq("jti-value"),
-                eq(userId.toString()),
-                eq(TokenService.MAX_DURATION_REFRESH_TOKEN)
-        );
+        verify(tokenRepository)
+                .storeRefreshToken(
+                        eq("jti-value"), eq(userId.toString()), eq(TokenService.MAX_DURATION_REFRESH_TOKEN));
     }
 }

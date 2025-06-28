@@ -25,72 +25,74 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("functional")
 class UpdatePasswordUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
 
-    private static final String OLD_PASSWORD = "clearPassword06?";
-    private static final String NEW_PASSWORD = "clearPassword07?";
+  private static final String OLD_PASSWORD = "clearPassword06?";
+  private static final String NEW_PASSWORD = "clearPassword07?";
 
-    @Autowired private UpdatePasswordUseCase updatePasswordUseCase;
-    @Autowired private ICredentialsRepository credentialsRepository;
-    @Autowired private IPasswordService passwordService;
-    @Autowired private CredentialsEntityJPARepository credentialsEntityJPARepository;
+  @Autowired
+  private UpdatePasswordUseCase updatePasswordUseCase;
+  @Autowired
+  private ICredentialsRepository credentialsRepository;
+  @Autowired
+  private IPasswordService passwordService;
+  @Autowired
+  private CredentialsEntityJPARepository credentialsEntityJPARepository;
 
-    private UUID existingUserId;
+  private UUID existingUserId;
 
-    @BeforeEach
-    void setUp() {
-        Credentials credentials = new Credentials(
-                null,
-                "test-update-password@test.fr",
-                this.passwordService.hashPassword(OLD_PASSWORD),
-                new Role(RoleName.CONSUMER, null),
-                Date.from(Instant.now()),
-                null
-        );
+  @BeforeEach
+  void setUp() {
+    Credentials credentials =
+            new Credentials(
+                    null,
+                    "test-update-password@test.fr",
+                    this.passwordService.hashPassword(OLD_PASSWORD),
+                    new Role(RoleName.CONSUMER, null),
+                    Date.from(Instant.now()),
+                    null);
 
-        existingUserId = this.credentialsRepository.save(credentials);
-    }
+    existingUserId = this.credentialsRepository.save(credentials);
+  }
 
+  @Test
+  void shouldThrow_whenUserDoesNotExist() {
+    UpdatePasswordCommand command =
+            new UpdatePasswordCommand(UUID.randomUUID(), "whatever", NEW_PASSWORD);
 
-    @Test
-    void shouldThrow_whenUserDoesNotExist() {
-        UpdatePasswordCommand command =
-                new UpdatePasswordCommand(UUID.randomUUID(), "whatever", NEW_PASSWORD);
+    assertThrows(UserNotFoundException.class, () -> updatePasswordUseCase.execute(command));
+  }
 
-        assertThrows(UserNotFoundException.class,
-                () -> updatePasswordUseCase.execute(command));
-    }
+  @Test
+  @Transactional
+  void shouldThrow_whenOldPasswordDoesNotMatch() {
+    UpdatePasswordCommand command =
+            new UpdatePasswordCommand(existingUserId, "wrongOldPwd", NEW_PASSWORD);
 
-    @Test
-    @Transactional
-    void shouldThrow_whenOldPasswordDoesNotMatch() {
-        UpdatePasswordCommand command =
-                new UpdatePasswordCommand(existingUserId, "wrongOldPwd", NEW_PASSWORD);
+    assertThrows(PasswordNotMatchException.class, () -> updatePasswordUseCase.execute(command));
+  }
 
-        assertThrows(PasswordNotMatchException.class,
-                () -> updatePasswordUseCase.execute(command));
-    }
+  @Test
+  @Transactional
+  void shouldUpdatePassword_whenEverythingIsValid() {
+    UpdatePasswordCommand command =
+            new UpdatePasswordCommand(existingUserId, OLD_PASSWORD, NEW_PASSWORD);
 
-    @Test
-    @Transactional
-    void shouldUpdatePassword_whenEverythingIsValid() {
-        UpdatePasswordCommand command =
-                new UpdatePasswordCommand(existingUserId, OLD_PASSWORD, NEW_PASSWORD);
+    updatePasswordUseCase.execute(command);
 
-        updatePasswordUseCase.execute(command);
+    Credentials creds = credentialsRepository.findByUserId(existingUserId.toString()).orElseThrow();
 
-        Credentials creds = credentialsRepository
-                .findByUserId(existingUserId.toString())
-                .orElseThrow();
+    assertAll(
+            () ->
+                    assertFalse(
+                            passwordService.matches(OLD_PASSWORD, creds.getPassword()),
+                            "L’ancien mot de passe ne doit plus matcher"),
+            () ->
+                    assertTrue(
+                            passwordService.matches(NEW_PASSWORD, creds.getPassword()),
+                            "Le nouveau mot de passe doit matcher"));
+  }
 
-        assertAll(
-                () -> assertFalse(passwordService.matches(OLD_PASSWORD, creds.getPassword()),
-                        "L’ancien mot de passe ne doit plus matcher"),
-                () -> assertTrue(passwordService.matches(NEW_PASSWORD, creds.getPassword()),
-                        "Le nouveau mot de passe doit matcher")
-        );
-    }
-
-    @AfterEach
-    void tearDown() {
-        credentialsEntityJPARepository.deleteAll();
-    }
+  @AfterEach
+  void tearDown() {
+    credentialsEntityJPARepository.deleteAll();
+  }
 }

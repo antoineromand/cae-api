@@ -1,8 +1,5 @@
 package com.pickandeat.authentication.infrastructure.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,6 +10,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Table(name = "role")
 @Entity()
@@ -28,8 +28,10 @@ public class RoleEntity {
 
     // Set<Scope> many to many
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "role_scope", joinColumns = { @JoinColumn(name = "role_id") }, inverseJoinColumns = {
-            @JoinColumn(name = "scope_id") })
+    @JoinTable(
+            name = "role_scope",
+            joinColumns = {@JoinColumn(name = "role_id")},
+            inverseJoinColumns = {@JoinColumn(name = "scope_id")})
     private Set<ScopeEntity> scopes = new HashSet<>();
 
     public RoleEntity() {
@@ -46,5 +48,4 @@ public class RoleEntity {
     public Set<ScopeEntity> getScopes() {
         return scopes;
     }
-
 }

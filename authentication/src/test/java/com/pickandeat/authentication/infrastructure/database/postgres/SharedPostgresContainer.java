@@ -12,11 +12,12 @@ public class SharedPostgresContainer {
 
     public static PostgreSQLContainer<?> getInstance() {
         if (INSTANCE == null && isEnabled()) {
-            INSTANCE = new PostgreSQLContainer<>("postgres:15")
-                    .withDatabaseName("pae-api")
-                    .withUsername("testuser")
-                    .withPassword("testpass")
-                    .withInitScript("db/migration/V1_Credentials_schema.sql");
+            INSTANCE =
+                    new PostgreSQLContainer<>("postgres:15")
+                            .withDatabaseName("pae-api")
+                            .withUsername("testuser")
+                            .withPassword("testpass")
+                            .withInitScript("db/migration/V1_Credentials_schema.sql");
             INSTANCE.start();
         }
         return INSTANCE;

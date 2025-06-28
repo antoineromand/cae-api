@@ -1,9 +1,8 @@
 package com.pickandeat.authentication.domain;
 
+import com.pickandeat.authentication.domain.valueobject.Role;
 import java.util.Date;
 import java.util.UUID;
-
-import com.pickandeat.authentication.domain.valueobject.Role;
 
 public class Credentials {
     private final UUID id;
@@ -12,9 +11,9 @@ public class Credentials {
     private final Role role;
     private final Date createdAt;
     private Date updatedAt;
-    
-    public Credentials(UUID id, String email, String password, Role role, Date createdAt,
-            Date updatedAt) {
+
+    public Credentials(
+            UUID id, String email, String password, Role role, Date createdAt, Date updatedAt) {
         this.id = id;
         this.email = email;
         this.password = password;

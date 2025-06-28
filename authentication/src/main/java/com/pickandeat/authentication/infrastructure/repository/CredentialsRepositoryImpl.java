@@ -1,14 +1,14 @@
 package com.pickandeat.authentication.infrastructure.repository;
 
+import com.pickandeat.authentication.domain.Credentials;
+import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
+import com.pickandeat.authentication.infrastructure.model.CredentialsEntity;
+import com.pickandeat.authentication.infrastructure.model.RoleEntity;
+
 import java.util.Optional;
 import java.util.UUID;
 
-import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import org.springframework.stereotype.Component;
-
-import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.authentication.infrastructure.model.CredentialsEntity;
-import com.pickandeat.authentication.infrastructure.model.RoleEntity;
 
 @Component
 public class CredentialsRepositoryImpl implements ICredentialsRepository {
@@ -16,7 +16,8 @@ public class CredentialsRepositoryImpl implements ICredentialsRepository {
     private final CredentialsEntityJPARepository iCredentialsJPARespository;
     private final RoleEntityJPARepository roleEntityJPARepository;
 
-    public CredentialsRepositoryImpl(CredentialsEntityJPARepository credentialsRepository,
+    public CredentialsRepositoryImpl(
+            CredentialsEntityJPARepository credentialsRepository,
             RoleEntityJPARepository roleRepository) {
         this.iCredentialsJPARespository = credentialsRepository;
         this.roleEntityJPARepository = roleRepository;
@@ -31,8 +32,10 @@ public class CredentialsRepositoryImpl implements ICredentialsRepository {
 
     @Override
     public UUID save(Credentials credentials) {
-        RoleEntity roleEntity = this.roleEntityJPARepository.findByName(credentials.getRole().name().toString())
-                .orElseThrow(() -> new RuntimeException("placeholder: role pas bon"));
+        RoleEntity roleEntity =
+                this.roleEntityJPARepository
+                        .findByName(credentials.getRole().name().toString())
+                        .orElseThrow(() -> new RuntimeException("placeholder: role pas bon"));
         var credentialsEntity = CredentialsEntity.fromDomain(credentials, roleEntity);
         CredentialsEntity savedCredentials = this.iCredentialsJPARespository.save(credentialsEntity);
         return savedCredentials.getId();
@@ -40,9 +43,9 @@ public class CredentialsRepositoryImpl implements ICredentialsRepository {
 
     @Override
     public Optional<Credentials> findByUserId(String userId) {
-        Optional<CredentialsEntity> entityModel = this.iCredentialsJPARespository.findById(UUID.fromString(userId));
+        Optional<CredentialsEntity> entityModel =
+                this.iCredentialsJPARespository.findById(UUID.fromString(userId));
 
         return entityModel.map(CredentialsEntity::toDomain);
     }
-
 }

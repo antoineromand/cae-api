@@ -1,11 +1,6 @@
 package com.pickandeat.authentication.infrastructure.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Table(name = "scope")
 @Entity()
@@ -35,5 +30,4 @@ public class ScopeEntity {
     public String getTarget() {
         return target;
     }
-
 }

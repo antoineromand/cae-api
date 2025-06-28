@@ -8,13 +8,13 @@ import com.pickandeat.authentication.application.exceptions.application.UserNotF
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.shared.token.TokenService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -24,7 +24,9 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
     private final ICredentialsRepository credentialsRepository;
     private final TokenService tokenService;
 
-    public RefreshTokenUseCase(ITokenRepository tokenRepository, ICredentialsRepository credentialsRepository,
+    public RefreshTokenUseCase(
+            ITokenRepository tokenRepository,
+            ICredentialsRepository credentialsRepository,
             TokenService tokenService) {
         this.tokenRepository = tokenRepository;
         this.credentialsRepository = credentialsRepository;
@@ -64,8 +66,7 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
     }
 
     private Credentials getCredentials(String userId) {
-        return credentialsRepository.findByUserId(userId)
-                .orElseThrow(UserNotFoundException::new);
+        return credentialsRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new);
     }
 
     private void deleteOldJti(String jti) {
@@ -78,7 +79,7 @@ public class RefreshTokenUseCase implements IRefreshUseCase {
     }
 
     private TokenPair createRotatedTokens(Credentials c, Duration ttl) {
-        String access  = tokenService.createAccessToken(c.getId(), c.getRole().name().toString());
+        String access = tokenService.createAccessToken(c.getId(), c.getRole().name().toString());
         String refresh = tokenService.createRefreshToken(c.getId(), c.getRole().name().toString(), ttl);
         return new TokenPair(access, refresh);
     }

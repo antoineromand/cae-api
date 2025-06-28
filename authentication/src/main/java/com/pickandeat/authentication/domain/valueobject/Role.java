@@ -1,8 +1,8 @@
 package com.pickandeat.authentication.domain.valueobject;
 
-import java.util.Set;
-
 import com.pickandeat.authentication.domain.enums.RoleName;
+
+import java.util.Set;
 
 public record Role(RoleName name, Set<Scope> scopes) {
 

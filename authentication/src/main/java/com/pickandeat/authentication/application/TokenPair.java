@@ -1,4 +1,3 @@
-
 package com.pickandeat.authentication.application;
 
 public class TokenPair {
