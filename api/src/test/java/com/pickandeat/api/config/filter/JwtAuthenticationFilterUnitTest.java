@@ -1,5 +1,8 @@
 package com.pickandeat.api.config.filter;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
 import com.pickandeat.authentication.infrastructure.model.RoleEntity;
 import com.pickandeat.authentication.infrastructure.model.ScopeEntity;
 import com.pickandeat.authentication.infrastructure.repository.RoleEntityJPARepository;
@@ -8,18 +11,15 @@ import com.pickandeat.shared.token.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @Tag("unit")
 public class JwtAuthenticationFilterUnitTest {

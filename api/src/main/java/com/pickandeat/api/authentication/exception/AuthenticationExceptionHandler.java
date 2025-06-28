@@ -6,7 +6,6 @@ import com.pickandeat.api.shared.ErrorApiResponse;
 import com.pickandeat.authentication.application.exceptions.application.*;
 import com.pickandeat.authentication.application.exceptions.technical.CannotHashPasswordException;
 import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

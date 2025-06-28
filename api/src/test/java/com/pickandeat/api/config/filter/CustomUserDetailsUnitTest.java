@@ -3,10 +3,8 @@ package com.pickandeat.api.config.filter;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.pickandeat.authentication.domain.valueobject.Scope;
-
 import java.util.Set;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 

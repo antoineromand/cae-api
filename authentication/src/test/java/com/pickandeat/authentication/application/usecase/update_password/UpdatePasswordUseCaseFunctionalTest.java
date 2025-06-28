@@ -28,14 +28,14 @@ class UpdatePasswordUseCaseFunctionalTest extends AbstractDatabaseContainersTest
   private static final String OLD_PASSWORD = "clearPassword06?";
   private static final String NEW_PASSWORD = "clearPassword07?";
 
-    @Autowired
-    private UpdatePasswordUseCase updatePasswordUseCase;
-    @Autowired
-    private ICredentialsRepository credentialsRepository;
-    @Autowired
-    private IPasswordService passwordService;
-    @Autowired
-    private CredentialsEntityJPARepository credentialsEntityJPARepository;
+  @Autowired
+  private UpdatePasswordUseCase updatePasswordUseCase;
+  @Autowired
+  private ICredentialsRepository credentialsRepository;
+  @Autowired
+  private IPasswordService passwordService;
+  @Autowired
+  private CredentialsEntityJPARepository credentialsEntityJPARepository;
 
   private UUID existingUserId;
 

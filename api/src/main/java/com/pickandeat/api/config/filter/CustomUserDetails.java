@@ -1,7 +1,6 @@
 package com.pickandeat.api.config.filter;
 
 import com.pickandeat.authentication.domain.valueobject.Scope;
-
 import java.util.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
