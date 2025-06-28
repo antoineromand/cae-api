@@ -55,7 +55,6 @@ subprojects {
 
 
 	plugins.withId("java") {
-		println("📦 Applying unitTest + JaCoCo config to project: ${project.name}")
 		val coverageLimit: BigDecimal =
 			(project.findProperty("limit") as String?)?.toBigDecimalOrNull() ?: BigDecimal("0.8")
 
