@@ -12,28 +12,28 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("unit")
 public class UpdatePasswordRequestMapperUnitTest {
-    @Test
-    void shouldMapRequestDtoToCommand() {
-        UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto("old", "new");
-        UUID userId = UUID.randomUUID();
+  @Test
+  void shouldMapRequestDtoToCommand() {
+    UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto("old", "new");
+    UUID userId = UUID.randomUUID();
 
-        UpdatePasswordCommand command = UpdatePasswordRequestMapper.toCommand(dto, userId.toString());
+    UpdatePasswordCommand command = UpdatePasswordRequestMapper.toCommand(dto, userId.toString());
 
-        assertEquals(userId, command.userId());
-        assertEquals("old", command.oldPassword());
-        assertEquals("new", command.newPassword());
-    }
+    assertEquals(userId, command.userId());
+    assertEquals("old", command.oldPassword());
+    assertEquals("new", command.newPassword());
+  }
 
-    @Test
-    void shouldThrowExceptionWhenUserIdInvalid() {
-        UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto("old", "new");
+  @Test
+  void shouldThrowExceptionWhenUserIdInvalid() {
+    UpdatePasswordRequestDto dto = new UpdatePasswordRequestDto("old", "new");
 
-        String invalidUuid = "not-a-uuid";
+    String invalidUuid = "not-a-uuid";
 
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    UpdatePasswordRequestMapper.toCommand(dto, invalidUuid);
-                });
-    }
+    assertThrows(
+            IllegalArgumentException.class,
+            () -> {
+              UpdatePasswordRequestMapper.toCommand(dto, invalidUuid);
+            });
+  }
 }

@@ -11,7 +11,6 @@ import com.pickandeat.shared.token.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
