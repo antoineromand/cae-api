@@ -175,6 +175,126 @@ public class PublicAuthenticationController {
     return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", token));
   }
 
+  @Operation(
+      summary = "Log a user",
+      description = "Log a new user and returns an api response with tokens.",
+      requestBody =
+          @io.swagger.v3.oas.annotations.parameters.RequestBody(
+              description = "User registration data",
+              required = true,
+              content =
+                  @Content(
+                      schema = @Schema(implementation = RegisterRequestDto.class),
+                      examples =
+                          @ExampleObject(
+                              name = "RegisterRequestExample",
+                              summary = "Example registration",
+                              value =
+                                  """
+                          {
+                              "email": "example@example.com",
+                              "password": "AstrongPassw0rd!",
+                          }
+                      """))))
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User successfully authenticated",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = LoginApiResponse.class))),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid request body.",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Wrong credentials.",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error.",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponse.class)))
+      })
+  @PostMapping("/login/pro")
+  public ResponseEntity<GenericApiResponse<TokenPair>> loginForPRO(
+      @Valid @RequestBody LoginRequestDto dto) {
+    LoginCommand command = LoginRequestMapper.toCommand(dto);
+    TokenPair token = this.loginUseCase.execute(command, RoleName.PRO);
+    return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", token));
+  }
+
+  @Operation(
+      summary = "Log a user",
+      description = "Log a new user and returns an api response with tokens.",
+      requestBody =
+          @io.swagger.v3.oas.annotations.parameters.RequestBody(
+              description = "User registration data",
+              required = true,
+              content =
+                  @Content(
+                      schema = @Schema(implementation = RegisterRequestDto.class),
+                      examples =
+                          @ExampleObject(
+                              name = "RegisterRequestExample",
+                              summary = "Example registration",
+                              value =
+                                  """
+                          {
+                              "email": "example@example.com",
+                              "password": "AstrongPassw0rd!",
+                          }
+                      """))))
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User successfully authenticated",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = LoginApiResponse.class))),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid request body.",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "401",
+            description = "Wrong credentials.",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error.",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ErrorResponse.class)))
+      })
+  @PostMapping("/login/admin")
+  public ResponseEntity<GenericApiResponse<TokenPair>> loginForAdmin(
+      @Valid @RequestBody LoginRequestDto dto) {
+    LoginCommand command = LoginRequestMapper.toCommand(dto);
+    TokenPair token = this.loginUseCase.execute(command, RoleName.ADMIN);
+    return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", token));
+  }
+
   @Operation(summary = "Refresh JWT tokens using a valid refresh token")
   @ApiResponses(
       value = {

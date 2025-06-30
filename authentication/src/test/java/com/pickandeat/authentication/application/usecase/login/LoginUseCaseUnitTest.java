@@ -56,10 +56,9 @@ public class LoginUseCaseUnitTest {
 
     when(credentialsRepository.findByEmail(command.email())).thenReturn(Optional.empty());
 
-    assertThrows(EmailNotFoundException.class, () -> loginUseCase.execute(command, RoleName.CONSUMER));
+    assertThrows(
+        EmailNotFoundException.class, () -> loginUseCase.execute(command, RoleName.CONSUMER));
   }
-
-
 
   @Test
   void login_shouldThrowPasswordNotMatchException_whenPasswordIsIncorrect() {
@@ -71,7 +70,8 @@ public class LoginUseCaseUnitTest {
     when(credentials.getPassword()).thenReturn("hashed-password");
     when(passwordService.matches(command.password(), "hashed-password")).thenReturn(false);
 
-    assertThrows(PasswordNotMatchException.class, () -> loginUseCase.execute(command, RoleName.CONSUMER));
+    assertThrows(
+        PasswordNotMatchException.class, () -> loginUseCase.execute(command, RoleName.CONSUMER));
   }
 
   @Test
@@ -84,7 +84,8 @@ public class LoginUseCaseUnitTest {
     when(passwordService.matches(command.password(), "hashed-password")).thenReturn(true);
     when(credentials.getRole()).thenReturn(consumerRole);
 
-    assertThrows(RoleMismatchException.class, () -> loginUseCase.execute(command, RoleName.CONSUMER));
+    assertThrows(
+        RoleMismatchException.class, () -> loginUseCase.execute(command, RoleName.CONSUMER));
   }
 
   @Test

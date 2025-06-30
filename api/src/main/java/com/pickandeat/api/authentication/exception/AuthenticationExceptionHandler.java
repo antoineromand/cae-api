@@ -89,4 +89,11 @@ public class AuthenticationExceptionHandler {
     return ResponseEntity.status(HttpStatusCode.valueOf(400))
         .body(new ErrorApiResponse(ex.getKey(), ex.getMessage(), 400, null));
   }
+
+  @ExceptionHandler(RoleMismatchException.class)
+  public ResponseEntity<ErrorApiResponse> handleForbiddenExceptions(
+      AbstractApplicationException ex) {
+    return ResponseEntity.status(HttpStatusCode.valueOf(403))
+        .body(new ErrorApiResponse(ex.getKey(), ex.getMessage(), 403, null));
+  }
 }

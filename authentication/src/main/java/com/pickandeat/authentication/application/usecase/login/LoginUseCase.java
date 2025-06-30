@@ -48,9 +48,9 @@ public class LoginUseCase implements ILoginUseCase {
   }
 
   private void checkRole(RoleName expectedRole, RoleName role) {
-      if(!role.equals(expectedRole)) {
-        throw new RoleMismatchException();
-      }
+    if (!role.equals(expectedRole)) {
+      throw new RoleMismatchException();
+    }
   }
 
   private void checkPassword(LoginCommand command, String hashedPassword) {

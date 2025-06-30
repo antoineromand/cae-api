@@ -50,23 +50,27 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
   void login_shouldThrowUserNotFoundException_whenEmailDoesNotExist() {
     LoginCommand loginCommand = new LoginCommand("not-a-user@email.com", "LePoissonSteve?2");
 
-    assertThrows(EmailNotFoundException.class, () -> this.loginUseCase.execute(loginCommand, RoleName.CONSUMER));
+    assertThrows(
+        EmailNotFoundException.class,
+        () -> this.loginUseCase.execute(loginCommand, RoleName.CONSUMER));
   }
-
 
   @Test
   @Transactional
   void login_shouldThrowPasswordNotMatchException_whenPasswordIsIncorrect() {
     LoginCommand loginCommand = new LoginCommand("test@test.com", "MauvaisMotDePasse33?");
 
-    assertThrows(PasswordNotMatchException.class, () -> this.loginUseCase.execute(loginCommand, RoleName.CONSUMER));
+    assertThrows(
+        PasswordNotMatchException.class,
+        () -> this.loginUseCase.execute(loginCommand, RoleName.CONSUMER));
   }
 
   @Test
   void login_shouldThrowUserNotFoundException_whenRoleDoesNotMatch() {
     LoginCommand loginCommand = new LoginCommand("test@test.com", "MotDePasseTest06?");
 
-    assertThrows(RoleMismatchException.class, () -> this.loginUseCase.execute(loginCommand, RoleName.PRO));
+    assertThrows(
+        RoleMismatchException.class, () -> this.loginUseCase.execute(loginCommand, RoleName.PRO));
   }
 
   @Test
