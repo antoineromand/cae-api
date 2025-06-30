@@ -104,3 +104,7 @@ L'API utilise le standard **JWT** avec deux types de tokens :
 - **Cache** : Dragonfly (compatible Redis)
 - **Architecture** : Monolithe modulaire
 - **Langage et framework** : Java 24 / Spring
+
+## 📚 Documentation Git & CI
+
+Consultez les [règles Git et la configuration CI](./docs/GIT_GUIDELINES.md) pour comprendre le fonctionnement des branches, PR et des vérifications automatiques.
