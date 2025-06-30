@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThrows;
 import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.EmailNotFoundException;
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
+import com.pickandeat.authentication.application.exceptions.application.RoleMismatchException;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
 import com.pickandeat.authentication.domain.enums.RoleName;
@@ -49,7 +50,9 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
   void login_shouldThrowUserNotFoundException_whenEmailDoesNotExist() {
     LoginCommand loginCommand = new LoginCommand("not-a-user@email.com", "LePoissonSteve?2");
 
-    assertThrows(EmailNotFoundException.class, () -> this.loginUseCase.execute(loginCommand));
+    assertThrows(
+        EmailNotFoundException.class,
+        () -> this.loginUseCase.execute(loginCommand, RoleName.CONSUMER));
   }
 
   @Test
@@ -57,7 +60,17 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
   void login_shouldThrowPasswordNotMatchException_whenPasswordIsIncorrect() {
     LoginCommand loginCommand = new LoginCommand("test@test.com", "MauvaisMotDePasse33?");
 
-    assertThrows(PasswordNotMatchException.class, () -> this.loginUseCase.execute(loginCommand));
+    assertThrows(
+        PasswordNotMatchException.class,
+        () -> this.loginUseCase.execute(loginCommand, RoleName.CONSUMER));
+  }
+
+  @Test
+  void login_shouldThrowUserNotFoundException_whenRoleDoesNotMatch() {
+    LoginCommand loginCommand = new LoginCommand("test@test.com", "MotDePasseTest06?");
+
+    assertThrows(
+        RoleMismatchException.class, () -> this.loginUseCase.execute(loginCommand, RoleName.PRO));
   }
 
   @Test
@@ -65,7 +78,7 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
   void login_shouldReturnToken_whenCredentialsAreValid() {
     LoginCommand loginCommand = new LoginCommand("test@test.com", "MotDePasseTest06?");
 
-    TokenPair resultToken = this.loginUseCase.execute(loginCommand);
+    TokenPair resultToken = this.loginUseCase.execute(loginCommand, RoleName.CONSUMER);
 
     Assertions.assertFalse(resultToken.getAccessToken().isBlank());
     Assertions.assertFalse(resultToken.getRefreshToken().isBlank());

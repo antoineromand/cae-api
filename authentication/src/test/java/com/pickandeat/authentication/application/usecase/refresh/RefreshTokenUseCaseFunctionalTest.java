@@ -54,7 +54,8 @@ public class RefreshTokenUseCaseFunctionalTest extends AbstractDatabaseContainer
             LocalDate.parse(dateString, formatter),
             new Role(RoleName.CONSUMER, null));
     this.registerUseCase.execute(command);
-    return this.loginUseCase.execute(new LoginCommand(command.email(), command.password()));
+    return this.loginUseCase.execute(
+        new LoginCommand(command.email(), command.password()), RoleName.CONSUMER);
   }
 
   @BeforeEach
