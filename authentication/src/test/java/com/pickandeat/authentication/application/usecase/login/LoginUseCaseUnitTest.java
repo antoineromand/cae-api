@@ -9,6 +9,7 @@ import com.pickandeat.authentication.application.ITokenRepository;
 import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.EmailNotFoundException;
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
+import com.pickandeat.authentication.application.exceptions.application.RoleMismatchException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
@@ -58,7 +59,7 @@ public class LoginUseCaseUnitTest {
     assertThrows(EmailNotFoundException.class, () -> loginUseCase.execute(command, RoleName.CONSUMER));
   }
 
-  // Add test to trigger exception if user has a unexpected role.
+
 
   @Test
   void login_shouldThrowPasswordNotMatchException_whenPasswordIsIncorrect() {
@@ -71,6 +72,19 @@ public class LoginUseCaseUnitTest {
     when(passwordService.matches(command.password(), "hashed-password")).thenReturn(false);
 
     assertThrows(PasswordNotMatchException.class, () -> loginUseCase.execute(command, RoleName.CONSUMER));
+  }
+
+  @Test
+  void login_shouldThrowPasswordNotMatchException_whenRoleDoesNotMatch() {
+    LoginCommand command = generateCommand();
+    Credentials credentials = mock(Credentials.class);
+    Role consumerRole = new Role(RoleName.ADMIN, null);
+    when(credentialsRepository.findByEmail(command.email())).thenReturn(Optional.of(credentials));
+    when(credentials.getPassword()).thenReturn("hashed-password");
+    when(passwordService.matches(command.password(), "hashed-password")).thenReturn(true);
+    when(credentials.getRole()).thenReturn(consumerRole);
+
+    assertThrows(RoleMismatchException.class, () -> loginUseCase.execute(command, RoleName.CONSUMER));
   }
 
   @Test

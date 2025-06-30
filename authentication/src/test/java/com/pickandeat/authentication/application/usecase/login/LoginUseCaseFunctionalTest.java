@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThrows;
 import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.EmailNotFoundException;
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
+import com.pickandeat.authentication.application.exceptions.application.RoleMismatchException;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
 import com.pickandeat.authentication.domain.enums.RoleName;
@@ -52,12 +53,20 @@ public class LoginUseCaseFunctionalTest extends AbstractDatabaseContainersTest {
     assertThrows(EmailNotFoundException.class, () -> this.loginUseCase.execute(loginCommand, RoleName.CONSUMER));
   }
 
+
   @Test
   @Transactional
   void login_shouldThrowPasswordNotMatchException_whenPasswordIsIncorrect() {
     LoginCommand loginCommand = new LoginCommand("test@test.com", "MauvaisMotDePasse33?");
 
     assertThrows(PasswordNotMatchException.class, () -> this.loginUseCase.execute(loginCommand, RoleName.CONSUMER));
+  }
+
+  @Test
+  void login_shouldThrowUserNotFoundException_whenRoleDoesNotMatch() {
+    LoginCommand loginCommand = new LoginCommand("test@test.com", "MotDePasseTest06?");
+
+    assertThrows(RoleMismatchException.class, () -> this.loginUseCase.execute(loginCommand, RoleName.PRO));
   }
 
   @Test

@@ -4,6 +4,7 @@ import com.pickandeat.authentication.application.ITokenRepository;
 import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.EmailNotFoundException;
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
+import com.pickandeat.authentication.application.exceptions.application.RoleMismatchException;
 import com.pickandeat.authentication.domain.Credentials;
 import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
@@ -35,8 +36,8 @@ public class LoginUseCase implements ILoginUseCase {
   @Override
   public TokenPair execute(LoginCommand command, RoleName expectedRole) {
     Credentials credentials = this.getCredentials(command);
-    this.checkRole(expectedRole, credentials.getRole().name());
     this.checkPassword(command, credentials.getPassword());
+    this.checkRole(expectedRole, credentials.getRole().name());
     return this.generateTokens(credentials.getId(), credentials.getRole().name().toString());
   }
 
@@ -48,7 +49,7 @@ public class LoginUseCase implements ILoginUseCase {
 
   private void checkRole(RoleName expectedRole, RoleName role) {
       if(!role.equals(expectedRole)) {
-        throw new RuntimeException("Wrong role");
+        throw new RoleMismatchException();
       }
   }
 
