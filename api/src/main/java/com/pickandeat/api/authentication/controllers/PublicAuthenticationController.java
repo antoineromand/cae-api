@@ -116,18 +116,18 @@ public class PublicAuthenticationController {
   }
 
   @Operation(
-      summary = "Log a user",
-      description = "Log a new user and returns an api response with tokens.",
+      summary = "Log a consumer",
+      description = "Log a new consumer and returns an api response with tokens.",
       requestBody =
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
-              description = "User registration data",
+              description = "Consumer registration data",
               required = true,
               content =
                   @Content(
                       schema = @Schema(implementation = RegisterRequestDto.class),
                       examples =
                           @ExampleObject(
-                              name = "RegisterRequestExample",
+                              name = "LoginRequestDto",
                               summary = "Example registration",
                               value =
                                   """
@@ -176,18 +176,18 @@ public class PublicAuthenticationController {
   }
 
   @Operation(
-      summary = "Log a user",
-      description = "Log a new user and returns an api response with tokens.",
+      summary = "Log a pro",
+      description = "Log a new pro and returns an api response with tokens.",
       requestBody =
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
-              description = "User registration data",
+              description = "Pro registration data",
               required = true,
               content =
                   @Content(
-                      schema = @Schema(implementation = RegisterRequestDto.class),
+                      schema = @Schema(implementation = LoginRequestDto.class),
                       examples =
                           @ExampleObject(
-                              name = "RegisterRequestExample",
+                              name = "LoginRequestDto",
                               summary = "Example registration",
                               value =
                                   """
@@ -236,18 +236,18 @@ public class PublicAuthenticationController {
   }
 
   @Operation(
-      summary = "Log a user",
-      description = "Log a new user and returns an api response with tokens.",
+      summary = "Log a admin",
+      description = "Log a new admin and returns an api response with tokens.",
       requestBody =
           @io.swagger.v3.oas.annotations.parameters.RequestBody(
-              description = "User registration data",
+              description = "Admin registration data",
               required = true,
               content =
                   @Content(
-                      schema = @Schema(implementation = RegisterRequestDto.class),
+                      schema = @Schema(implementation = LoginRequestDto.class),
                       examples =
                           @ExampleObject(
-                              name = "RegisterRequestExample",
+                              name = "LoginRequestDto",
                               summary = "Example registration",
                               value =
                                   """
@@ -260,7 +260,7 @@ public class PublicAuthenticationController {
       value = {
         @ApiResponse(
             responseCode = "200",
-            description = "User successfully authenticated",
+            description = "ADMIN successfully authenticated",
             content =
                 @Content(
                     mediaType = "application/json",
