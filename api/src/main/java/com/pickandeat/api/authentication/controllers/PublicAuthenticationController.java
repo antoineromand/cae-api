@@ -13,6 +13,7 @@ import com.pickandeat.authentication.application.usecase.logout.ILogoutUseCase;
 import com.pickandeat.authentication.application.usecase.refresh_token.IRefreshUseCase;
 import com.pickandeat.authentication.application.usecase.register.IRegisterUseCase;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
+import com.pickandeat.authentication.domain.enums.RoleName;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -166,11 +167,11 @@ public class PublicAuthenticationController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = ErrorResponse.class)))
       })
-  @PostMapping("/login")
-  public ResponseEntity<GenericApiResponse<TokenPair>> login(
+  @PostMapping("/login/consumer")
+  public ResponseEntity<GenericApiResponse<TokenPair>> loginForConsumer(
       @Valid @RequestBody LoginRequestDto dto) {
     LoginCommand command = LoginRequestMapper.toCommand(dto);
-    TokenPair token = this.loginUseCase.execute(command);
+    TokenPair token = this.loginUseCase.execute(command, RoleName.CONSUMER);
     return ResponseEntity.ok(new GenericApiResponse<>("Authentication successful.", token));
   }
 

@@ -5,6 +5,7 @@ import com.pickandeat.authentication.application.TokenPair;
 import com.pickandeat.authentication.application.exceptions.application.EmailNotFoundException;
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
 import com.pickandeat.authentication.domain.Credentials;
+import com.pickandeat.authentication.domain.enums.RoleName;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import com.pickandeat.shared.token.TokenService;
@@ -32,8 +33,9 @@ public class LoginUseCase implements ILoginUseCase {
   }
 
   @Override
-  public TokenPair execute(LoginCommand command) {
+  public TokenPair execute(LoginCommand command, RoleName expectedRole) {
     Credentials credentials = this.getCredentials(command);
+    this.checkRole(expectedRole, credentials.getRole().name());
     this.checkPassword(command, credentials.getPassword());
     return this.generateTokens(credentials.getId(), credentials.getRole().name().toString());
   }
@@ -42,6 +44,12 @@ public class LoginUseCase implements ILoginUseCase {
     return this.credentialsRepository
         .findByEmail(command.email())
         .orElseThrow(EmailNotFoundException::new);
+  }
+
+  private void checkRole(RoleName expectedRole, RoleName role) {
+      if(!role.equals(expectedRole)) {
+        throw new RuntimeException("Wrong role");
+      }
   }
 
   private void checkPassword(LoginCommand command, String hashedPassword) {
