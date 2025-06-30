@@ -49,3 +49,37 @@ La branche `develop` est protégée via les règles suivantes :
 
 ---
 
+## 🧪 Environnement de test
+
+Les tests d’intégration et fonctionnels s’exécutent dans un environnement isolé :
+
+- **Base de données de test** initialisée à chaque run
+- Utilisation de données fictives
+- Nettoyage après chaque test pour éviter les conflits
+
+---
+
+## 💡 Bonnes pratiques
+
+- **Créer une branche par fonctionnalité** à partir de `develop` :
+  ```bash
+  git checkout -b <ticket_jira>
+  ex: git checkout -b api-86
+  ```
+- **Commits clairs et réguliers**, par exemple :
+  ```bash
+  feat: add loginUseCase functional tests
+  ```
+  ou mieux encore :
+  ```bash
+  feat: add loginUseCase functional tests (authentication)
+  ```
+  
+---
+
+## 📎 Références
+
+- [Documentation Spotless](https://github.com/diffplug/spotless)
+- [Règles de couverture recommandées par module](https://martinfowler.com/bliki/TestCoverage.html)
+
+
