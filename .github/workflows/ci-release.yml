@@ -34,51 +34,119 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Get latest tag (robust)
+      - name: Get latest tags (robust)
         id: tag
         run: |
+          # List all tags for debugging
+          echo "All tags:"
+          git tag -l
           TAG=$(git tag --sort=-creatordate | head -n1)
           echo "latest_tag=$TAG" >> $GITHUB_OUTPUT
-          PREV_TAG=$(git tag --sort=-creatordate | grep -B1 $TAG | head -n1)
+          PREV_TAG=$(git tag --sort=-creatordate | head -n2 | tail -n1)
+          if [ "$TAG" = "$PREV_TAG" ]; then
+            PREV_TAG=""
+          fi
           echo "prev_tag=$PREV_TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $TAG"
+          echo "Previous tag: $PREV_TAG"
 
       - name: Confirm version with Axion Release
         id: version
         run: |
           VERSION=$(./gradlew -q currentVersion | grep -oE '[0-9]+\.[0-9]+\.[0-9]+([-\.][a-zA-Z0-9]+)*')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
 
-      - name: Create release branch
+      - name: Create release branch with initial commit
         run: |
+          # Configure git
+          git config user.name "grisou"
+          git config user.email "grisou@pickandeat.org"
+          
+          # Create and push release branch
           git checkout -b release/v${{ steps.version.outputs.version }}
+          echo "Release v${{ steps.version.outputs.version }} preparation" > RELEASE_NOTES.txt
+          git add RELEASE_NOTES.txt
+          git commit -m "chore: prepare release branch v${{ steps.version.outputs.version }}"
           git push origin release/v${{ steps.version.outputs.version }}
+          
+          # Debug: Verify branch state
+          echo "Branch state after initial commit:"
+          git log --oneline --graph --all -n 5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Create PR to main
         id: create-pr
-        uses: peter-evans/create-pull-request@v7
+        uses: actions/github-script@v7
         with:
-          commit-message: "chore: prepare release v${{ steps.version.outputs.version }}"
-          title: "Merge release v${{ steps.version.outputs.version }} into main"
-          body: "Automated PR to merge release branch v${{ steps.version.outputs.version }} into main after tagging. Changelog will be updated in this PR."
-          base: main
-          branch: release/v${{ steps.version.outputs.version }}
-          token: ${{ secrets.GH_PAT }}
-          delete-branch: false
-          author: grisou <grisou@pickandeat.org>
-          committer: grisou <grisou@pickandeat.org>
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            const result = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Merge release v${{ steps.version.outputs.version }} into main`,
+              head: `release/v${{ steps.version.outputs.version }}`,
+              base: 'main',
+              body: 'Automated PR to merge release branch v${{ steps.version.outputs.version }} into main after tagging. Changelog will be updated in this PR.'
+            });
+            console.log(`PR created: #${result.data.number}`);
+            core.setOutput('pull-request-number', result.data.number);
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+
+      - name: Debug PR creation
+        run: |
+          echo "PR number: ${{ steps.create-pr.outputs.pull-request-number }}"
+          if [ -z "${{ steps.create-pr.outputs.pull-request-number }}" ]; then
+            echo "Error: No PR was created. Check logs for errors."
+          else
+            echo "PR created successfully: #${{ steps.create-pr.outputs.pull-request-number }}"
+          fi
 
       - name: Generate and commit changelog
         run: |
           LAST_TAG=${{ steps.tag.outputs.latest_tag }}
           PREV_TAG=${{ steps.tag.outputs.prev_tag }}
-          echo "Generating changelog from $PREV_TAG to $LAST_TAG"
           
-          # Generate changelog for the specific tag range
-          conventional-changelog -p angular -r 2 -o CHANGELOG.md $PREV_TAG..$LAST_TAG
+          # Ensure CHANGELOG.md exists
+          touch CHANGELOG.md
+          
+          # Debug: List commits between tags
+          if [ -n "$PREV_TAG" ]; then
+            echo "Commits between $PREV_TAG and $LAST_TAG:"
+            git log --pretty='* %s' $PREV_TAG..$LAST_TAG
+          else
+            echo "Commits up to $LAST_TAG:"
+            git log --pretty='* %s' $LAST_TAG
+          fi
+          
+          # Generate changelog
+          if [ -z "$PREV_TAG" ]; then
+            echo "No previous tag found, generating changelog for all commits up to $LAST_TAG"
+            conventional-changelog -p angular -r 0 -o CHANGELOG.md
+          else
+            echo "Generating changelog from $PREV_TAG to $LAST_TAG"
+            conventional-changelog -p angular -r 2 -o CHANGELOG.md $PREV_TAG..$LAST_TAG
+          fi
           
           # Debug: Display changelog content
           echo "Changelog content:"
           cat CHANGELOG.md
+          
+          # Fallback: If changelog is empty, include all commits
+          if [ ! -s CHANGELOG.md ]; then
+            echo "Changelog is empty, generating fallback changelog with all commits"
+            echo "# Changelog\n\n## [${{ steps.version.outputs.version }}] - $(date +%F)" > CHANGELOG.md
+            echo "\n### Changes\n" >> CHANGELOG.md
+            if [ -n "$PREV_TAG" ]; then
+              git log --pretty='* %s' $PREV_TAG..$LAST_TAG >> CHANGELOG.md
+            else
+              git log --pretty='* %s' $LAST_TAG >> CHANGELOG.md
+            fi
+            echo "Fallback changelog content:"
+            cat CHANGELOG.md
+          fi
           
           # Configure git
           git config user.name "grisou"
