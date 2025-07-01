@@ -1,0 +1,76 @@
+name: Release pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository (with tags)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 24
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Get latest tag
+        id: tag
+        run: |
+          TAG=$(git describe --tags --abbrev=0)
+          echo "latest_tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Confirm version with Axion Release
+        id: version
+        run: |
+          VERSION=$(./gradlew -q currentVersion)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create release branch
+        run: |
+          git checkout -b release/v${{ steps.version.outputs.version }}
+          git push origin release/v${{ steps.version.outputs.version }}
+
+      - name: Install git-chglog
+        run: |
+          curl -sSL https://github.com/git-chglog/git-chglog/releases/download/v0.15.1/git-chglog_0.15.1_linux_amd64.tar.gz | tar -xz
+          sudo mv git-chglog /usr/local/bin/
+
+      - name: Generate changelog
+        run: |
+          git-chglog ${{ steps.tag.outputs.latest_tag }}..HEAD -o CHANGELOG.md
+
+      - name: Commit and push CHANGELOG.md
+        run: |
+          git config user.name "grisou"
+          git config user.email "grisou@pickandeat.org"
+          git add CHANGELOG.md
+          git commit -m "docs(changelog): update for release v${{ steps.version.outputs.version }}"
+          git push origin HEAD
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Release v${{ steps.version.outputs.version }}
+          generate_release_notes: true
+
+      - name: Create PR to main (optional step)
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: merge release v${{ steps.version.outputs.version }} into main"
+          title: "Merge release v${{ steps.version.outputs.version }} into main"
+          body: "Automated PR to merge release branch into main after tagging"
+          base: main
+          branch: release/v${{ steps.version.outputs.version }}
