@@ -20,6 +20,7 @@ scmVersion {
 	}
 
 	versionCreator("simple")
+	useHighestVersion = true
 
 }
 
