@@ -78,3 +78,5 @@ jobs:
           body: "Automated PR to merge release branch into main after tagging"
           base: main
           branch: release/v${{ steps.version.outputs.version }}
+          token: ${{ secrets.GH_PAT }}
+
