@@ -22,6 +22,14 @@ jobs:
           distribution: 'temurin'
           java-version: 24
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install conventional-changelog-cli
+        run: npm install -g conventional-changelog-cli
+
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
@@ -42,19 +50,14 @@ jobs:
           git checkout -b release/v${{ steps.version.outputs.version }}
           git push origin release/v${{ steps.version.outputs.version }}
 
-      - name: Install git-chglog
-        run: |
-          curl -sSL https://github.com/git-chglog/git-chglog/releases/download/v0.15.1/git-chglog_0.15.1_linux_amd64.tar.gz | tar -xz
-          sudo mv git-chglog /usr/local/bin/
-
       - name: Generate and commit changelog
         run: |
           LAST_TAG=${{ steps.tag.outputs.latest_tag }}
           PREV_TAG=$(git tag --sort=-creatordate | grep -B1 $LAST_TAG | head -n1)
           echo "Generating changelog from $PREV_TAG to $LAST_TAG"
           
-          # Generate changelog
-          git-chglog --config .chglog/config.yml $PREV_TAG..$LAST_TAG > CHANGELOG.md
+          # Generate changelog using conventional-changelog
+          conventional-changelog -p angular -r 0 -o CHANGELOG.md
           
           # Configure git
           git config user.name "grisou"
@@ -75,10 +78,10 @@ jobs:
           fi
           
           # Verify README hasn't been modified
-          if ! git diff --quiet HEAD^ HEAD -- README.md; then
+          if ! git diff --quiet HEAD^ HEAD -- README.md 2>/dev/null; then
             echo "Error: README.md was unexpectedly modified"
             git checkout HEAD^ -- README.md
-            git commit -m "revert: undo unwanted README.md changes"
+            git commit -m "revert: undo unwanted README.md changes" || true
             git push origin release/v${{ steps.version.outputs.version }}
           fi
         env:
