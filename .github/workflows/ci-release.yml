@@ -47,21 +47,42 @@ jobs:
           curl -sSL https://github.com/git-chglog/git-chglog/releases/download/v0.15.1/git-chglog_0.15.1_linux_amd64.tar.gz | tar -xz
           sudo mv git-chglog /usr/local/bin/
 
-      - name: Generate changelog from previous tag
+      - name: Generate and commit changelog
         run: |
           LAST_TAG=${{ steps.tag.outputs.latest_tag }}
           PREV_TAG=$(git tag --sort=-creatordate | grep -B1 $LAST_TAG | head -n1)
           echo "Generating changelog from $PREV_TAG to $LAST_TAG"
-          git-chglog $PREV_TAG..$LAST_TAG > CHANGELOG.md
-      
-
-      - name: Commit and push changelog
-        run: |
+          
+          # Generate changelog
+          git-chglog --config .chglog/config.yml $PREV_TAG..$LAST_TAG > CHANGELOG.md
+          
+          # Configure git
           git config user.name "grisou"
           git config user.email "grisou@pickandeat.org"
+          
+          # Ensure we're on the correct branch
+          git checkout release/v${{ steps.version.outputs.version }}
+          
+          # Stage only CHANGELOG.md
           git add CHANGELOG.md
-          git commit -m "docs(changelog): update for release v${{ steps.version.outputs.version }}"
-          git push origin HEAD
+          
+          # Check if there are actual changes to commit
+          if git diff --cached --quiet; then
+            echo "No changelog changes detected, skipping commit"
+          else
+            git commit -m "docs(changelog): update for release v${{ steps.version.outputs.version }}"
+            git push origin release/v${{ steps.version.outputs.version }}
+          fi
+          
+          # Verify README hasn't been modified
+          if ! git diff --quiet HEAD^ HEAD -- README.md; then
+            echo "Error: README.md was unexpectedly modified"
+            git checkout HEAD^ -- README.md
+            git commit -m "revert: undo unwanted README.md changes"
+            git push origin release/v${{ steps.version.outputs.version }}
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -69,14 +90,14 @@ jobs:
           tag_name: v${{ steps.version.outputs.version }}
           name: Release v${{ steps.version.outputs.version }}
           generate_release_notes: true
+          files: CHANGELOG.md
 
-      - name: Create PR to main (optional step)
+      - name: Create PR to main
         uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "chore: merge release v${{ steps.version.outputs.version }} into main"
           title: "Merge release v${{ steps.version.outputs.version }} into main"
-          body: "Automated PR to merge release branch into main after tagging"
+          body: "Automated PR to merge release branch v${{ steps.version.outputs.version }} into main after tagging"
           base: main
           branch: release/v${{ steps.version.outputs.version }}
           token: ${{ secrets.GH_PAT }}
-
