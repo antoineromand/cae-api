@@ -1,24 +1,31 @@
-{{ range .Versions }}
+{{- range .Versions }}
 <a name="{{ .Tag.Name }}"></a>
-## {{ if .Tag.Previous }}[{{ .Tag.Name }}]({{ $.Info.RepositoryURL }}/compare/{{ .Tag.Previous.Name }}...{{ .Tag.Name }}){{ else }}{{ .Tag.Name }}{{ end }}
+## 📦 Version {{ .Tag.Name }} {{ if .Tag.Previous }}([diff]({{ $.Info.RepositoryURL }}/compare/{{ .Tag.Previous.Name }}...{{ .Tag.Name }})){{ end }}
 
-> {{ datetime "2006-01-02" .Tag.Date }}
+🗓️  _{{ datetime "2006-01-02" .Tag.Date }}_
 
-{{ range .CommitGroups -}}
-### {{ .Title }}
-
-{{ range .Commits -}}
-* {{ .Subject }}
+{{ range .CommitGroups }}
+### {{ if eq .Title "Feat" }}✨ Features
+{{ else if eq .Title "Fix" }}🐛 Fixes
+{{ else if eq .Title "Chore" }}🧹 Chores
+{{ else }}📌 {{ .Title }}
 {{ end }}
-{{ end -}}
 
-{{- if .NoteGroups -}}
-{{ range .NoteGroups -}}
-### {{ .Title }}
+{{- range .Commits }}
+- {{ if .Scope }}**{{ .Scope }}**: {{ end }}{{ .Subject }}
+  {{- end }}
 
+{{ end }}
+
+{{- if .NoteGroups }}
+{{ range .NoteGroups }}
+### ⚠️ {{ .Title }}
 {{ range .Notes }}
-{{ .Body }}
+- {{ .Body }}
+  {{ end }}
+  {{ end }}
+  {{ end }}
+
+---
+
 {{ end }}
-{{ end -}}
-{{ end -}}
-{{ end -}}
