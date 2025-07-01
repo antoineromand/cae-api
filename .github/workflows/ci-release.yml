@@ -34,7 +34,7 @@ jobs:
       - name: Confirm version with Axion Release
         id: version
         run: |
-          VERSION=$(./gradlew -q currentVersion)
+          VERSION=$(./gradlew -q currentVersion | grep -oE '[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9]+)?')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create release branch
