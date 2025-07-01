@@ -3,6 +3,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 	id("co.uzzu.dotenv.gradle") version "4.0.0"
 	id("com.diffplug.spotless") version "7.0.4"
+	id("pl.allegro.tech.build.axion-release") version "1.18.18"
 }
 
 java {
@@ -11,11 +12,21 @@ java {
 	}
 }
 
-var currentVersion = "0.0.1-SNAPSHOT"
+version = scmVersion.version
+
+scmVersion {
+	tag {
+		prefix = "v"
+	}
+
+	versionCreator("simple")
+
+}
+
+
 
 allprojects {
 	group = "com.pickandeat"
-	version = currentVersion
 	repositories {
 		mavenCentral()
 		gradlePluginPortal()
