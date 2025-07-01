@@ -55,16 +55,17 @@ jobs:
 
       - name: Create PR to main
         id: create-pr
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           commit-message: "chore: prepare release v${{ steps.version.outputs.version }}"
           title: "Merge release v${{ steps.version.outputs.version }} into main"
-          body: "Automated PR to merge release branch v${{ steps.version.outputs.version }} into main after tagging"
+          body: "Automated PR to merge release branch v${{ steps.version.outputs.version }} into main after tagging. Changelog will be updated in this PR."
           base: main
           branch: release/v${{ steps.version.outputs.version }}
           token: ${{ secrets.GH_PAT }}
           delete-branch: false
-          push-to-fork: false
+          author: grisou <grisou@pickandeat.org>
+          committer: grisou <grisou@pickandeat.org>
 
       - name: Generate and commit changelog
         run: |
