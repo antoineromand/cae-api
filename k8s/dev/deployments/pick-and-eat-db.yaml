@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pick-and-eat-db
+  labels:
+    app: pick-and-eat-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pick-and-eat-db
+  template:
+    metadata:
+      labels:
+        app: pick-and-eat-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: db-secret
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
