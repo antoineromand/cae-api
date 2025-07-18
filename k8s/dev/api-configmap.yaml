@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+data:
+  PROJECT_MODE: any
+  SERVER_PORT: "3000"
+  USE_TESTCONTAINERS: "true"
