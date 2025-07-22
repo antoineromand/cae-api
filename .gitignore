@@ -34,3 +34,7 @@ bin/
 .env
 
 .idea
+
+# Kubernetes - Helm
+
+__snapshot__/

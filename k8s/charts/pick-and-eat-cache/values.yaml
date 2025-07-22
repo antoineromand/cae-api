@@ -1,0 +1,12 @@
+name: pick-and-eat-cache
+deployment:
+  container:
+    name: dragonfly
+    image: docker.dragonflydb.io/dragonflydb/dragonfly
+    port: 6379
+
+  volumeMount:
+    mountPath: /data
+
+volume:
+  size: 1Gi
