@@ -1,0 +1,7 @@
+db:
+  user: ""
+  password: ""
+  name: ""
+  port: 5432
+
+name: pick-and-eat-db
