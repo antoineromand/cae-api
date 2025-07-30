@@ -1,19 +1,19 @@
 package com.pickandeat.authentication.infrastructure.database.redis;
 
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.utility.DockerImageName;
+import com.redis.testcontainers.RedisContainer;
 
 public class SharedRedisContainer {
-  private static GenericContainer<?> instance;
+  private static RedisContainer instance;
 
   public static boolean isEnabled() {
     String env = System.getenv("USE_TESTCONTAINERS");
     return env == null || env.equalsIgnoreCase("true");
   }
 
-  public static GenericContainer<?> getInstance() {
+  public static RedisContainer getInstance() {
     if (instance == null && isEnabled()) {
-      instance = new GenericContainer<>(DockerImageName.parse("redis:7.2")).withExposedPorts(6379);
+      instance = new RedisContainer("redis:7.2.3-alpine");
+      instance.withExposedPorts(6379);
       instance.start();
     }
     return instance;
