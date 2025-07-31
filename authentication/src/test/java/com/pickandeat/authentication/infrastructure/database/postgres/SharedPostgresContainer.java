@@ -16,8 +16,7 @@ public class SharedPostgresContainer {
           new PostgreSQLContainer<>("postgres:15")
               .withDatabaseName("pae-api")
               .withUsername("testuser")
-              .withPassword("testpass")
-              .withInitScript("db/migration/V1_Credentials_schema.sql");
+              .withPassword("testpass");
       INSTANCE.start();
     }
     return INSTANCE;

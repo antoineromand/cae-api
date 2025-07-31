@@ -11,16 +11,19 @@ java {
 
 dependencies {
 	api(project(":shared"))
+	testImplementation(project(":migrations"))
+	testImplementation("org.flywaydb:flyway-core:11.10.4")
+	testRuntimeOnly("org.flywaydb:flyway-database-postgresql:11.10.4")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.springframework.security:spring-security-crypto")
-//	compileOnly("org.projectlombok:lombok")
-//	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
-	
+	testImplementation("org.postgresql:postgresql")
+
 	testImplementation("org.testcontainers:junit-jupiter")
-	testImplementation("org.testcontainers:postgresql")
+	testRuntimeOnly("org.testcontainers:postgresql")
+	testImplementation("com.redis:testcontainers-redis")
 	implementation("io.jsonwebtoken:jjwt-api:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")

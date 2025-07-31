@@ -132,11 +132,18 @@ jobs:
             sleep 5
           done
 
-      - name: Run DB init script
+      - name: Set up Flyway
         run: |
-          psql -h localhost -U testuser -d pae-api -f authentication/src/main/resources/db/migration/V1_Credentials_schema.sql
+            curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz | tar xvz
+            sudo ln -s $(pwd)/flyway-*/flyway /usr/local/bin/flyway
+
+      - name: Run Flyway migrations
         env:
-          PGPASSWORD: testpass
+          FLYWAY_URL: jdbc:postgresql://localhost:5432/pae-api
+          FLYWAY_USER: testuser
+          FLYWAY_PASSWORD: testpass
+          FLYWAY_LOCATIONS: filesystem:migrations/src/main/resources/db/migration
+        run: flyway migrate
 
       - name: Run integration tests
         env:
@@ -209,11 +216,18 @@ jobs:
             sleep 5
           done
 
-      - name: Run DB init script
+      - name: Set up Flyway
         run: |
-          psql -h localhost -U testuser -d pae-api -f authentication/src/main/resources/db/migration/V1_Credentials_schema.sql
+          curl -L https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.22.3/flyway-commandline-9.22.3-linux-x64.tar.gz | tar xvz
+          sudo ln -s $(pwd)/flyway-*/flyway /usr/local/bin/flyway
+
+      - name: Run Flyway migrations
         env:
-          PGPASSWORD: testpass
+          FLYWAY_URL: jdbc:postgresql://localhost:5432/pae-api
+          FLYWAY_USER: testuser
+          FLYWAY_PASSWORD: testpass
+          FLYWAY_LOCATIONS: filesystem:migrations/src/main/resources/db/migration
+        run: flyway migrate
 
       - name: Run functional tests
         env:

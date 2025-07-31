@@ -1,0 +1,9 @@
+apiVersion: v2
+name: pick-and-eat-cache
+description: A Helm chart for api's cache system.
+
+type: application
+
+version: 0.1.0
+
+appVersion: "1.0.0"

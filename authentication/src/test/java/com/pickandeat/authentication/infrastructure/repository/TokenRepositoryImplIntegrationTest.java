@@ -20,7 +20,6 @@ public class TokenRepositoryImplIntegrationTest extends AbstractDatabaseContaine
     Duration duration = Duration.ofMinutes(5);
 
     tokenRepositoryImpl.storeRefreshToken(jti, userId, duration);
-
     Thread.sleep(3000);
 
     Assertions.assertEquals(userId, tokenRepositoryImpl.getUserIdByJti(jti));

@@ -3,11 +3,12 @@ package com.pickandeat.authentication.infrastructure.database;
 import com.pickandeat.authentication.TestConfiguration;
 import com.pickandeat.authentication.infrastructure.database.postgres.SharedPostgresContainer;
 import com.pickandeat.authentication.infrastructure.database.redis.SharedRedisContainer;
+import com.redis.testcontainers.RedisContainer;
+import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 @SpringBootTest(classes = TestConfiguration.class)
@@ -24,6 +25,12 @@ public abstract class AbstractDatabaseContainersTest {
       registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
       registry.add("spring.jpa.hibernate.ddl-auto", () -> "none");
       registry.add("spring.jpa.show-sql", () -> "true");
+
+      Flyway.configure()
+          .dataSource(container.getJdbcUrl(), container.getUsername(), container.getPassword())
+          .locations("classpath:db/migration")
+          .load()
+          .migrate();
     } else {
       registry.add("spring.datasource.url", () -> "jdbc:postgresql://localhost:5432/pae-api");
       registry.add("spring.datasource.username", () -> "testuser");
@@ -32,19 +39,18 @@ public abstract class AbstractDatabaseContainersTest {
       registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
       registry.add("spring.jpa.hibernate.ddl-auto", () -> "none");
       registry.add("spring.jpa.show-sql", () -> "true");
-      System.out.println("[DEBUG] Using CI Postgres at localhost:5432");
     }
   }
 
   private static void configureRedisDatabase(DynamicPropertyRegistry registry) {
+    System.out.println(registry.toString());
     if (SharedRedisContainer.isEnabled()) {
-      GenericContainer<?> redis = SharedRedisContainer.getInstance();
-      registry.add("spring.redis.host", redis::getHost);
-      registry.add("spring.redis.port", () -> String.valueOf(redis.getMappedPort(6379)));
+      RedisContainer redis = SharedRedisContainer.getInstance();
+      registry.add("spring.data.redis.host", redis::getHost);
+      registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
     } else {
-      registry.add("spring.redis.host", () -> "localhost");
-      registry.add("spring.redis.port", () -> "6379");
-      System.out.println("[DEBUG] Using CI Redis at localhost:6379");
+      registry.add("spring.data.redis.host", () -> "localhost");
+      registry.add("spring.data.redis.port", () -> "6379");
     }
   }
 
