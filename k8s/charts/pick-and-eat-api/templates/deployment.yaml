@@ -14,9 +14,22 @@ spec:
       labels:
         app: {{ .Values.name }}
     spec:
+      initContainers:
+        - name: wait-for-flyway
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "⏳ Waiting for migration-job to complete..."
+              kubectl wait --for=condition=complete --timeout=600s -n {{ .Release.Namespace }} job/migration-job || {
+                echo "❌ Migration job failed or timed out."
+                exit 1
+              }
+              echo "✅ Migration job completed successfully!"
       containers:
         - name: {{ .Values.name }}-container
-          image: {{ .Values.ghcr.image }}
+          image: {{ .Values.ghcr.image.api }}
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILES_ACTIVE

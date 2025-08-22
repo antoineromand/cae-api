@@ -19,7 +19,9 @@ jwt:
   expiration_access_token: ""
 
 ghcr:
-  image: ghcr.io/pick-and-eat-organization/pick-and-eat-api:latest
+  image:
+    api: ghcr.io/pick-and-eat-organization/pick-and-eat-api:latest
+    flyway: ghcr.io/pick-and-eat-organization/cs-flyway:latest
   docker:
     json:
       config: ""

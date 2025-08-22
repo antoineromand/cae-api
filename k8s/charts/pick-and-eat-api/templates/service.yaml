@@ -6,5 +6,6 @@ spec:
   selector:
     app: {{ .Values.name }}
   ports:
-    - port: {{ .Values.server.port }}
+    - name: http
+      port: 80
       targetPort: {{ .Values.server.port }}
