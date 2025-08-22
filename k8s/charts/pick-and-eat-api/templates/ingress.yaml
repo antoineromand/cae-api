@@ -2,6 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Values.name }}-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
 spec:
   rules:
     - host: pick-and-eat.local
@@ -13,4 +15,4 @@ spec:
               service:
                 name: {{.Values.name }}-service
                 port:
-                  number: {{.Values.server.port }}
+                  number: 80
