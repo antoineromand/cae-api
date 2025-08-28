@@ -2,7 +2,7 @@ package com.pickandeat.account.infrastructure.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.pickandeat.account.domain.Account;
+import com.pickandeat.account.domain.account.Account;
 import com.pickandeat.shared.enums.RoleName;
 import java.time.Instant;
 import java.util.Date;
@@ -25,14 +25,7 @@ public class AccountEntityUnitTest {
           null);
   private static final AccountEntity ACCOUNT_ENTITY =
       new AccountEntity(
-          1L,
-          "Tony",
-          "Stark",
-          "1995-08-04",
-          "+33650121314",
-          Instant.now(),
-          null,
-          "CONSUMER");
+          1L, "Tony", "Stark", "1995-08-04", "+33650121314", Instant.now(), null, "CONSUMER");
 
   @Test
   public void shouldConvertAccountEntityToAccount() {

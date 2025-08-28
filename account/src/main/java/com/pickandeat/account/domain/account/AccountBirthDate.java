@@ -1,4 +1,4 @@
-package com.pickandeat.account.domain;
+package com.pickandeat.account.domain.account;
 
 import java.text.ParseException;
 import java.time.LocalDate;

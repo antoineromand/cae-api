@@ -1,4 +1,4 @@
-package com.pickandeat.account.domain;
+package com.pickandeat.account.domain.account.pro;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -15,7 +15,6 @@ public record Localisation(
     return Stream.of(address1, address2, address3, city, postalCode, country)
         .filter(Objects::nonNull)
         .map(String::trim)
-        .filter(s -> ((String) s).isEmpty())
         .collect(Collectors.joining(", "));
   }
 }

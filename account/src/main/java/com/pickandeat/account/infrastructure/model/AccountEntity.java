@@ -1,6 +1,6 @@
 package com.pickandeat.account.infrastructure.model;
 
-import com.pickandeat.account.domain.Account;
+import com.pickandeat.account.domain.account.Account;
 import com.pickandeat.shared.enums.RoleName;
 import jakarta.persistence.*;
 import java.time.Instant;

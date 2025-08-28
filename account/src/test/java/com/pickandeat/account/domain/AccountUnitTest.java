@@ -3,6 +3,9 @@ package com.pickandeat.account.domain;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.pickandeat.account.domain.account.Account;
+import com.pickandeat.account.domain.account.AccountPhoneNumber;
+import com.pickandeat.account.domain.account.pro.AccountProInformations;
 import com.pickandeat.shared.enums.RoleName;
 import java.text.ParseException;
 import java.time.Instant;
@@ -12,7 +15,21 @@ import org.junit.jupiter.api.Test;
 
 @Tag("unit")
 public class AccountUnitTest {
-  Account consumerAccount =
+  com.pickandeat.account.domain.account.pro.AccountProInformations accountProInformations =
+      new AccountProInformations(
+              2L,
+          "ref",
+          "siret",
+          "deluxe kebab",
+          "SARL",
+          "103 Avenue des potirons",
+          null,
+          null,
+          "Narnia",
+          "010101",
+          "France");
+
+  private final Account consumerAccount =
       new Account(
           1L,
           "Doe",
@@ -24,6 +41,19 @@ public class AccountUnitTest {
           Date.from(Instant.now()),
           null,
           null);
+
+  private final Account proAccount =
+      new Account(
+          2L,
+          "Doe",
+          "John",
+          RoleName.PRO,
+          "+33650333125",
+          "test@gmail.com",
+          "1995-09-04",
+          Date.from(Instant.now()),
+          null,
+          accountProInformations);
 
   @Test
   public void testConstructor() {
@@ -47,5 +77,18 @@ public class AccountUnitTest {
   @Test
   public void testAccountPhoneNumber_shouldThrowException() {
     assertThrows(IllegalArgumentException.class, () -> new AccountPhoneNumber("xce33650333125"));
+  }
+
+  @Test
+  public void testProInformations_shouldGetFullLocalisation() {
+    String fullAddress = "103 Avenue des potirons, Narnia, 010101, France";
+
+    assertEquals(fullAddress, this.proAccount.getAccountProInformations()
+            .getLocalisation().fullAddress());
+  }
+
+  @Test
+  public void testProInformationsId_shouldHaveSameThanAccountId() {
+    assertEquals(this.proAccount.getId(), this.accountProInformations.getId());
   }
 }
