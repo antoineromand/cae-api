@@ -13,7 +13,7 @@ import com.pickandeat.authentication.application.usecase.logout.ILogoutUseCase;
 import com.pickandeat.authentication.application.usecase.refresh_token.IRefreshUseCase;
 import com.pickandeat.authentication.application.usecase.register.IRegisterUseCase;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
-import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.shared.enums.RoleName;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;

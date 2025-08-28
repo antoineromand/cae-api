@@ -2,7 +2,7 @@ package com.pickandeat.api.authentication.mapper;
 
 import com.pickandeat.api.authentication.dto.RegisterRequestDto;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
-import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

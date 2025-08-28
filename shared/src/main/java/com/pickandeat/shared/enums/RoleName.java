@@ -1,4 +1,4 @@
-package com.pickandeat.authentication.domain.enums;
+package com.pickandeat.shared.enums;
 
 public enum RoleName {
   ADMIN,

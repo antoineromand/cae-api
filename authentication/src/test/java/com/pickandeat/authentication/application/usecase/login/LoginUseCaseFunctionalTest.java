@@ -8,7 +8,7 @@ import com.pickandeat.authentication.application.exceptions.application.Password
 import com.pickandeat.authentication.application.exceptions.application.RoleMismatchException;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
-import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 import java.time.LocalDate;

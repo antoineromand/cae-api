@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.domain.valueobject.Scope;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;

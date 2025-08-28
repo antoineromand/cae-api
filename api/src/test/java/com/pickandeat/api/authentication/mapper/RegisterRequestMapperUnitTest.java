@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.pickandeat.api.authentication.dto.RegisterRequestDto;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
-import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.shared.enums.RoleName;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;

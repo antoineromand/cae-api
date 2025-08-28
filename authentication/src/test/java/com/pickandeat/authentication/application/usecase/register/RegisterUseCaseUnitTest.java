@@ -10,7 +10,7 @@ import com.pickandeat.authentication.application.exceptions.application.EmailAlr
 import com.pickandeat.authentication.application.exceptions.technical.CannotHashPasswordException;
 import com.pickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
 import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
 import com.pickandeat.authentication.domain.valueobject.Role;

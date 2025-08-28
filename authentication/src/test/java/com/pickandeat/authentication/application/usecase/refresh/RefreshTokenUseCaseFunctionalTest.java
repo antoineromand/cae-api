@@ -10,7 +10,7 @@ import com.pickandeat.authentication.application.usecase.login.LoginUseCase;
 import com.pickandeat.authentication.application.usecase.refresh_token.RefreshTokenUseCase;
 import com.pickandeat.authentication.application.usecase.register.RegisterCommand;
 import com.pickandeat.authentication.application.usecase.register.RegisterUseCase;
-import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 import com.pickandeat.shared.token.TokenService;

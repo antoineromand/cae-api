@@ -2,7 +2,7 @@ package com.pickandeat.authentication.domain;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.domain.valueobject.Scope;
 import java.util.Date;

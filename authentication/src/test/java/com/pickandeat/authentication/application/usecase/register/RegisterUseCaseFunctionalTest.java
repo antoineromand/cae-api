@@ -3,7 +3,7 @@ package com.pickandeat.authentication.application.usecase.register;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.pickandeat.authentication.application.exceptions.application.EmailAlreadyUsedException;
-import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
 import java.time.LocalDate;

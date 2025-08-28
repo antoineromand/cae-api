@@ -1,6 +1,6 @@
 package com.pickandeat.api.authentication.dto.validators;
 
-import com.pickandeat.authentication.domain.enums.RoleName;
+import com.pickandeat.shared.enums.RoleName;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
