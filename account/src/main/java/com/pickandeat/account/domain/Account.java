@@ -3,7 +3,6 @@ package com.pickandeat.account.domain;
 import com.pickandeat.shared.enums.RoleName;
 
 import java.util.Date;
-import java.util.UUID;
 
 public class Account {
     private final Long id;
@@ -11,11 +10,13 @@ public class Account {
     private String firstName;
     private final RoleName role;
     private AccountPhoneNumber accountPhoneNumber;
-    private String accountEmail;
+    private final String accountEmail;
     private final AccountBirthDate accountBirthDate;
-    private Date accountCreatedDate;
-    private Date accountUpdatedDate;
-    private AccountProInformations accountProInformations;
+    private final Date accountCreatedDate;
+    private final Date accountUpdatedDate;
+    private final AccountProInformations accountProInformations;
+
+
 
     public Account(Long id, String lastName, String firstName, RoleName role, String accountPhoneNumber, String accountEmail, String accountBirthDate, Date accountCreatedDate, Date accountUpdatedDate, AccountProInformations accountProInformations) {
         this.id = id;
@@ -64,5 +65,21 @@ public class Account {
 
     public AccountBirthDate getAccountBirthDate() {
         return accountBirthDate;
+    }
+
+    public String getAccountEmail() {
+        return accountEmail;
+    }
+
+    public Date getAccountCreatedDate() {
+        return accountCreatedDate;
+    }
+
+    public Date getAccountUpdatedDate() {
+        return accountUpdatedDate;
+    }
+
+    public AccountProInformations getAccountProInformations() {
+        return accountProInformations;
     }
 }
