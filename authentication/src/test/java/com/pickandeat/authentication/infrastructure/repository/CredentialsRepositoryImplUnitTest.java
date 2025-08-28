@@ -6,10 +6,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.infrastructure.model.CredentialsEntity;
 import com.pickandeat.authentication.infrastructure.model.RoleEntity;
+import com.pickandeat.shared.enums.RoleName;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;

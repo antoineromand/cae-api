@@ -1,9 +1,9 @@
 package com.pickandeat.authentication.infrastructure.model;
 
 import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.domain.valueobject.Scope;
+import com.pickandeat.shared.enums.RoleName;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

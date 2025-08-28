@@ -6,9 +6,9 @@ import com.pickandeat.authentication.application.exceptions.application.EmailNot
 import com.pickandeat.authentication.application.exceptions.application.PasswordNotMatchException;
 import com.pickandeat.authentication.application.exceptions.application.RoleMismatchException;
 import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.service.IPasswordService;
+import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.shared.token.TokenService;
 import java.util.UUID;
 import org.springframework.stereotype.Service;

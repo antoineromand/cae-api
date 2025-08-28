@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.authentication.domain.valueobject.Role;
 import com.pickandeat.authentication.domain.valueobject.Scope;
 import com.pickandeat.authentication.infrastructure.database.AbstractDatabaseContainersTest;
+import com.pickandeat.shared.enums.RoleName;
 import jakarta.transaction.Transactional;
 import java.util.Date;
 import java.util.Optional;

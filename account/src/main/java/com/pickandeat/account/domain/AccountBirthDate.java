@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.Period;
 
 public record AccountBirthDate(String date) {
-    public int getAge() throws ParseException {
-        return Period.between(LocalDate.parse(date), LocalDate.now()).getYears();
-    }
+  public int getAge() throws ParseException {
+    return Period.between(LocalDate.parse(date), LocalDate.now()).getYears();
+  }
 }

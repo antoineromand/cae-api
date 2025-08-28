@@ -11,9 +11,9 @@ import com.pickandeat.authentication.application.exceptions.application.JtiNotFo
 import com.pickandeat.authentication.application.exceptions.application.UserNotFoundException;
 import com.pickandeat.authentication.application.usecase.refresh_token.RefreshTokenUseCase;
 import com.pickandeat.authentication.domain.Credentials;
-import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.authentication.domain.repository.ICredentialsRepository;
 import com.pickandeat.authentication.domain.valueobject.Role;
+import com.pickandeat.shared.enums.RoleName;
 import com.pickandeat.shared.token.TokenService;
 import java.time.Duration;
 import java.time.Instant;
