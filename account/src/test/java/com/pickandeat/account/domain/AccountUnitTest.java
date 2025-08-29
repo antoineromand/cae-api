@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 public class AccountUnitTest {
   com.pickandeat.account.domain.account.pro.AccountProInformations accountProInformations =
       new AccountProInformations(
-              2L,
+          2L,
           "ref",
           "siret",
           "deluxe kebab",
@@ -83,8 +83,8 @@ public class AccountUnitTest {
   public void testProInformations_shouldGetFullLocalisation() {
     String fullAddress = "103 Avenue des potirons, Narnia, 010101, France";
 
-    assertEquals(fullAddress, this.proAccount.getAccountProInformations()
-            .getLocalisation().fullAddress());
+    assertEquals(
+        fullAddress, this.proAccount.getAccountProInformations().getLocalisation().fullAddress());
   }
 
   @Test

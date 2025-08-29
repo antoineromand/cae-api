@@ -10,9 +10,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 @Table(
-    name = "credentials",
+    name = "account",
     uniqueConstraints = {@UniqueConstraint(columnNames = {"phoneNumber"})},
-    indexes = {@Index(name = "idx_credentials_phoneNumber", columnList = "phoneNumber")})
+    indexes = {@Index(name = "idx_account_phoneNumber", columnList = "phoneNumber")})
 @Entity()
 public class AccountEntity {
   @Id
@@ -42,6 +42,9 @@ public class AccountEntity {
 
   @Column(name = "role", updatable = false, nullable = false)
   private String role;
+
+  @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, optional = true)
+  private AccountProInformationsEntity accountProInformations;
 
   public AccountEntity(
       Long id,

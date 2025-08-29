@@ -9,7 +9,7 @@ public class AccountProInformations {
   private final Localisation localisation;
 
   public AccountProInformations(
-          Long id,
+      Long id,
       String kbis_ref,
       String siret,
       String legal_name,
