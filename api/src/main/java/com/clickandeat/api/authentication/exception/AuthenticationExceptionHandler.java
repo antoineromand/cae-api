@@ -1,0 +1,99 @@
+package com.clickandeat.api.authentication.exception;
+
+import com.clickandeat.api.authentication.controllers.PrivateAuthenticationController;
+import com.clickandeat.api.authentication.controllers.PublicAuthenticationController;
+import com.clickandeat.api.shared.ErrorApiResponse;
+import com.clickandeat.authentication.application.exceptions.application.*;
+import com.clickandeat.authentication.application.exceptions.technical.CannotHashPasswordException;
+import com.clickandeat.authentication.application.exceptions.technical.DatabaseTechnicalException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice(
+    basePackageClasses = {
+      PublicAuthenticationController.class,
+      PrivateAuthenticationController.class
+    })
+public class AuthenticationExceptionHandler {
+
+  private static final String CREDENTIALS_ERROR =
+      "Error while login, please check your credentials.";
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ErrorApiResponse> handleValidationExceptions(
+      MethodArgumentNotValidException ex) {
+    Map<String, List<String>> errors = new HashMap<>();
+
+    ex.getBindingResult()
+        .getFieldErrors()
+        .forEach(
+            error -> {
+              if (error.getDefaultMessage() != null) {
+                errors
+                    .computeIfAbsent(error.getField(), k -> new ArrayList<>())
+                    .add(error.getDefaultMessage());
+              }
+            });
+
+    return ResponseEntity.badRequest()
+        .body(
+            new ErrorApiResponse(
+                "INVALID_PARAMETERS", "Some parameters are invalid.", 400, errors));
+  }
+
+  @ExceptionHandler(EmailAlreadyUsedException.class)
+  public ResponseEntity<ErrorApiResponse> handleEmailAlreadyUsedException(
+      EmailAlreadyUsedException ex) {
+    return ResponseEntity.status(HttpStatusCode.valueOf(409))
+        .body(new ErrorApiResponse(ex.getKey(), ex.getMessage(), 409, null));
+  }
+
+  @ExceptionHandler({DatabaseTechnicalException.class, CannotHashPasswordException.class})
+  public ResponseEntity<ErrorApiResponse> handleTechnicalException() {
+    return ResponseEntity.status(HttpStatusCode.valueOf(500))
+        .body(
+            new ErrorApiResponse(
+                "INTERNAL_SERVER_ERROR", "The server encountered an internal error.", 500, null));
+  }
+
+  @ExceptionHandler({EmailNotFoundException.class, PasswordNotMatchException.class})
+  public ResponseEntity<ErrorApiResponse> handleLoginExceptions() {
+    return ResponseEntity.status(HttpStatusCode.valueOf(401))
+        .body(new ErrorApiResponse("INVALID_CREDENTIALS", CREDENTIALS_ERROR, 401, null));
+  }
+
+  @ExceptionHandler(UserNotFoundException.class)
+  public ResponseEntity<ErrorApiResponse> handleUserNotFoundException(UserNotFoundException ex) {
+    return ResponseEntity.status(HttpStatusCode.valueOf(401))
+        .body(new ErrorApiResponse("USER_NOT_FOUND", ex.getMessage(), 401, null));
+  }
+
+  @ExceptionHandler(MissingRequestHeaderException.class)
+  public ResponseEntity<ErrorApiResponse> handleMissingRequestHeaderException(
+      MissingRequestHeaderException ex) {
+    return ResponseEntity.status(HttpStatusCode.valueOf(400))
+        .body(new ErrorApiResponse("MISSING_HEADER", ex.getMessage(), 400, null));
+  }
+
+  @ExceptionHandler({InvalidTokenException.class, JtiNotFoundInCacheException.class})
+  public ResponseEntity<ErrorApiResponse> handleInvalidTokenExceptions(
+      AbstractApplicationException ex) {
+    return ResponseEntity.status(HttpStatusCode.valueOf(400))
+        .body(new ErrorApiResponse(ex.getKey(), ex.getMessage(), 400, null));
+  }
+
+  @ExceptionHandler(RoleMismatchException.class)
+  public ResponseEntity<ErrorApiResponse> handleForbiddenExceptions(
+      AbstractApplicationException ex) {
+    return ResponseEntity.status(HttpStatusCode.valueOf(403))
+        .body(new ErrorApiResponse(ex.getKey(), ex.getMessage(), 403, null));
+  }
+}

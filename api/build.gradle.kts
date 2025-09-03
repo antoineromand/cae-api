@@ -16,7 +16,7 @@ java {
 }
 
 tasks.named<Jar>("bootJar") {
-    archiveFileName.set("pickandeat-api-${project.version}.jar")
+    archiveFileName.set("click-and-eat-api-${project.version}.jar")
 }
 
 
@@ -36,7 +36,7 @@ dependencies {
 }
 
 tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
-    mainClass.set("com.pickandeat.api.PickAndEatApplication")
+    mainClass.set("com.clickandeat.api.ClickAndEatApplication")
 }
 
 tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {

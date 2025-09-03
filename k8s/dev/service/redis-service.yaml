@@ -4,7 +4,7 @@ metadata:
   name: redis-service
 spec:
   selector:
-    app: pick-and-eat-cache
+    app: click-and-eat-cache
   type: NodePort
   ports:
     - port: 6379

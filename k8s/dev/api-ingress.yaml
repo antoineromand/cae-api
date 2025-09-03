@@ -1,16 +1,16 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: pick-and-eat-api-ingress
+  name: click-and-eat-api-ingress
 spec:
   rules:
-    - host: pick-and-eat.local
+    - host: click-and-eat.local
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: pick-and-eat-api-service
+                name: click-and-eat-api-service
                 port:
                   number: 3000

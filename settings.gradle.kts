@@ -11,5 +11,5 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
 }
 
-rootProject.name = "pick-and-eat-api"
+rootProject.name = "click-and-eat-api"
 include("api", "authentication", "shared", "migrations", "account")

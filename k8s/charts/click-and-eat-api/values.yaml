@@ -1,0 +1,27 @@
+project_mode: any
+name: click-and-eat-api
+
+server:
+  port: 3000
+tests:
+  use_testcontainers: true
+
+db:
+  url: ""
+  username: ""
+  password: ""
+cache:
+  host: ""
+  port: ""
+
+jwt:
+  secret: ""
+  expiration_access_token: ""
+
+ghcr:
+  image:
+    api: ghcr.io/click-and-eat-organization/click-and-eat-api:latest
+    flyway: ghcr.io/click-and-eat-organization/cs-flyway:latest
+  docker:
+    json:
+      config: ""

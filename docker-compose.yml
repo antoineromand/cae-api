@@ -27,7 +27,7 @@ services:
       - dragonflydata:/data
 
   api:
-    image: pick-and-eat-api:0.0.1-snapshot
+    image: click-and-eat-api:latest
     build:
       context: .
       dockerfile: Dockerfile
