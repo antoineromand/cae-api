@@ -1,10 +1,9 @@
-CREATE TYPE role_type AS ENUM ('CONSUMER', 'PRO', 'ADMIN');
 CREATE TYPE legal_forms AS ENUM ('SARL', 'SAS', 'SASU', 'EI', 'EURL', 'SA', 'SNC', 'SCOP');
 
 CREATE TABLE IF NOT EXISTS account (
     account_id SERIAL PRIMARY KEY,
     credentials_id UUID NOT NULL UNIQUE,
-    role_type role_type NOT NULL,
+    role_type VARCHAR(50) NOT NULL,
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
     phone_number VARCHAR UNIQUE NOT NULL,

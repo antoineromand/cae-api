@@ -4,8 +4,11 @@ import com.clickandeat.account.domain.account.Account;
 import com.clickandeat.shared.enums.RoleName;
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -16,9 +19,12 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Entity()
 public class AccountEntity {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "account_id", updatable = false, nullable = false)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "account_id", updatable = false, nullable = false, columnDefinition = "serial")
   private Long id;
+
+  @Column(name="credentials_id", nullable = false, updatable = false)
+  private UUID credentialsId;
 
   @Column(name = "firstName", updatable = true, nullable = false)
   private String firstName;
@@ -27,7 +33,7 @@ public class AccountEntity {
   private String lastName;
 
   @Column(name = "birth_date", updatable = true, nullable = false)
-  private String birthDate;
+  private LocalDate birthDate;
 
   @Column(name = "phone_number", updatable = true, nullable = false)
   private String phoneNumber;
@@ -40,8 +46,8 @@ public class AccountEntity {
   @Column(name = "updated_at", updatable = true, nullable = true)
   private Instant updatedAt;
 
-  @Column(name = "role", updatable = false, nullable = false)
-  private String role;
+  @Column(name = "role_type", updatable = false, nullable = false)
+  private String roleType;
 
   @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, optional = true)
   private AccountProInformationsEntity accountProInformations;
@@ -50,7 +56,8 @@ public class AccountEntity {
       Long id,
       String firstName,
       String lastName,
-      String birthDate,
+      UUID credentialsId,
+      LocalDate birthDate,
       String phoneNumber,
       Instant createdAt,
       Instant updatedAt,
@@ -62,7 +69,8 @@ public class AccountEntity {
     this.phoneNumber = phoneNumber;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
-    this.role = role;
+    this.roleType = role;
+    this.credentialsId = credentialsId;
   }
 
   public AccountEntity() {}
@@ -72,27 +80,28 @@ public class AccountEntity {
         this.id,
         this.lastName,
         this.firstName,
-        RoleName.valueOf(this.role),
+        RoleName.valueOf(roleType),
         this.phoneNumber,
         email,
-        this.birthDate,
+        this.birthDate.toString(),
         Date.from(this.createdAt),
         Objects.isNull(this.updatedAt) ? null : Date.from(this.updatedAt),
         null);
   }
 
-  public static AccountEntity fromDomain(Account account) {
+  public static AccountEntity fromDomain(Account account, UUID credentialsId) {
     return new AccountEntity(
         account.getId(),
         account.getLastName(),
         account.getFirstName(),
-        account.getAccountBirthDate().date(),
+        credentialsId,
+        LocalDate.parse(account.getAccountBirthDate().date()),
         account.getAccountPhoneNumber().phoneNumber(),
         account.getAccountCreatedDate().toInstant(),
         Objects.isNull(account.getAccountUpdatedDate())
             ? null
             : account.getAccountUpdatedDate().toInstant(),
-        account.getRole().toString());
+        account.getRole().name());
   }
 
   public Long getId() {

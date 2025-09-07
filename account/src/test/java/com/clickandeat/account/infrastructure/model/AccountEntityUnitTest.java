@@ -5,7 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.clickandeat.account.domain.account.Account;
 import com.clickandeat.shared.enums.RoleName;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.UUID;
+
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +28,7 @@ public class AccountEntityUnitTest {
           null);
   private static final AccountEntity ACCOUNT_ENTITY =
       new AccountEntity(
-          1L, "Tony", "Stark", "1995-08-04", "+33650121314", Instant.now(), null, "CONSUMER");
+          1L, "Tony", "Stark", UUID.randomUUID(), LocalDate.parse("1995-08-04"), "+33650121314", Instant.now(), null, "CONSUMER");
 
   @Test
   public void shouldConvertAccountEntityToAccount() {
@@ -36,7 +39,7 @@ public class AccountEntityUnitTest {
 
   @Test
   public void shouldConvertAccountDomainToAccountEntity() {
-    AccountEntity accountEntity = AccountEntity.fromDomain(ACCOUNT_DOMAIN);
+    AccountEntity accountEntity = AccountEntity.fromDomain(ACCOUNT_DOMAIN, UUID.randomUUID());
     assertEquals(1L, accountEntity.getId());
   }
 }
