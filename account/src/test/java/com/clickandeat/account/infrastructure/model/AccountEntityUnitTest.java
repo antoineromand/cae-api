@@ -28,7 +28,7 @@ public class AccountEntityUnitTest {
           null);
   private static final AccountEntity ACCOUNT_ENTITY =
       new AccountEntity(
-          1L, "Tony", "Stark", UUID.randomUUID(), LocalDate.parse("1995-08-04"), "+33650121314", Instant.now(), null, "CONSUMER");
+          1L, "Tony", "Stark", UUID.randomUUID(), LocalDate.parse("1995-08-04"), "+33650121314", Instant.now(), null, RoleName.CONSUMER);
 
   @Test
   public void shouldConvertAccountEntityToAccount() {

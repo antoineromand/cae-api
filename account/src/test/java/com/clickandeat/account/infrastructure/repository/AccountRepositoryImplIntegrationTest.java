@@ -31,7 +31,7 @@ public class AccountRepositoryImplIntegrationTest extends AbstractDatabaseContai
                 "+33650505050",
                 Instant.now(),
                 null,
-                "CONSUMER"
+                RoleName.CONSUMER
         );
 
         this.accountJpaRepository.save(accountEntity);

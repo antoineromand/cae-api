@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -46,8 +48,10 @@ public class AccountEntity {
   @Column(name = "updated_at", updatable = true, nullable = true)
   private Instant updatedAt;
 
+  @Enumerated(EnumType.STRING)
+  @JdbcType(PostgreSQLEnumJdbcType.class)
   @Column(name = "role_type", updatable = false, nullable = false)
-  private String roleType;
+  private RoleName roleType;
 
   @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, optional = true)
   private AccountProInformationsEntity accountProInformations;
@@ -61,7 +65,7 @@ public class AccountEntity {
       String phoneNumber,
       Instant createdAt,
       Instant updatedAt,
-      String role) {
+      RoleName role) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -80,7 +84,7 @@ public class AccountEntity {
         this.id,
         this.lastName,
         this.firstName,
-        RoleName.valueOf(roleType),
+        this.roleType,
         this.phoneNumber,
         email,
         this.birthDate.toString(),
@@ -101,7 +105,7 @@ public class AccountEntity {
         Objects.isNull(account.getAccountUpdatedDate())
             ? null
             : account.getAccountUpdatedDate().toInstant(),
-        account.getRole().name());
+        account.getRole());
   }
 
   public Long getId() {
