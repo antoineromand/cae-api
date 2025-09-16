@@ -9,5 +9,4 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(basePackages = "com.clickandeat.account")
 @EntityScan("com.clickandeat.account.infrastructure.model")
 @EnableJpaRepositories("com.clickandeat.account.infrastructure.repository")
-public class TestConfiguration {
-}
+public class TestConfiguration {}

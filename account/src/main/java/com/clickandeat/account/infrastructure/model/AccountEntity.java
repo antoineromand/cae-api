@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
-
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.springframework.data.annotation.CreatedDate;
@@ -25,7 +24,7 @@ public class AccountEntity {
   @Column(name = "account_id", updatable = false, nullable = false, columnDefinition = "serial")
   private Long id;
 
-  @Column(name="credentials_id", nullable = false, updatable = false)
+  @Column(name = "credentials_id", nullable = false, updatable = false)
   private UUID credentialsId;
 
   @Column(name = "firstName", updatable = true, nullable = false)

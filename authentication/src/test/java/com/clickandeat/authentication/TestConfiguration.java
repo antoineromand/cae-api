@@ -11,6 +11,4 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan(basePackages = "com.clickandeat.authentication")
 @EntityScan("com.clickandeat.authentication.infrastructure.model")
 @EnableJpaRepositories("com.clickandeat.authentication.infrastructure.repository")
-public class TestConfiguration {
-
-}
+public class TestConfiguration {}

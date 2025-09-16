@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +27,15 @@ public class AccountEntityUnitTest {
           null);
   private static final AccountEntity ACCOUNT_ENTITY =
       new AccountEntity(
-          1L, "Tony", "Stark", UUID.randomUUID(), LocalDate.parse("1995-08-04"), "+33650121314", Instant.now(), null, RoleName.CONSUMER);
+          1L,
+          "Tony",
+          "Stark",
+          UUID.randomUUID(),
+          LocalDate.parse("1995-08-04"),
+          "+33650121314",
+          Instant.now(),
+          null,
+          RoleName.CONSUMER);
 
   @Test
   public void shouldConvertAccountEntityToAccount() {
