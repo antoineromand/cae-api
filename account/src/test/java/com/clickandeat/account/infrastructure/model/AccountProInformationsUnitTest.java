@@ -50,7 +50,7 @@ public class AccountProInformationsUnitTest {
             AccountEntity.fromDomain(ACCOUNT_DOMAIN, UUID.randomUUID()),
             ACCOUNT_ID);
 
-    assertEquals(1L, accountProInformations.getId());
+    assertEquals(1L, accountProInformations.toDomain().getId());
 
     AccountProInformations toDomain = accountProInformations.toDomain();
 

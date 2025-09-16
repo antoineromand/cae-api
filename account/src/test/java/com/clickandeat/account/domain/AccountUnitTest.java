@@ -9,6 +9,8 @@ import com.clickandeat.account.domain.account.pro.AccountProInformations;
 import com.clickandeat.shared.enums.RoleName;
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Date;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -64,9 +66,12 @@ public class AccountUnitTest {
 
   @Test
   public void testAccountBirthDate_shouldGetAge() throws ParseException {
-    int actualAge = 29;
+    int expectedAge = Period.between(
+            LocalDate.parse("1995-09-04"),
+            LocalDate.now()
+    ).getYears();
 
-    assertEquals(actualAge, consumerAccount.getAccountBirthDate().getAge());
+    assertEquals(expectedAge, consumerAccount.getAccountBirthDate().getAge());
   }
 
   @Test
