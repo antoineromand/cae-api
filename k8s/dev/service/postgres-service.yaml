@@ -4,7 +4,7 @@ metadata:
   name: postgres-service
 spec:
   selector:
-    app: pick-and-eat-db
+    app: click-and-eat-db
   type: NodePort
   ports:
     - port: 5432

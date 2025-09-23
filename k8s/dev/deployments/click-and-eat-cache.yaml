@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: click-and-eat-cache
+  labels:
+    app: click-and-eat-cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: click-and-eat-cache
+  template:
+    metadata:
+      labels:
+        app: click-and-eat-cache
+    spec:
+      containers:
+        - name: dragonfly
+          image: docker.dragonflydb.io/dragonflydb/dragonfly
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-storage
+              mountPath: /data
+      volumes:
+        - name: redis-storage
+          persistentVolumeClaim:
+            claimName: redis-pvc

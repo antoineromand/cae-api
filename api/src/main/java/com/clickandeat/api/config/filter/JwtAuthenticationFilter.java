@@ -1,0 +1,93 @@
+package com.clickandeat.api.config.filter;
+
+import com.clickandeat.authentication.domain.valueobject.Scope;
+import com.clickandeat.authentication.infrastructure.model.RoleEntity;
+import com.clickandeat.authentication.infrastructure.repository.RoleEntityJPARepository;
+import com.clickandeat.shared.token.TokenPayload;
+import com.clickandeat.shared.token.TokenService;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+@Component
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+  private final TokenService tokenService;
+  private final RoleEntityJPARepository roleEntityJPARepository;
+
+  @Override
+  protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    String path = request.getRequestURI();
+    return !path.startsWith("/private/");
+  }
+
+  @Override
+  protected void doFilterInternal(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws ServletException, IOException {
+
+    String token = extractBearerToken(request);
+    if (token == null || token.isBlank()) {
+      reject(response, "Missing Bearer token");
+      return;
+    }
+    if (!this.tokenService.isAccessTokenValid(token)) {
+      reject(response, "Token not valid");
+      return;
+    }
+
+    TokenPayload tokenPayload = this.tokenService.extractPayload(token);
+
+    Set<Scope> scopes = this.resolveScopesFromRole(tokenPayload.getRole());
+
+    CustomUserDetails customUserDetails =
+        new CustomUserDetails(tokenPayload.getUserId(), tokenPayload.getRole(), scopes);
+    authenticateUser(request, customUserDetails);
+    filterChain.doFilter(request, response);
+  }
+
+  private void reject(HttpServletResponse response, String message) throws IOException {
+    SecurityContextHolder.clearContext();
+    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, message);
+  }
+
+  private String extractBearerToken(HttpServletRequest request) {
+    String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+    if (header != null && header.startsWith("Bearer ")) {
+      return header.substring("Bearer ".length()).trim();
+    }
+    return null;
+  }
+
+  private Set<Scope> resolveScopesFromRole(String roleName) {
+    return this.roleEntityJPARepository
+        .findByNameWithScopes(roleName)
+        .map(RoleEntity::getScopes)
+        .map(
+            set ->
+                set.stream()
+                    .map(se -> new Scope(se.getAction(), se.getTarget()))
+                    .collect(Collectors.toSet()))
+        .orElse(Collections.emptySet());
+  }
+
+  private void authenticateUser(HttpServletRequest request, CustomUserDetails userDetails) {
+    UsernamePasswordAuthenticationToken auth =
+        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+    SecurityContextHolder.getContext().setAuthentication(auth);
+  }
+}

@@ -40,13 +40,13 @@ jobs:
 
       - name: Build Docker image
         run: |
-          IMAGE=ghcr.io/pick-and-eat-organization/pick-and-eat-api:${{ steps.extract_tag.outputs.tag }}
+          IMAGE=ghcr.io/click-and-eat-organization/click-and-eat-api:${{ steps.extract_tag.outputs.tag }}
           echo "Building image: $IMAGE"
-          docker build -t $IMAGE -t ghcr.io/pick-and-eat-organization/pick-and-eat-api:latest .
+          docker build -t $IMAGE -t ghcr.io/click-and-eat-organization/click-and-eat-api:latest .
 
       - name: Push Docker image
         run: |
-          IMAGE=ghcr.io/pick-and-eat-organization/pick-and-eat-api:${{ steps.extract_tag.outputs.tag }}
+          IMAGE=ghcr.io/click-and-eat-organization/click-and-eat-api:${{ steps.extract_tag.outputs.tag }}
           echo "Pushing image: $IMAGE"
           docker push $IMAGE
-          docker push ghcr.io/pick-and-eat-organization/pick-and-eat-api:latest
+          docker push ghcr.io/click-and-eat-organization/click-and-eat-api:latest

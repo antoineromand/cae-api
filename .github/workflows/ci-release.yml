@@ -61,7 +61,7 @@ jobs:
         run: |
           # Configure git
           git config user.name "grisou"
-          git config user.email "grisou@pickandeat.org"
+          git config user.email "grisou@clickandeat.org"
           
           # Create and push release branch
           git checkout -b release/v${{ steps.version.outputs.version }}
@@ -150,7 +150,7 @@ jobs:
           
           # Configure git
           git config user.name "grisou"
-          git config user.email "grisou@pickandeat.org"
+          git config user.email "grisou@clickandeat.org"
           
           # Ensure we're on the correct branch
           git checkout release/v${{ steps.version.outputs.version }}

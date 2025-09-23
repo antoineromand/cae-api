@@ -1,6 +1,6 @@
-# 🥗 Pick and Eat API
+# 🥗 Click and Eat API
 
-**Pick and Eat API** est une API REST monolithique modulaire conçue pour gérer les fonctionnalités d'une application de
+**Click and Eat API** est une API REST monolithique modulaire conçue pour gérer les fonctionnalités d'une application de
 commande ou de recommandation alimentaire. Elle adopte une architecture **Domain-Driven Design (DDD)** et est déployée
 via Docker avec **PostgreSQL** comme base de données et **Dragonfly** comme cache compatible Redis.
 
@@ -51,7 +51,7 @@ Cela déploie :
 L'image de l'API est disponible sur le registre privé :
 
 ```bash
-docker pull ghcr.io/pick-and-eat-organization/pick-and-eat-api:0.0.1-snapshot
+docker pull ghcr.io/click-and-eat-organization/click-and-eat-api:0.0.1-snapshot
 ```
 
 ⚠️ **Note** : L'accès à l'image est restreint. Assurez-vous d'avoir les droits nécessaires.
@@ -69,8 +69,8 @@ USE_TESTCONTAINERS=false
 # Base de données
 DB_USERNAME=admin
 DB_PASSWORD=securepassword
-DB_URL=jdbc:postgresql://localhost:5432/pickandeat
-DB_NAME=pickandeat
+DB_URL=jdbc:postgresql://localhost:5432/clickandeat
+DB_NAME=clickandeat
 
 # JWT
 JWT_SECRET=your_jwt_secret_key

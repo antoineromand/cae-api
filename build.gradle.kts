@@ -27,7 +27,7 @@ scmVersion {
 
 
 allprojects {
-	group = "com.pickandeat"
+	group = "com.clickandeat"
 	repositories {
 		mavenCentral()
 		gradlePluginPortal()
@@ -153,7 +153,7 @@ tasks.register<DefaultTask>("aggregateJavadoc") {
                 "use" to true,
                 "author" to true,
                 "version" to true,
-                "windowtitle" to "PickAndEat API Documentation"
+                "windowtitle" to "Click&Eat API Documentation"
             )
         }
     }
